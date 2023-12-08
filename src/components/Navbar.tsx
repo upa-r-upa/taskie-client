@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
+import Routes from "../constants/routes";
 
 const NavBar = () => {
   return (
-    <div className="navbar bg-base-100">
+    <div className="navbar bg-base-100 z-10 border">
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
@@ -26,33 +27,20 @@ const NavBar = () => {
             className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
           >
             <li>
-              <Link to={"/"}>Main</Link>
+              <Link to={`/${Routes.LOGIN}`}>로그인</Link>
             </li>
             <li>
-              <Link to={"/routine"}>Routine</Link>
-            </li>
-            <li>
-              <Link to={"/todo"}>Todo</Link>
-            </li>
-            <li>
-              <Link to={"/habit"}>Habit</Link>
+              <Link to={`/${Routes.SIGN_UP}`}>회원가입</Link>
             </li>
           </ul>
         </div>
       </div>
       <div className="navbar-center">
-        <Link to={"/"} className="btn btn-ghost text-xl">
+        <Link to={Routes.MAIN} className="btn btn-ghost text-3xl">
           Taskie
         </Link>
       </div>
-      <div className="navbar-end">
-        <Link to={"/login"}>
-          <button className="btn btn-ghost">로그인</button>
-        </Link>
-        <Link to={"/sign-up"}>
-          <button className="btn btn-ghost">회원가입</button>
-        </Link>
-      </div>
+      <div className="navbar-end"></div>
     </div>
   );
 };
