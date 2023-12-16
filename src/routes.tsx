@@ -9,14 +9,39 @@ import MainPage from "./pages/MainPage";
 import ErrorPage from "./pages/ErrorPage";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
+import RoutinePlayPage from "./pages/RoutinePlayPage";
+import RoutinePage from "./pages/RoutinePage";
+import TodoPage from "./pages/TodoPage";
+import HabitPage from "./pages/HabitPage";
+import RoutineEditPage from "./pages/RoutineEditPage";
+import Routes from "./constants/routes";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
+    <Route
+      path={`/${Routes.MAIN}`}
+      element={<Root />}
+      errorElement={<ErrorPage />}
+    >
       <Route errorElement={<ErrorPage />}>
         <Route index element={<MainPage />} />
-        <Route path="login" element={<LoginPage />} />
-        <Route path="sign-up" element={<SignUpPage />} />
+
+        <Route path={Routes.TODO} element={<TodoPage />} />
+
+        <Route path={Routes.ROUTINE} element={<RoutinePage />} />
+        <Route
+          path={`${Routes.ROUTINE_PLAY}:routineId`}
+          element={<RoutinePlayPage />}
+        />
+        <Route
+          path={`${Routes.ROUTINE_EDIT}:routineId`}
+          element={<RoutineEditPage />}
+        />
+
+        <Route path={Routes.HABIT} element={<HabitPage />} />
+
+        <Route path={Routes.LOGIN} element={<LoginPage />} />
+        <Route path={Routes.SIGN_UP} element={<SignUpPage />} />
       </Route>
     </Route>
   )
