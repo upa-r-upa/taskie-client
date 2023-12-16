@@ -10,7 +10,7 @@ import Routes from "../constants/routes";
 
 export default function BottomNavigation() {
   return (
-    <div className="btm-nav static border btm-nav-md">
+    <div className="btm-nav static bordered btm-nav-md">
       <button className="[&:has(.active)]:active">
         <NavLink to={`/${Routes.MAIN}`}>
           <span className="block max-w-max mx-auto text-2xl">
