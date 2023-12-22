@@ -11,7 +11,7 @@ const mockRoutine = routine[0];
 type PlayViewStepType = 0 | 1 | 2;
 
 export default function RoutinePlayPage({}: Props) {
-  const [playViewStep, setPlayViewStep] = useState<PlayViewStepType>(0);
+  const [playViewStep, setPlayViewStep] = useState<PlayViewStepType>(2);
 
   const renderStepView = () => {
     switch (playViewStep) {
@@ -30,8 +30,12 @@ export default function RoutinePlayPage({}: Props) {
           />
         );
       case 2:
-        return <DoneView routine={mockRoutine} />;
-      default:
+        return (
+          <DoneView
+            routine={mockRoutine}
+            goToInitialStep={() => setPlayViewStep(1)}
+          />
+        );
         return null;
     }
   };
