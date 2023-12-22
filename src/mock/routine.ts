@@ -23,7 +23,7 @@ const routine: Array<Routine> = [
         duration_minutes: 10,
       },
       {
-        id: 3,
+        id: 4,
         title: "허리 스트레칭 해주기",
         duration_minutes: 5,
       },
