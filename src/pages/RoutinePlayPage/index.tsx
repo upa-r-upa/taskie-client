@@ -23,7 +23,12 @@ export default function RoutinePlayPage({}: Props) {
           />
         );
       case 1:
-        return <PlayView routine={mockRoutine} />;
+        return (
+          <PlayView
+            routine={mockRoutine}
+            goToNextStep={() => setPlayViewStep(2)}
+          />
+        );
       case 2:
         return <DoneView routine={mockRoutine} />;
       default:
