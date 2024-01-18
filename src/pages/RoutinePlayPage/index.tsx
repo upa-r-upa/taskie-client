@@ -36,6 +36,7 @@ export default function RoutinePlayPage({}: Props) {
             goToInitialStep={() => setPlayViewStep(1)}
           />
         );
+      default:
         return null;
     }
   };
