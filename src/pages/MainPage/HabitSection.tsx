@@ -5,26 +5,75 @@ interface Props {
 }
 
 export default function TodoSection({ habitList }: Props) {
-  const renderHabitList = (habitList: Array<Habit>): JSX.Element[] => {
-    return habitList.map((habit) => {
-      return (
-        <li key={habit.id} className="card card-bordered  card-compact mb-2">
-          <div className="card-body">
-            <div className=" flex">
-              <div className="flex-1">
-                <h2 className="card-title text-lg">{habit.title}</h2>
-                <p>총 {habit.start_time_minutes.length}번 중 5번 완료</p>
-              </div>
+  return (
+    <ul>
+      <li className="card card-bordered card-compact mb-2 shadow-md">
+        <div className="card-body">
+          <div className="">
+            <div className="card-title text-lg">
+              <h2>물 마시기</h2>
+            </div>
 
-              <div className="card-actions">
-                <button className="btn btn-sm btn-primary">수행하기</button>
-              </div>
+            <div>
+              <ul className="flex gap-1">
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-xs checkbox-primary"
+                />
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-xs checkbox-primary"
+                />
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-xs checkbox-primary"
+                />
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-xs checkbox-primary"
+                />
+              </ul>
+              <p className="text-primary text-xs mt-1">
+                오늘 총 6번 중 5번 완료
+              </p>
             </div>
           </div>
-        </li>
-      );
-    });
-  };
+        </div>
+      </li>
 
-  return <>{renderHabitList(habitList)}</>;
+      <li className="card card-bordered card-compact mb-2 shadow-md">
+        <div className="card-body">
+          <div className="">
+            <div className="card-title text-lg">
+              <h2>목 스트레칭 해주기</h2>
+            </div>
+
+            <div>
+              <ul className="flex gap-1">
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-xs checkbox-primary"
+                />
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-xs checkbox-primary"
+                />
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-xs checkbox-primary"
+                />
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-xs checkbox-primary"
+                />
+              </ul>
+              <p className="text-primary text-xs mt-1">
+                오늘 총 6번 중 5번 완료
+              </p>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+  );
 }
