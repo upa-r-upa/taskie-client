@@ -4,13 +4,11 @@ import ThumbnailView from "./ThumbnailView";
 import PlayView from "./PlayView";
 import DoneView from "./DoneView";
 
-interface Props {}
-
 const mockRoutine = routine[0];
 
 type PlayViewStepType = 0 | 1 | 2;
 
-export default function RoutinePlayPage({}: Props) {
+export default function RoutinePlayPage() {
   const [playViewStep, setPlayViewStep] = useState<PlayViewStepType>(0);
 
   const renderStepView = () => {
