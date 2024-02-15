@@ -28,4 +28,4 @@ jobs:
           aws-region: ap-northeast-2
 
       - name: Deploy
-        run: aws s3 sync build/ s3://taskie.upa-r-upa.com
+        run: aws s3 sync dist/ s3://taskie.upa-r-upa.com
