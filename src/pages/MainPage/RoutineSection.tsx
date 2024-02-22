@@ -1,7 +1,7 @@
 import { BsFillPlayFill, BsSkipEndFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 
-import { Routine } from "../../types/routine";
+import { Routine, RoutineElement } from "../../types/routine";
 import { getFormatDayList, getFormatMinutes } from "../../utils/time";
 import Routes from "../../constants/routes";
 
