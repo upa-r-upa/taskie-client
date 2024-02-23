@@ -18,17 +18,11 @@ jobs:
 
       - name: Setup node
         uses: actions/setup-node@v2
-
-      - name: Cache node modules
-        uses: actions/cache@v2
         with:
-          path: |
-            node_modules
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
+          cache: "yarn"
 
       - name: Install dependencies (if not cached)
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: npm ci
+        run: yarn install --frozen-lockfile
 
       - name: Format check
-        run: npm run lint
+        run: yarn lint
