@@ -63,7 +63,7 @@ export default function TodoSection({ todoList }: Props) {
       <dialog
         key={todo.id}
         id="todo_modal"
-        className="modal modal-bottom"
+        className="modal modal-bottom max-w-lg m-auto"
         ref={modalRef}
       >
         <div className="modal-box">
