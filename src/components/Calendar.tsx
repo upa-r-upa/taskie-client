@@ -65,8 +65,6 @@ const Calendar = ({
           </div>
 
           <div className="calendar grid grid-cols-7 gap-2 p-4">
-            {/* 달 표시 추가 (이전/다음달  넘길 수 있는 버튼도) */}
-
             {/* Calendar Header */}
             <div className="text-center font-bold">Sun</div>
             <div className="text-center font-bold">Mon</div>
