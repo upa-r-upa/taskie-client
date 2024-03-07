@@ -89,35 +89,37 @@ export default function RoutinePage() {
         key={routine.id}
         className="card card-bordered card-compact shadow-md mb-2"
       >
-        <div className="card-body">
-          <div className="flex">
-            <div className="flex-1">
-              <h2 className="card-title text-lg">{routine.title}</h2>
-              <p>매주 {getFormatDayList(routine.repeat_days)}</p>
-              <p>
-                {getFormatMinutes(routine.start_time_minutes)} |{" "}
-                {calculateTotalRoutineMinutes(routine.routine_elements)}분 동안
-                진행
-              </p>
-            </div>
+        <Link to={`/${Routes.ROUTINE_REPORT}${routine.id}`}>
+          <div className="card-body">
+            <div className="flex">
+              <div className="flex-1">
+                <h2 className="card-title text-lg">{routine.title}</h2>
+                <p>매주 {getFormatDayList(routine.repeat_days)}</p>
+                <p>
+                  {getFormatMinutes(routine.start_time_minutes)} |{" "}
+                  {calculateTotalRoutineMinutes(routine.routine_elements)}분
+                  동안 진행
+                </p>
+              </div>
 
-            <div className="card-actions">
-              <button className="btn btn-sm btn-circle btn-primary">
-                <BsSkipEndFill />
-              </button>
-
-              <Link to={`/${Routes.ROUTINE_PLAY}${routine.id}`}>
-                <button className="btn btn-sm btn-circle btn-outline btn-primary">
-                  <BsFillPlayFill />
+              <div className="card-actions">
+                <button className="btn btn-sm btn-circle btn-primary">
+                  <BsSkipEndFill />
                 </button>
-              </Link>
 
-              {renderActivatedRoutineOptionButtonList(routine.id)}
+                <Link to={`/${Routes.ROUTINE_PLAY}${routine.id}`}>
+                  <button className="btn btn-sm btn-circle btn-outline btn-primary">
+                    <BsFillPlayFill />
+                  </button>
+                </Link>
+
+                {renderActivatedRoutineOptionButtonList(routine.id)}
+              </div>
             </div>
-          </div>
 
-          <div className="badge badge-sm badge-outline">100% 완료</div>
-        </div>
+            <div className="badge badge-sm badge-outline">100% 완료</div>
+          </div>
+        </Link>
       </li>
     ));
   };
