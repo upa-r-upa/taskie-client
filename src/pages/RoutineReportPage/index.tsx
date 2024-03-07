@@ -7,6 +7,7 @@ export default function RoutineReportPage() {
         <span className="font-bold">미라클 점심</span> 루틴
       </h1>
 
+      <h2 className="text-2xl mb-3 font-semibold">루틴 정보</h2>
       <div className="mb-6">
         <div className="stats shadow">
           <div className="stat">
@@ -29,29 +30,43 @@ export default function RoutineReportPage() {
 
       <div className="flex flex-col mb-6 gap-3">
         <div>
-          <h2 className="text-xl font-semibold">진행 요일</h2>
+          <h2 className="text-lg font-semibold">진행 요일</h2>
           <p>월, 화, 수, 목, 금</p>
         </div>
         <div>
-          <h2 className="text-xl font-semibold">시작일</h2>
+          <h2 className="text-lg font-semibold">시작일</h2>
           <p>2021년 7월 1일부터 시작했어요.</p>
         </div>
         <div>
-          <h2 className="text-xl font-semibold">시작 시각 및 진행 시간</h2>
+          <h2 className="text-lg font-semibold">시작 시각 및 진행 시간</h2>
           <p>아침 7시 30분부터 50분 동안 진행해요.</p>
         </div>
+      </div>
+
+      <h2 className="text-2xl mb-3 font-semibold">
+        주간 요약<span className="text-base ml-3">5월 6일 ~ 5월 9일</span>
+      </h2>
+
+      <div className="flex gap-2 mb-6">
+        <button className="btn btn-outline btn-sm">다음 주</button>
+        <button className="btn btn-outline btn-sm">이전 주</button>
+      </div>
+
+      <div className="flex flex-col mb-6 gap-3">
         <div>
-          <h2 className="text-xl font-semibold">평균 소요 시간</h2>
-          <p>평균적으로 약 56분 동안 진행해요.</p>
+          <h2 className="text-lg font-semibold">평균 소요 시간</h2>
+          <p>평균적으로 약 56분 동안 진행했어요.</p>
         </div>
         <div>
-          <h2 className="text-xl font-semibold">평균 시작 시간</h2>
+          <h2 className="text-lg font-semibold">평균 시작 시간</h2>
           <p>평균적으로 아침 8시 30분에 시작했어요.</p>
         </div>
       </div>
 
       <div className="mb-6">
-        <h2 className="text-2xl mb-3 font-semibold">2월 루틴 진행 상황</h2>
+        <h2 className="text-2xl mb-3 font-semibold">
+          한달 요약<span className="text-base ml-3">3월 1일 ~ 3월 31일</span>
+        </h2>
         <Calendar
           className="shadow-md"
           dateContents={[
@@ -60,10 +75,21 @@ export default function RoutineReportPage() {
             { date: 6, highlight: true },
           ]}
         />
+
+        <div className="flex flex-col mt-6 mb-6 gap-3">
+          <div>
+            <h2 className="text-lg font-semibold">평균 소요 시간</h2>
+            <p>평균적으로 약 56분 동안 진행했어요.</p>
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold">평균 시작 시간</h2>
+            <p>평균적으로 아침 8시 30분에 시작했어요.</p>
+          </div>
+        </div>
       </div>
 
       <div className="mb-6">
-        <h2 className="text-2xl mb-3 font-semibold">루틴 요소</h2>
+        <h2 className="text-2xl mb-3 font-semibold"></h2>
 
         <ul>
           <li className="rounded-md py-2 px-2 border border-gray-300 mb-3">

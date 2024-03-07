@@ -56,7 +56,17 @@ const Calendar = ({
     <div className={`container mx-auto rounded-md p-2 ${className}`}>
       <div className="flex flex-col">
         <div className="overflow-auto">
+          <div className="flex justify-between mb-2">
+            <button className="text-blue-500">&lt;</button>
+            <div className="font-bold text-xl">
+              {year}년 {month + 1}월
+            </div>
+            <button className="text-blue-500">&gt;</button>
+          </div>
+
           <div className="calendar grid grid-cols-7 gap-2 p-4">
+            {/* 달 표시 추가 (이전/다음달  넘길 수 있는 버튼도) */}
+
             {/* Calendar Header */}
             <div className="text-center font-bold">Sun</div>
             <div className="text-center font-bold">Mon</div>
