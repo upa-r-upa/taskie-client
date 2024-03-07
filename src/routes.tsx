@@ -14,6 +14,8 @@ import RoutinePage from "./pages/RoutinePage";
 import TodoPage from "./pages/TodoPage";
 import HabitPage from "./pages/HabitPage";
 import RoutineEditPage from "./pages/RoutineEditPage";
+import RoutineReportPage from "./pages/RoutineReportPage";
+
 import Routes from "./constants/routes";
 
 const router = createBrowserRouter(
@@ -36,6 +38,10 @@ const router = createBrowserRouter(
         <Route
           path={`${Routes.ROUTINE_EDIT}:routineId`}
           element={<RoutineEditPage />}
+        />
+        <Route
+          path={`${Routes.ROUTINE_REPORT}:routineId`}
+          element={<RoutineReportPage />}
         />
 
         <Route path={Routes.HABIT} element={<HabitPage />} />
