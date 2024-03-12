@@ -1,5 +1,9 @@
 // import { Habit } from "../../types/habit";
 
+import { Link } from "react-router-dom";
+
+import Routes from "../../constants/routes";
+
 // import habitList from "../../mock/habit";
 
 export default function HabitPage() {
@@ -50,6 +54,11 @@ export default function HabitPage() {
               <div className="card-actions">
                 <button className="btn btn-sm btn-primary">수행하기</button>
                 <button className="btn btn-sm btn-outline">수정하기</button>
+                <Link to={`/${Routes.HABIT_REPORT}${1}`}>
+                  <button className="btn btn-sm btn-info btn-outline">
+                    대시보드
+                  </button>
+                </Link>
               </div>
             </div>
           </li>
@@ -94,6 +103,9 @@ export default function HabitPage() {
               <div className="card-actions">
                 <button className="btn btn-sm btn-primary">수행하기</button>
                 <button className="btn btn-sm btn-outline">수정하기</button>
+                <button className="btn btn-sm btn-info btn-outline">
+                  대시보드
+                </button>
               </div>
             </div>
           </li>
@@ -133,6 +145,9 @@ export default function HabitPage() {
 
               <div className="card-actions">
                 <button className="btn btn-sm btn-outline">수정하기</button>
+                <button className="btn btn-sm btn-info btn-outline">
+                  대시보드
+                </button>
               </div>
             </div>
           </li>
@@ -159,6 +174,9 @@ export default function HabitPage() {
               <div className="card-actions">
                 <button className="btn btn-sm btn-primary">수행하기</button>
                 <button className="btn btn-sm btn-outline">수정하기</button>
+                <button className="btn btn-sm btn-info btn-outline">
+                  대시보드
+                </button>
               </div>
             </div>
           </li>
@@ -183,6 +201,9 @@ export default function HabitPage() {
               <div className="card-actions">
                 <button className="btn btn-sm btn-primary">수행하기</button>
                 <button className="btn btn-sm btn-outline">수정하기</button>
+                <button className="btn btn-sm btn-info btn-outline">
+                  대시보드
+                </button>
               </div>
             </div>
           </li>
@@ -208,6 +229,9 @@ export default function HabitPage() {
                   일찍 수행하기
                 </button>
                 <button className="btn btn-sm btn-outline">수정하기</button>
+                <button className="btn btn-sm btn-info btn-outline">
+                  대시보드
+                </button>
               </div>
             </div>
           </li>
@@ -232,6 +256,9 @@ export default function HabitPage() {
                   일찍 수행하기
                 </button>
                 <button className="btn btn-sm btn-outline">수정하기</button>
+                <button className="btn btn-sm btn-info btn-outline">
+                  대시보드
+                </button>
               </div>
             </div>
           </li>
