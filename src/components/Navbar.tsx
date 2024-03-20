@@ -32,6 +32,9 @@ const NavBar = () => {
             <li>
               <Link to={`/${Routes.SIGN_UP}`}>회원가입</Link>
             </li>
+            <li>
+              <Link to={`/${Routes.DASHBOARD}`}>이번주 대시보드</Link>
+            </li>
           </ul>
         </div>
       </div>
