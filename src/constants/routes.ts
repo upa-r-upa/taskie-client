@@ -8,6 +8,7 @@ enum Routes {
   ROUTINE_EDIT = "routine/edit/",
   ROUTINE_REPORT = "routine/report/",
   HABIT_REPORT = "habit/report/",
+  DASHBOARD = "dashboard",
   HABIT = "habit",
 }
 

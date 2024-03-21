@@ -18,6 +18,7 @@ import RoutineReportPage from "./pages/RoutineReportPage";
 import HabitReportPage from "./pages/HabitReportPage";
 
 import Routes from "./constants/routes";
+import Dashboard from "./pages/Dashboard";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -50,6 +51,8 @@ const router = createBrowserRouter(
           path={`${Routes.HABIT_REPORT}:habitId`}
           element={<HabitReportPage />}
         />
+
+        <Route path={Routes.DASHBOARD} element={<Dashboard />} />
 
         <Route path={Routes.LOGIN} element={<LoginPage />} />
         <Route path={Routes.SIGN_UP} element={<SignUpPage />} />
