@@ -7,7 +7,7 @@
       "client": {
         "generatorName": "typescript-axios",
         "output": "src/api/generated",
-        "inputSpec": "http://localhost:88/openapi.json"
+        "inputSpec": "http://localhost:8000/openapi.json"
       }
     }
   }
