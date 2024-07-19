@@ -1,7 +1,7 @@
 enum Routes {
-  MAIN = "",
   LOGIN = "login",
   SIGN_UP = "sign-up",
+  MAIN = "",
   TODO = "todo",
   ROUTINE = "routine",
   ROUTINE_PLAY = "routine/play/",

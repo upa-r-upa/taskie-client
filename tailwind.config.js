@@ -11,6 +11,7 @@ export default {
       "dim", // good
       "light",
       "dark",
+      "sunset"
     ],
   },
   plugins: [daisyui],

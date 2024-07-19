@@ -5,8 +5,6 @@ interface Props {
 }
 
 export default function TodoSection({ habitList }: Props) {
-  console.log(habitList);
-
   return (
     <ul>
       <li className="card card-bordered card-compact mb-2 shadow-md">
