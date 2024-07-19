@@ -19,17 +19,16 @@ import HabitReportPage from "./pages/HabitReportPage";
 
 import Routes from "./constants/routes";
 import Dashboard from "./pages/Dashboard";
+import RequireAuth from "./components/RequireAuth";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route
-      path={`/${Routes.MAIN}`}
-      element={<Root />}
-      errorElement={<ErrorPage />}
-    >
-      <Route errorElement={<ErrorPage />}>
-        <Route index element={<MainPage />} />
+    <Route path={"/"} element={<Root />} errorElement={<ErrorPage />}>
+      <Route path={Routes.LOGIN} element={<LoginPage />} />
+      <Route path={Routes.SIGN_UP} element={<SignUpPage />} />
 
+      <Route path={Routes.MAIN} element={<RequireAuth />}>
+        <Route index element={<MainPage />} />
         <Route path={Routes.TODO} element={<TodoPage />} />
 
         <Route path={Routes.ROUTINE} element={<RoutinePage />} />
@@ -53,9 +52,6 @@ const router = createBrowserRouter(
         />
 
         <Route path={Routes.DASHBOARD} element={<Dashboard />} />
-
-        <Route path={Routes.LOGIN} element={<LoginPage />} />
-        <Route path={Routes.SIGN_UP} element={<SignUpPage />} />
       </Route>
     </Route>
   )

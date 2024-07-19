@@ -1,6 +1,18 @@
 import { BsPlusLg, BsTrash } from "react-icons/bs";
 
+import useQuery from "../../hooks/useQuery";
+import { todoApi } from "../../api/client";
+import Loading from "../../components/Loading";
+
 export default function TodoPage() {
+  const { isLoading } = useQuery({
+    queryFn: () => todoApi.getTodoList(100, 0, false),
+  });
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
   return (
     <div className="relative">
       <h1 className="text-2xl font-semibold mb-3">투두 목록</h1>
