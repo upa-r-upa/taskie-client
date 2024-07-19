@@ -4,6 +4,7 @@ interface Props {
   habitList: Array<Habit>;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function TodoSection({ habitList }: Props) {
   return (
     <ul>
