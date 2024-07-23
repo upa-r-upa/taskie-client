@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 export type MessageType = "info" | "error" | "success" | "warning";
 
-interface Message {
+export interface Message {
   message: React.ReactNode;
 
   description?: React.ReactNode;
@@ -22,9 +22,11 @@ export const useMessageStore = create<MessageState>((set) => ({
   messages: [],
 
   addMessage: (message) =>
-    set((state) => ({
-      messages: [...state.messages, message],
-    })),
+    set((state) => {
+      return {
+        messages: [...state.messages, message],
+      };
+    }),
 
   clearMessage: (idx) =>
     set((state) => ({
