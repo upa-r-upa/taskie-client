@@ -114,6 +114,17 @@ export default function TokenRefresher() {
             message: "현재 요청한 작업을 처리 할 권한이 없습니다.",
             type: "warning",
           });
+        } else if (error.response?.status === 500) {
+          addMessage({
+            message: "서버에서 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+            type: "error",
+          });
+        } else if (error.code === "ERR_NETWORK") {
+          addMessage({
+            message:
+              "현재 서버가 원활하지 않습니다. 잠시 후 다시 시도해주세요.",
+            type: "error",
+          });
         }
 
         return Promise.reject(error);
