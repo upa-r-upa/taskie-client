@@ -10,6 +10,7 @@ enum Routes {
   HABIT_REPORT = "habit/report/",
   DASHBOARD = "dashboard",
   HABIT = "habit",
+  USER = "user",
 }
 
 export default Routes;
