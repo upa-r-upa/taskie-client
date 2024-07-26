@@ -14,10 +14,13 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          cache: 'yarn'
+          cache: "yarn"
 
       - name: Install dependencies
         run: yarn install
+
+      - name: Generate API client
+        run: yarn generate-api-test
 
       - name: Build
         run: yarn build
