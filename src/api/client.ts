@@ -5,6 +5,7 @@ import {
   TodosApi,
   UsersApi,
   HabitsApi,
+  TaskApi,
 } from "./generated";
 
 const API_BASE_URL = import.meta.env.VITE_APP_API_URL;
@@ -22,5 +23,6 @@ const authApi = new AuthApi(apiConfig, "", client);
 const todoApi = new TodosApi(apiConfig, "", client);
 const usersApi = new UsersApi(apiConfig, "", client);
 const habitsApi = new HabitsApi(apiConfig, "", client);
+const taskApi = new TaskApi(apiConfig, "", client);
 
-export { authApi, todoApi, usersApi, habitsApi };
+export { authApi, todoApi, usersApi, habitsApi, taskApi };
