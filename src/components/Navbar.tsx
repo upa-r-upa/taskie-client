@@ -96,7 +96,7 @@ const NavBar = () => {
         </div>
       </div>
       <div className="navbar-center">
-        <Link to={Routes.MAIN} className="btn btn-ghost text-3xl">
+        <Link to={`/${Routes.MAIN}`} className="btn btn-ghost text-3xl">
           Taskie
         </Link>
       </div>

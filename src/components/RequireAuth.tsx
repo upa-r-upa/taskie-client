@@ -24,7 +24,9 @@ export default function RequireAuth() {
   }
 
   if (!getIsLoggedIn()) {
-    return <Navigate to={Routes.LOGIN} state={{ from: location }} replace />;
+    return (
+      <Navigate to={`/${Routes.LOGIN}`} state={{ from: location }} replace />
+    );
   }
 
   return (

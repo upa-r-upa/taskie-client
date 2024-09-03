@@ -6,7 +6,7 @@ import useMutation from "../../hooks/useMutation";
 
 import { ResponseLoginOutput } from "../../api/generated";
 import { useAuthStore } from "../../state/useAuthStore";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Routes from "../../constants/routes";
 import { useMessageStore } from "../../state/useMessageStore";
 
@@ -123,6 +123,11 @@ const LoginPage = () => {
           disabled={isLoading}
         />
       </form>
+      <Link to={`/${Routes.SIGN_UP}`}>
+        <button className="btn btn-outline btn-block mt-5" disabled={isLoading}>
+          회원가입 페이지로 이동하기
+        </button>
+      </Link>
     </div>
   );
 };
