@@ -1,11 +1,11 @@
 import axios from "axios";
 import {
   Configuration,
-  AuthApi,
-  TodosApi,
-  UsersApi,
-  HabitsApi,
-  TaskApi,
+  AuthApiFactory,
+  TodosApiFactory,
+  UsersApiFactory,
+  HabitsApiFactory,
+  TaskApiFactory,
 } from "./generated";
 
 const API_BASE_URL = import.meta.env.VITE_APP_API_URL;
@@ -19,10 +19,10 @@ export const client = axios.create({
   withCredentials: true,
 });
 
-const authApi = new AuthApi(apiConfig, "", client);
-const todoApi = new TodosApi(apiConfig, "", client);
-const usersApi = new UsersApi(apiConfig, "", client);
-const habitsApi = new HabitsApi(apiConfig, "", client);
-const taskApi = new TaskApi(apiConfig, "", client);
+const authApi = AuthApiFactory(apiConfig, "", client);
+const todoApi = TodosApiFactory(apiConfig, "", client);
+const usersApi = UsersApiFactory(apiConfig, "", client);
+const habitsApi = HabitsApiFactory(apiConfig, "", client);
+const taskApi = TaskApiFactory(apiConfig, "", client);
 
 export { authApi, todoApi, usersApi, habitsApi, taskApi };
