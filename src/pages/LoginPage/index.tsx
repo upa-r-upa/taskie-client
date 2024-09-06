@@ -43,11 +43,7 @@ const LoginPage = () => {
   };
 
   const { mutation, isLoading } = useMutation({
-    mutationFn: () =>
-      authApi.login({
-        username,
-        password,
-      }),
+    mutationFn: authApi.login,
     onSuccess: handleLoginSuccess,
     onError: handleLoginError,
   });
@@ -62,7 +58,10 @@ const LoginPage = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    mutation();
+    mutation({
+      username,
+      password,
+    });
   };
 
   return (
