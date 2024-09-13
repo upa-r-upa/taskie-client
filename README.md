@@ -58,13 +58,15 @@ yarn install
 
 ## 4. 개발 환경에 맞는 api generate
 - 배포된 서버 기준으로 generate
-  ```bash
+  
+```bash
 yarn generate-api-test
-  ```
+```
+
 - 로컬 서버를 기준으로 generate
-  ```bash
+```bash
 yarn generate-api-dev
-  ```
+```
 
 ## 5. 개발 서버 실행
 ```bash
