@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Routine, RoutineElement } from "../../types/routine";
 import { getFormatDayList, getFormatMinutes } from "../../utils/time";
 import Routes from "../../constants/routes";
+import EmptyCard from "../../components/EmptyCard";
 
 interface Props {
   routineList: Array<Routine>;
@@ -14,7 +15,15 @@ export default function RoutineSection({ routineList }: Props) {
     return list.reduce((acc, cur) => acc + cur.duration_minutes, 0);
   };
 
-  const renderRoutineList = (list: Array<Routine>): JSX.Element[] => {
+  const renderRoutineList = (list: Array<Routine>) => {
+    if (list.length === 0) {
+      return (
+        <EmptyCard label="루틴">
+          <button className="btn btn-primary btn-outline">루틴 추가하기</button>
+        </EmptyCard>
+      );
+    }
+
     return list.map((routine) => {
       return (
         <li
@@ -53,5 +62,5 @@ export default function RoutineSection({ routineList }: Props) {
     });
   };
 
-  return <>{renderRoutineList(routineList)}</>;
+  return <ul>{renderRoutineList(routineList)}</ul>;
 }

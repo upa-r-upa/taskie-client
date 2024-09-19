@@ -8,10 +8,11 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "generate-api-dev": "openapi-generator-cli generate -g typescript-axios -i http://localhost:8000/openapi.json -o src/api/generated",
-    "generate-api-test": "openapi-generator-cli generate -g typescript-axios -i http://taskie-backend.upa-r-upa.com:2095/openapi.json -o src/api/generated"
+    "generate-api-local": "openapi-generator-cli generate --generator-key local",
+    "generate-api-dev": "openapi-generator-cli generate --generator-key dev"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.56.2",
     "axios": "^1.7.2",
     "daisyui": "^4.4.6",
     "dayjs": "^1.11.12",
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.13.4",
+    "@tanstack/eslint-plugin-query": "^5.56.1",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
     "@typescript-eslint/eslint-plugin": "^6.10.0",

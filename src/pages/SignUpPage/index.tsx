@@ -2,11 +2,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { authApi } from "../../api/client";
-import { Message, useMessageStore } from "../../state/useMessageStore";
+import { useMessageStore } from "../../state/useMessageStore";
 
 import Routes from "../../constants/routes";
-import useMutation from "../../hooks/useMutation";
 import InputField from "../../components/InputField";
+import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import { ErrorResponse } from "../../api/generated";
 
 const messages: { [key: string]: { [key: string]: string } } = {
   username: {
@@ -44,14 +46,8 @@ const SignUpPage = () => {
     email: "",
   });
 
-  const { mutation, isLoading } = useMutation({
-    mutationFn: () =>
-      authApi.signup({
-        username: form.username,
-        password: form.password,
-        password_confirm: form.passwordConfirm,
-        email: form.email,
-      }),
+  const { mutate, isPending } = useMutation({
+    mutationFn: authApi.signup,
     onSuccess: () => {
       navigate(`/${Routes.LOGIN}`);
       addMessage({
@@ -59,12 +55,7 @@ const SignUpPage = () => {
         type: "success",
       });
     },
-    onError: (error) => {
-      const extraErrorMessage: Message = {
-        message: "회원가입 중 오류가 발생했습니다. 다시 시도해주세요.",
-        type: "error",
-      };
-
+    onError: (error: AxiosError<ErrorResponse>) => {
       if (error.response?.status === 422 && error.response?.data.location) {
         const { location, error_type } = error.response.data;
 
@@ -100,11 +91,7 @@ const SignUpPage = () => {
             message: messages.email[error_type],
             type: "warning",
           });
-        } else {
-          addMessage(extraErrorMessage);
         }
-      } else {
-        addMessage(extraErrorMessage);
       }
     },
   });
@@ -118,7 +105,12 @@ const SignUpPage = () => {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        mutation();
+        mutate({
+          username: form.username,
+          password: form.password,
+          password_confirm: form.passwordConfirm,
+          email: form.email,
+        });
       }}
     >
       <InputField
@@ -164,7 +156,7 @@ const SignUpPage = () => {
       <input
         type="submit"
         value="회원가입"
-        disabled={isLoading}
+        disabled={isPending}
         className="btn btn-primary btn-block mt-5"
       />
     </form>
