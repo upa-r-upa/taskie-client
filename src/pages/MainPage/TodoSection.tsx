@@ -4,13 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { todoApi } from "../../api/client";
 import TodoModal from "./TodoModal";
 import { TodoPublic } from "../../api/generated";
-import {
-  convertUtcToKst,
-  dateToUTC,
-  getDateWithoutTime,
-  getFormatTime,
-  isToday,
-} from "../../utils/time";
+import { getDateWithoutTime, getFormatTime, isToday } from "../../utils/time";
 import { useMessageStore } from "../../state/useMessageStore";
 import EmptyCard from "../../components/EmptyCard";
 import { TodoModalSubmitProps, TodoUpdateInputParameter } from "./types";
@@ -56,9 +50,10 @@ export default function TodoSection({ todoList, fetchData }: Props) {
 
   const handleAddTodoSubmit = (todo: TodoModalSubmitProps) => {
     createTodoMutation.mutate({
-      ...todo,
+      content: todo.content,
+      title: todo.title,
       order: 0,
-      target_date: dateToUTC(todo.targetDate),
+      target_date: todo.targetDate.toISOString(),
     });
   };
 
@@ -106,7 +101,7 @@ export default function TodoSection({ todoList, fetchData }: Props) {
       update: {
         ...todo,
         completed: !!selectedTodo.completed_at,
-        target_date: dateToUTC(todo.targetDate),
+        target_date: todo.targetDate.toISOString(),
       },
     });
   };
@@ -137,7 +132,7 @@ export default function TodoSection({ todoList, fetchData }: Props) {
         modalId="todo-update"
         title={todo.title}
         content={todo.content}
-        targetDate={convertUtcToKst(todo.target_date)}
+        targetDate={new Date(todo.target_date)}
         modalRef={updateModalRef}
         onTodoSubmit={handleUpdateTodoSubmit}
         isLoading={updateTodoMutation.isPending || deleteTodoMutation.isPending}
@@ -207,7 +202,7 @@ export default function TodoSection({ todoList, fetchData }: Props) {
     }
 
     return list.map((item) => {
-      const date = convertUtcToKst(item.target_date);
+      const date = item.target_date;
       const formattedDate = isToday(date) ? getFormatTime(date) : "";
 
       if (item.completed_at) {

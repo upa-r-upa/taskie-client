@@ -5,13 +5,14 @@ import HabitSection from "./HabitSection";
 import RoutineSection from "./RoutineSection";
 import { queryClient, taskApi } from "../../api/client";
 import Loading from "../../components/Loading";
-import { formatDateToUTC, getDateWithoutTime } from "../../utils/time";
+import { formatDate } from "../../utils/time";
 
 function MainPage() {
   const { isLoading, data } = useQuery({
     queryKey: ["tasks"],
-    queryFn: () =>
-      taskApi.getAllDailyTask(formatDateToUTC(getDateWithoutTime())),
+    queryFn: () => taskApi.getAllDailyTask(formatDate(new Date())),
+    refetchIntervalInBackground: true,
+    refetchInterval: 60 * 1000,
   });
 
   if (isLoading) {
@@ -39,7 +40,10 @@ function MainPage() {
 
       <div className="container mb-5">
         <h2 className="text-xl mb-2">습관</h2>
-        <HabitSection habitList={data?.data?.habit_list || []} />
+        <HabitSection
+          habitList={data?.data?.habit_list || []}
+          fetchData={refetch}
+        />
       </div>
 
       <div className="container mb-5">

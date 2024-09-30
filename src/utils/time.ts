@@ -1,5 +1,31 @@
 import dayjs from "dayjs";
 
+export function getTimeDifferenceFromNow(dateString: string): number {
+  const targetDate = dayjs(dateString);
+  const now = dayjs();
+
+  const diffInMinutes = now.diff(targetDate, "minute");
+
+  return diffInMinutes;
+}
+
+export function convertMinutesToHours(minutes: number): string {
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+
+  let result = "";
+
+  if (hours > 0) {
+    result += `${hours}시간 `;
+  }
+
+  if (remainingMinutes > 0) {
+    result += `${remainingMinutes}분`;
+  }
+
+  return result.trim();
+}
+
 export function getFormatMinutes(minutes: number): string {
   const hours = Math.floor(minutes / 60);
   const remainderMinutes = minutes % 60;
@@ -53,17 +79,4 @@ export function getFormatDayList(days: Array<number>): string {
 
 export function formatDate(date: Date): string {
   return dayjs(date).format("YYYY-MM-DD");
-}
-
-export function dateToUTC(date: Date): string {
-  return dayjs(date).utc().toISOString();
-}
-
-export function formatDateToUTC(date: Date): string {
-  return dayjs(date).utc().format("YYYY-MM-DD");
-}
-
-export function convertUtcToKst(utcDate: string): Date {
-  const kstDate = dayjs.utc(utcDate).tz("Asia/Seoul");
-  return kstDate.toDate();
 }
