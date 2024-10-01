@@ -1,5 +1,11 @@
 import dayjs from "dayjs";
 
+const weeks = ["월", "화", "수", "목", "금", "토", "일"];
+
+export function getDayFromNumber(week: number): string {
+  return week >= 0 && week <= 7 ? weeks[week] : "존재하지 않는 요일";
+}
+
 export function getTimeDifferenceFromNow(dateString: string): number {
   const targetDate = dayjs(dateString);
   const now = dayjs();
@@ -19,23 +25,40 @@ export function convertMinutesToHours(minutes: number): string {
     result += `${hours}시간 `;
   }
 
-  if (remainingMinutes > 0) {
+  if (remainingMinutes > 0 || (remainingMinutes === 0 && !hours)) {
     result += `${remainingMinutes}분`;
   }
 
   return result.trim();
 }
 
+export function getFormatMinutesWithMeridiem(minutes: number): string {
+  const hours = Math.floor(minutes / 60);
+  const remainderMinutes = minutes % 60;
+
+  const period = hours < 12 ? "오전" : hours >= 24 ? "익일 오전" : "오후";
+  const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
+
+  const result = `${period} ${formattedHours}시 ${remainderMinutes
+    .toString()
+    .padStart(2, "0")}분`;
+
+  return result;
+}
+
 export function getFormatMinutes(minutes: number): string {
   const hours = Math.floor(minutes / 60);
   const remainderMinutes = minutes % 60;
 
-  const period = hours < 12 ? "오전" : "오후";
-  const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
+  let result = "";
 
-  const result = `${period} ${formattedHours}:${remainderMinutes
-    .toString()
-    .padStart(2, "0")}`;
+  if (hours) {
+    result += `${hours}시간`;
+  }
+
+  if (remainderMinutes) {
+    result += ` ${remainderMinutes.toString().padStart(2, "0")}분`;
+  }
 
   return result;
 }

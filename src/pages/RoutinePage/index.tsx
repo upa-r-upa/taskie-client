@@ -12,7 +12,10 @@ import {
 import routineList from "../../mock/routine";
 import Routes from "../../constants/routes";
 
-import { getFormatDayList, getFormatMinutes } from "../../utils/time";
+import {
+  getFormatDayList,
+  getFormatMinutesWithMeridiem,
+} from "../../utils/time";
 import { Routine, RoutineElement } from "../../types/routine";
 
 export default function RoutinePage() {
@@ -96,7 +99,7 @@ export default function RoutinePage() {
                 <h2 className="card-title text-lg">{routine.title}</h2>
                 <p>매주 {getFormatDayList(routine.repeat_days)}</p>
                 <p>
-                  {getFormatMinutes(routine.start_time_minutes)} |{" "}
+                  {getFormatMinutesWithMeridiem(routine.start_time_minutes)} |{" "}
                   {calculateTotalRoutineMinutes(routine.routine_elements)}분
                   동안 진행
                 </p>
@@ -133,7 +136,7 @@ export default function RoutinePage() {
               <h2 className="card-title text-lg">{routine.title}</h2>
               <p>매주 {getFormatDayList(routine.repeat_days)}</p>
               <p>
-                {getFormatMinutes(routine.start_time_minutes)} |{" "}
+                {getFormatMinutesWithMeridiem(routine.start_time_minutes)} |{" "}
                 {calculateTotalRoutineMinutes(routine.routine_elements)}분 동안
                 진행
               </p>
@@ -163,7 +166,7 @@ export default function RoutinePage() {
               <h2 className="card-title text-lg">{routine.title}</h2>
               <p>매주 {getFormatDayList(routine.repeat_days)}</p>
               <p>
-                {getFormatMinutes(routine.start_time_minutes)} |{" "}
+                {getFormatMinutesWithMeridiem(routine.start_time_minutes)} |{" "}
                 {calculateTotalRoutineMinutes(routine.routine_elements)}분 동안
                 진행
               </p>

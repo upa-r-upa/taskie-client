@@ -136,7 +136,7 @@ export default function TodoSection({ todoList, fetchData }: Props) {
         modalRef={updateModalRef}
         onTodoSubmit={handleUpdateTodoSubmit}
         isLoading={updateTodoMutation.isPending || deleteTodoMutation.isPending}
-        handleModalClose={handleUpdateModalClose}
+        onCancel={handleUpdateModalClose}
         extraButton={
           <button
             disabled={deleteTodoMutation.isPending}
@@ -163,7 +163,7 @@ export default function TodoSection({ todoList, fetchData }: Props) {
           modalRef={addModalRef}
           onTodoSubmit={handleAddTodoSubmit}
           isLoading={createTodoMutation.isPending}
-          handleModalClose={() => setIsCreateTodoModalOpened(false)}
+          onCancel={() => setIsCreateTodoModalOpened(false)}
         />
       </>
     );

@@ -1,14 +1,16 @@
 import { useMutation } from "@tanstack/react-query";
-import { HabitWithLog } from "../../api/generated";
+import { HabitPublic, HabitWithLog } from "../../api/generated";
 import EmptyCard from "../../components/EmptyCard";
 import {
   convertMinutesToHours,
-  getFormatMinutes,
+  getFormatMinutesWithMeridiem,
   getTimeDifferenceFromNow,
 } from "../../utils/time";
 import HabitModal from "./HabitModal";
 import { habitsApi } from "../../api/client";
 import { useMessageStore } from "../../state/useMessageStore";
+import { useEffect, useRef, useState } from "react";
+import { HabitModalSubmitProps } from "./types";
 
 interface Props {
   habitList: Array<HabitWithLog>;
@@ -30,22 +32,53 @@ export default function HabitSection({ habitList, fetchData }: Props) {
     },
   });
 
+  const addModalRef = useRef<HTMLDialogElement>(null);
+  const updateModalRef = useRef<HTMLDialogElement>(null);
+
+  const [selectedHabit, setSelectedHabit] = useState<HabitPublic | null>(null);
+  const [isCreateModalOpened, setIsCreateModalOpened] =
+    useState<boolean>(false);
+
+  useEffect(() => {
+    if (isCreateModalOpened) addModalRef.current?.showModal();
+    else addModalRef.current?.close();
+  }, [isCreateModalOpened]);
+
+  useEffect(() => {
+    if (selectedHabit) updateModalRef.current?.showModal();
+    else updateModalRef.current?.close();
+  }, [selectedHabit]);
+
   const renderHabitList = (list: Array<HabitWithLog>) => {
     if (list.length === 0) {
       return (
         <EmptyCard label="습관">
-          <button className="btn btn-primary btn-outline">습관 추가하기</button>
+          <div>
+            <div className="text-sm text-gray-500">
+              <p>
+                습관은 <b>하루에 여러번 반복되는 일</b>을<br /> 편리하게 관리할
+                수 있어요.
+              </p>
+              <p className="mt-1">
+                주기적으로 반복되는 할 일이라고
+                <br /> 생각하면 편해요.
+              </p>
+            </div>
+            <button className="btn btn-primary btn-outline mt-2">
+              습관 추가하기
+            </button>
+          </div>
         </EmptyCard>
       );
     }
 
     return list.map((data) => {
-      const count = Math.ceil(
-        (data.end_time_minutes - data.start_time_minutes) /
-          data.repeat_time_minutes
-      );
+      const count =
+        Math.ceil(
+          (data.end_time_minutes - data.start_time_minutes) /
+            data.repeat_time_minutes
+        ) + 1;
       const done = count <= data.log_list.length;
-      const diffTime = getTimeDifferenceFromNow(data.log_list[0].completed_at);
 
       return (
         <li
@@ -53,7 +86,7 @@ export default function HabitSection({ habitList, fetchData }: Props) {
           className="card card-bordered card-compact mb-2 shadow-md"
         >
           <div className="card-body flex flex-row items-center">
-            <div className="flex-1">
+            <div className="flex-1" onClick={() => setSelectedHabit(data)}>
               <span className="badge badge-primary badge-sm">
                 {convertMinutesToHours(data.repeat_time_minutes)} 주기
               </span>
@@ -74,8 +107,8 @@ export default function HabitSection({ habitList, fetchData }: Props) {
                 <>
                   <p>
                     {data.log_list.length
-                      ? `${diffTime}분 전에 실천했어요.`
-                      : `${getFormatMinutes(data.start_time_minutes)} 습관 시작이에요.`}
+                      ? `${convertMinutesToHours(getTimeDifferenceFromNow(data.log_list[0].completed_at))} 전에 실천했어요.`
+                      : `${getFormatMinutesWithMeridiem(data.start_time_minutes)} 습관 시작이에요.`}
                   </p>
                   <div>
                     <p className="text-primary text-xs mt-1">
@@ -86,11 +119,15 @@ export default function HabitSection({ habitList, fetchData }: Props) {
                   </div>
                 </>
               )}
-              <progress
-                className="progress progress-primary w-56"
-                value={(data.log_list.length / count) * 100}
-                max="100"
-              />
+              {data.log_list.length ? (
+                <progress
+                  className="progress progress-primary w-56"
+                  value={(data.log_list.length / count) * 100}
+                  max="100"
+                />
+              ) : (
+                <></>
+              )}
             </div>
             <input
               type="checkbox"
@@ -106,10 +143,68 @@ export default function HabitSection({ habitList, fetchData }: Props) {
       );
     });
   };
+
+  const handleAddHabitSubmit = (params: HabitModalSubmitProps) => {
+    console.log(params);
+  };
+
+  const handleUpdateHabitSubmit = (params: HabitModalSubmitProps) => {
+    console.log(params);
+  };
+
+  const parseRepeatDays = (repeatDays: Array<number>): Array<number> => {
+    const result = Array.from({ length: 7 }, (v, i) => i);
+
+    repeatDays.forEach((value) => {
+      result[value] = 1;
+    });
+
+    return result;
+  };
+
   return (
     <>
       <ul>{renderHabitList(habitList)}</ul>
-      <HabitModal />
+      {habitList.length ? (
+        <button
+          onClick={() => setIsCreateModalOpened(true)}
+          className="btn btn-primary btn-outline btn-sm mt-2"
+        >
+          습관 추가하기
+        </button>
+      ) : (
+        <></>
+      )}
+
+      <HabitModal
+        key={isCreateModalOpened ? "open" : "close"}
+        modalRef={addModalRef}
+        onCancel={() => {
+          setIsCreateModalOpened(false);
+        }}
+        onSubmit={handleAddHabitSubmit}
+        modalId="habit-add-modal"
+        modalTitle="습관 추가하기"
+      />
+
+      {selectedHabit ? (
+        <HabitModal
+          modalRef={updateModalRef}
+          onCancel={() => {
+            setSelectedHabit(null);
+          }}
+          onSubmit={handleUpdateHabitSubmit}
+          modalId="habit-add-modal"
+          modalTitle="습관 수정하기"
+          title={selectedHabit.title}
+          startTimeMinutes={selectedHabit.start_time_minutes}
+          endTimeMinutes={selectedHabit.end_time_minutes}
+          repeatIntervalMinutes={selectedHabit.repeat_time_minutes}
+          repeatDays={parseRepeatDays(selectedHabit.repeat_days)}
+        />
+      ) : (
+        <></>
+      )}
     </>
   );
 }

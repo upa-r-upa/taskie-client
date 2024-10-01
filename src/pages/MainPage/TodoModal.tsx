@@ -17,7 +17,7 @@ interface TodoModalProps {
   modalRef: React.RefObject<HTMLDialogElement>;
 
   onTodoSubmit: (todo: TodoModalSubmitProps) => void;
-  handleModalClose: () => void;
+  onCancel: () => void;
 }
 
 export default function TodoModal({
@@ -27,7 +27,7 @@ export default function TodoModal({
   title: originTitle,
   content: originContent,
   targetDate: originTargetDate,
-  handleModalClose,
+  onCancel,
   onTodoSubmit,
   extraButton,
   modalRef,
@@ -51,8 +51,8 @@ export default function TodoModal({
     setTargetDate(value.startDate);
   };
 
-  const handleTimeChange = (hour: number, minutes: number) => {
-    targetDate.setHours(hour, minutes);
+  const handleTimeChange = (minutes: number) => {
+    targetDate.setHours(Math.floor(minutes / 60), minutes % 60);
   };
 
   const handleConfirmModal = () => {
@@ -96,8 +96,7 @@ export default function TodoModal({
               inputClassName="input input-bordered w-full text-sm input-md"
             />
             <TimePicker
-              hour={targetDate.getHours()}
-              minutes={targetDate.getMinutes()}
+              minutes={targetDate.getHours() * 60 + targetDate.getMinutes()}
               onChange={handleTimeChange}
               className="w-32"
             />
@@ -122,7 +121,7 @@ export default function TodoModal({
             {isLoading ? "할 일 저장 중..." : "확인"}
           </button>
           <button
-            onClick={handleModalClose}
+            onClick={onCancel}
             className="btn flex-1"
             disabled={isLoading}
           >

@@ -2,7 +2,10 @@ import { BsFillPlayFill, BsSkipEndFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 
 import { Routine, RoutineElement } from "../../types/routine";
-import { getFormatDayList, getFormatMinutes } from "../../utils/time";
+import {
+  getFormatDayList,
+  getFormatMinutesWithMeridiem,
+} from "../../utils/time";
 import Routes from "../../constants/routes";
 import EmptyCard from "../../components/EmptyCard";
 
@@ -36,7 +39,7 @@ export default function RoutineSection({ routineList }: Props) {
                 <h2 className="card-title text-lg">{routine.title}</h2>
                 <p>매주 {getFormatDayList(routine.repeat_days)}</p>
                 <p>
-                  {getFormatMinutes(routine.start_time_minutes)} |{" "}
+                  {getFormatMinutesWithMeridiem(routine.start_time_minutes)} |{" "}
                   {calculateTotalRoutineMinutes(routine.routine_elements)}분
                   동안 진행
                 </p>

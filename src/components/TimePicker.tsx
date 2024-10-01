@@ -1,54 +1,51 @@
 import React from "react";
+import { getFormatMinutesWithMeridiem } from "../utils/time";
 
 interface TimePickerProps {
-  hour: number;
   minutes: number;
-  onChange: (hour: number, minutes: number) => void;
+  onChange: (minutes: number) => void;
+
+  isMidnightSelectable?: boolean;
 
   className?: string;
 }
 
-const generateTimeOptions = () => {
-  const times = [];
-  for (let hour = 0; hour < 24; hour++) {
-    times.push(`${hour.toString().padStart(2, "0")}시 00분`);
-    times.push(`${hour.toString().padStart(2, "0")}시 30분`);
-  }
-  return times;
-};
-
-const times = generateTimeOptions();
-
 const TimePicker: React.FC<TimePickerProps> = ({
-  hour,
   minutes,
   onChange,
+  isMidnightSelectable,
   className,
 }) => {
-  const handleTimeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const [newHour, newMinutes] = e.target.value
-      .split("시")
-      .map((part) => part.trim());
-    const parsedHour = parseInt(newHour, 10);
-    const parsedMinutes = parseInt(newMinutes.replace("분", ""), 10);
+  const generateTimeOptions = (
+    isMidnightSelectable: boolean
+  ): Array<number> => {
+    const times = [];
+    for (let hour = 0; hour < 24; hour++) {
+      times.push(hour * 60);
+      times.push(hour * 60 + 30);
+    }
 
-    onChange(parsedHour, parsedMinutes);
+    if (isMidnightSelectable) {
+      times.push(24 * 60);
+    }
+
+    return times;
   };
 
+  const times = generateTimeOptions(!!isMidnightSelectable);
+
   return (
-    <div>
-      <select
-        defaultValue={`${hour.toString().padStart(2, "0")}시 ${minutes}분`}
-        onChange={handleTimeChange}
-        className={`select select-bordered w-full ${className}`}
-      >
-        {times.map((timeOption) => (
-          <option key={timeOption} value={timeOption}>
-            {timeOption}
-          </option>
-        ))}
-      </select>
-    </div>
+    <select
+      defaultValue={minutes}
+      onChange={({ target }) => onChange(parseInt(target.value) ?? 0)}
+      className={`select select-bordered w-full ${className}`}
+    >
+      {times.map((timeOption) => (
+        <option key={timeOption} value={timeOption}>
+          {getFormatMinutesWithMeridiem(timeOption)}
+        </option>
+      ))}
+    </select>
   );
 };
 
