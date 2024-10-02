@@ -6,33 +6,57 @@ import { useMessageStore } from "../../state/useMessageStore";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient, routineApi } from "../../api/client";
 import { useNavigate } from "react-router-dom";
-import { RoutineItemBase } from "../../api/generated";
+import { RoutinePublic, RoutineUpdateInput } from "../../api/generated";
+import { RoutineItemLocal } from "../../types/routine";
 
-export default function RoutineCreatePage() {
+interface Props {
+  routine: RoutinePublic;
+}
+
+export default function EditPage({ routine }: Props) {
   const navigate = useNavigate();
 
-  const [title, setTitle] = useState<string>("");
-  const [startTimeMinutes, setStartTimeMinutes] = useState<number>(540);
-  const [repeatDays, setRepeatDays] = useState<Array<number>>(
-    Array.from({ length: 7 }, () => 0)
+  const parseRepeatDays = (repeatDays: Array<number>): Array<number> => {
+    const result = Array.from({ length: 7 }, (v, i) => i);
+
+    repeatDays.forEach((value) => {
+      result[value] = 1;
+    });
+
+    return result;
+  };
+
+  const [title, setTitle] = useState<string>(routine.title);
+  const [startTimeMinutes, setStartTimeMinutes] = useState<number>(
+    routine.start_time_minutes
   );
-  const [todoList, setTodoList] = useState<Array<RoutineItemBase>>([]);
+  const [repeatDays, setRepeatDays] = useState<Array<number>>(
+    parseRepeatDays(routine.repeat_days)
+  );
+  const [todoList, setTodoList] = useState<Array<RoutineItemLocal>>(
+    routine.routine_elements
+  );
+
+  const refetchData = () => {
+    queryClient.invalidateQueries({
+      queryKey: ["tasks"],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["routines"],
+    });
+  };
 
   const addMessage = useMessageStore((state) => state.addMessage);
   const createRoutineMutation = useMutation({
-    mutationFn: routineApi.createRoutine,
+    mutationFn: (data: RoutineUpdateInput) =>
+      routineApi.updateRoutine(routine.id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["tasks"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["routines"],
-      });
+      refetchData();
       navigate(-1);
     },
     onError: () => {
       addMessage({
-        message: "루틴 생성에 실패했습니다.",
+        message: "루틴 수정에 실패했습니다.",
         type: "error",
       });
     },
@@ -137,9 +161,31 @@ export default function RoutineCreatePage() {
     return repeatDays.every((v) => v === 0) || !title;
   };
 
+  const deleteRoutineMutation = useMutation({
+    mutationFn: routineApi.deleteRoutine,
+    onSuccess: () => {
+      addMessage({
+        message: "루틴을 삭제했습니다.",
+      });
+      refetchData();
+
+      navigate(-1);
+    },
+    onError: () => {
+      addMessage({
+        message: "루틴 삭제에 실패했습니다.",
+        type: "error",
+      });
+    },
+  });
+
+  const handleRoutineDeleteClick = () => {
+    deleteRoutineMutation.mutate(routine.id);
+  };
+
   return (
     <>
-      <h1 className="text-xl font-semibold">루틴 추가하기</h1>
+      <h1 className="text-xl font-semibold">루틴 수정하기</h1>
 
       <div className="mt-4 flex flex-col gap-3">
         <label>
@@ -231,13 +277,30 @@ export default function RoutineCreatePage() {
         </div>
       </div>
 
-      <button
-        onClick={handleSubmit}
-        disabled={isDisabled()}
-        className="btn btn-primary mt-5"
-      >
-        루틴 추가하기
-      </button>
+      <div className="flex items-center mt-5 gap-2">
+        <button
+          onClick={() => {
+            navigate(-1);
+          }}
+          className="btn w-20"
+        >
+          취소
+        </button>
+        <button
+          disabled={deleteRoutineMutation.isPending}
+          onClick={handleRoutineDeleteClick}
+          className="btn btn-error"
+        >
+          삭제하기
+        </button>
+        <button
+          onClick={handleSubmit}
+          disabled={isDisabled() || deleteRoutineMutation.isPending}
+          className="btn btn-primary flex-1"
+        >
+          루틴 수정하기
+        </button>
+      </div>
     </>
   );
 }
