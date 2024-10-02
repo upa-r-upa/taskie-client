@@ -16,10 +16,10 @@ import {
   getFormatDayList,
   getFormatMinutesWithMeridiem,
 } from "../../utils/time";
-import { Routine, RoutineElement } from "../../types/routine";
+import { RoutineItem, RoutinePublic } from "../../api/generated";
 
 export default function RoutinePage() {
-  const calculateTotalRoutineMinutes = (list: Array<RoutineElement>) => {
+  const calculateTotalRoutineMinutes = (list: Array<RoutineItem>) => {
     return list.reduce((acc, cur) => acc + cur.duration_minutes, 0);
   };
 
@@ -86,7 +86,7 @@ export default function RoutinePage() {
     );
   };
 
-  const renderTodayRoutineList = (list: Array<Routine>) => {
+  const renderTodayRoutineList = (list: Array<RoutinePublic>) => {
     return list.map((routine) => (
       <li
         key={routine.id}
@@ -127,7 +127,7 @@ export default function RoutinePage() {
     ));
   };
 
-  const renderRoutineList = (list: Array<Routine>) => {
+  const renderRoutineList = (list: Array<RoutinePublic>) => {
     return list.map((routine) => (
       <li key={routine.id} className="card card-bordered card-compact mb-2">
         <div className="card-body">
@@ -157,7 +157,7 @@ export default function RoutinePage() {
     ));
   };
 
-  const renderDisabledRoutineList = (list: Array<Routine>) => {
+  const renderDisabledRoutineList = (list: Array<RoutinePublic>) => {
     return list.map((routine) => (
       <li key={routine.id} className="car card-bordered card-compact mb-2">
         <div className="card-body">

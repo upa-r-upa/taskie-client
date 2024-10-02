@@ -1,24 +1,21 @@
 import { BsFillPlayFill, BsSkipEndFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 
-import { Routine, RoutineElement } from "../../types/routine";
-import {
-  getFormatDayList,
-  getFormatMinutesWithMeridiem,
-} from "../../utils/time";
+import { getFormatMinutesWithMeridiem } from "../../utils/time";
 import Routes from "../../constants/routes";
 import EmptyCard from "../../components/EmptyCard";
+import { RoutineItem, RoutinePublic } from "../../api/generated";
 
 interface Props {
-  routineList: Array<Routine>;
+  routineList: Array<RoutinePublic>;
 }
 
 export default function RoutineSection({ routineList }: Props) {
-  const calculateTotalRoutineMinutes = (list: Array<RoutineElement>) => {
+  const calculateTotalRoutineMinutes = (list: Array<RoutineItem>) => {
     return list.reduce((acc, cur) => acc + cur.duration_minutes, 0);
   };
 
-  const renderRoutineList = (list: Array<Routine>) => {
+  const renderRoutineList = (list: Array<RoutinePublic>) => {
     if (list.length === 0) {
       return (
         <EmptyCard label="루틴">
@@ -28,6 +25,65 @@ export default function RoutineSection({ routineList }: Props) {
     }
 
     return list.map((routine) => {
+      const isDone = routine.routine_elements.some((data) => data.completed_at);
+
+      if (isDone) {
+        return (
+          <li
+            key={routine.id}
+            className="card card-bordered card-compact shadow-md mb-2"
+          >
+            <div className="card-body">
+              <div className="flex">
+                <div className="flex-1 text-gray-400">
+                  <h2 className="card-title text-lg line-through">
+                    {routine.title}
+                  </h2>
+                  <p>
+                    {getFormatMinutesWithMeridiem(routine.start_time_minutes)} |{" "}
+                    총 {calculateTotalRoutineMinutes(routine.routine_elements)}
+                    분
+                  </p>
+                </div>
+
+                <div className="card-actions">
+                  <Link to={`/${Routes.ROUTINE_PLAY}${routine.id}`}>
+                    <button className="btn btn-sm btn-circle btn-outline btn-primary">
+                      <BsFillPlayFill />
+                    </button>
+                  </Link>
+                </div>
+              </div>
+
+              <ul className="flex flex-col gap-2">
+                {routine.routine_elements.map((data) => {
+                  if (data.is_skipped) {
+                    return;
+                  }
+
+                  return (
+                    <li
+                      key={`${routine.id}-${data.id}`}
+                      className="card-bordered shadow-sm rounded-md p-2 line-through text-gray-400 flex overflow-hidden gap-2"
+                    >
+                      <p className="overflow-hidden text-ellipsis whitespace-nowrap">
+                        {data.title}
+                      </p>
+
+                      <input
+                        className="checkbox flex-shrink-0 checkbox-sm rounded-full checkbox-primary"
+                        type="checkbox"
+                        disabled
+                        checked
+                      />
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </li>
+        );
+      }
       return (
         <li
           key={routine.id}
@@ -37,11 +93,9 @@ export default function RoutineSection({ routineList }: Props) {
             <div className="flex">
               <div className="flex-1">
                 <h2 className="card-title text-lg">{routine.title}</h2>
-                <p>매주 {getFormatDayList(routine.repeat_days)}</p>
                 <p>
                   {getFormatMinutesWithMeridiem(routine.start_time_minutes)} |{" "}
-                  {calculateTotalRoutineMinutes(routine.routine_elements)}분
-                  동안 진행
+                  총 {calculateTotalRoutineMinutes(routine.routine_elements)}분
                 </p>
               </div>
 
@@ -57,13 +111,22 @@ export default function RoutineSection({ routineList }: Props) {
                 </Link>
               </div>
             </div>
-
-            <div className="badge badge-sm badge-outline">100% 완료</div>
           </div>
         </li>
       );
     });
   };
 
-  return <ul>{renderRoutineList(routineList)}</ul>;
+  return (
+    <>
+      <ul>{renderRoutineList(routineList)}</ul>
+      {routineList.length ? (
+        <button className="btn btn-primary btn-outline btn-sm mt-2">
+          루틴 추가하기
+        </button>
+      ) : (
+        <></>
+      )}
+    </>
+  );
 }

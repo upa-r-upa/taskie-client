@@ -111,7 +111,7 @@ const LoginPage = () => {
           </div>
 
           <div className="text-sm">
-            <p className="font-medium text-primary">비밀번호 찾기</p>
+            {/* <p className="font-medium text-primary">비밀번호 찾기</p> */}
           </div>
         </div>
 

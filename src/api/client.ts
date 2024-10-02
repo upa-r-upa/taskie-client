@@ -7,6 +7,7 @@ import {
   UsersApiFactory,
   HabitsApiFactory,
   TaskApiFactory,
+  RoutinesApiFactory,
 } from "./generated";
 
 const API_BASE_URL = import.meta.env.VITE_APP_API_URL;
@@ -31,5 +32,6 @@ const todoApi = TodosApiFactory(apiConfig, API_BASE_URL, client);
 const usersApi = UsersApiFactory(apiConfig, API_BASE_URL, client);
 const habitsApi = HabitsApiFactory(apiConfig, API_BASE_URL, client);
 const taskApi = TaskApiFactory(apiConfig, API_BASE_URL, client);
+const routineApi = RoutinesApiFactory(apiConfig, API_BASE_URL, client);
 
-export { authApi, todoApi, usersApi, habitsApi, taskApi };
+export { authApi, todoApi, usersApi, habitsApi, taskApi, routineApi };
