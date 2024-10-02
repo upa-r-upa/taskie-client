@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from "react";
 
 interface AutoResizeTextareaProps {
   value: string;
+  required?: boolean;
   onChange: (value: string) => void;
 
   placeholder?: string;
@@ -10,6 +11,7 @@ interface AutoResizeTextareaProps {
 const AutoResizeTextarea: React.FC<AutoResizeTextareaProps> = ({
   placeholder,
   value,
+  required,
   onChange,
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -25,6 +27,7 @@ const AutoResizeTextarea: React.FC<AutoResizeTextareaProps> = ({
     <textarea
       ref={textareaRef}
       value={value}
+      required={required}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       className="textarea textarea-bordered w-full max-w-lg resize-none overflow-hidden"

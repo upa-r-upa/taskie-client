@@ -44,7 +44,7 @@ export default function HabitModal({
 }: HabitModalProps) {
   const [title, setTitle] = useState<string>(originTitle || "");
   const [repeatDays, setRepeatDays] = useState<Array<number>>(
-    originRepeatDays || []
+    originRepeatDays || Array.from({ length: 7 }, () => 0)
   );
   const [startTimeMinutes, setStartTimeMinutes] = useState<number>(
     originStartTimeMinutes || 720
@@ -100,11 +100,19 @@ export default function HabitModal({
   const count =
     Math.floor((endTimeMinutes - startTimeMinutes) / repeatIntervalMinutes) + 1;
 
+  const isDisabled = () => {
+    return (
+      startTimeMinutes >= endTimeMinutes ||
+      repeatDays.every((v) => v === 0) ||
+      !title
+    );
+  };
+
   return (
     <dialog
       ref={modalRef}
       id={modalId}
-      className="modal rounded-lg shadow-lg p-3 pb-0 modal-bottom"
+      className="modal rounded-lg shadow-lg p-3 pb-0 modal-bottom z-1"
     >
       <div className="modal-box flex flex-col max-w-lg mx-auto">
         <div className="flex-1">
@@ -113,14 +121,29 @@ export default function HabitModal({
           </h3>
           <AutoResizeTextarea
             value={title}
+            required
             placeholder={"습관 이름을 입력하세요."}
             onChange={(value) => setTitle(value)}
           />
+          {!title ? (
+            <p className="text-error text-sm ml-2">
+              * 습관 이름을 입력해주세요.
+            </p>
+          ) : (
+            <></>
+          )}
 
           <div className="flex flex-col gap-2 mt-2">
             <div>
               <p className="font-semibold mb-2">반복 요일</p>
               <div className="flex gap-2">{renderRepeatDays(repeatDays)}</div>
+              {repeatDays.every((v) => v === 0) ? (
+                <p className="text-error text-sm ml-2 mt-2">
+                  * 반복 요일이 하루라도 있어야 해요.
+                </p>
+              ) : (
+                <></>
+              )}
             </div>
 
             <div>
@@ -139,6 +162,14 @@ export default function HabitModal({
                 onChange={setEndTimeMinutes}
               />
             </div>
+
+            {startTimeMinutes >= endTimeMinutes ? (
+              <p className="text-error text-sm ml-2">
+                * 시작 시간보다 종료 시간이 이르거나, 같을 수 없어요.
+              </p>
+            ) : (
+              <></>
+            )}
 
             <div>
               <p className="my-2 font-semibold">습관 간격</p>
@@ -179,9 +210,9 @@ export default function HabitModal({
                   </ul>
                 </div>
               ) : (
-                <p>
-                  이러면 습관이 한번도 진행되지 않아요. 시간대를 넓혀보거나,
-                  습관 간격을 줄여보는건 어떨까요?
+                <p className="text-sm ml-2 mt-2">
+                  이러면 습관이 한번도 진행되지 않아요.
+                  <br /> 시간대를 넓혀보거나, 습관 간격을 줄여보는건 어떨까요?
                 </p>
               )}
             </div>
@@ -192,7 +223,7 @@ export default function HabitModal({
           <button
             onClick={handleSubmit}
             className="btn btn-primary flex-1"
-            disabled={isLoading}
+            disabled={isLoading || isDisabled()}
           >
             {isLoading ? "저장 중..." : "확인"}
           </button>

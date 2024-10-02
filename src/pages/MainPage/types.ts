@@ -1,4 +1,4 @@
-import { TodoUpdateInput } from "../../api/generated";
+import { HabitUpdateInput, TodoUpdateInput } from "../../api/generated";
 
 export interface TodoModalSubmitProps {
   title: string;
@@ -17,4 +17,9 @@ export interface HabitModalSubmitProps {
   endTimeMinutes: number;
   repeatIntervalMinutes: number;
   repeatDays: Array<number>;
+}
+
+export interface HabitUpdateInputParameter {
+  id: number;
+  update: HabitUpdateInput;
 }

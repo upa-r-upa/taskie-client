@@ -10,7 +10,7 @@ import HabitModal from "./HabitModal";
 import { habitsApi } from "../../api/client";
 import { useMessageStore } from "../../state/useMessageStore";
 import { useEffect, useRef, useState } from "react";
-import { HabitModalSubmitProps } from "./types";
+import { HabitModalSubmitProps, HabitUpdateInputParameter } from "./types";
 
 interface Props {
   habitList: Array<HabitWithLog>;
@@ -64,7 +64,10 @@ export default function HabitSection({ habitList, fetchData }: Props) {
                 <br /> 생각하면 편해요.
               </p>
             </div>
-            <button className="btn btn-primary btn-outline mt-2">
+            <button
+              className="btn btn-primary btn-outline mt-2"
+              onClick={() => setIsCreateModalOpened(true)}
+            >
               습관 추가하기
             </button>
           </div>
@@ -144,12 +147,61 @@ export default function HabitSection({ habitList, fetchData }: Props) {
     });
   };
 
+  const createHabitMutation = useMutation({
+    mutationFn: habitsApi.createHabit,
+    onSuccess: () => {
+      setIsCreateModalOpened(false);
+      fetchData();
+    },
+    onError: () => {
+      addMessage({
+        message: "습관 추가에 실패했습니다.",
+        type: "error",
+      });
+    },
+  });
+
   const handleAddHabitSubmit = (params: HabitModalSubmitProps) => {
-    console.log(params);
+    createHabitMutation.mutate({
+      title: params.title,
+      start_time_minutes: params.startTimeMinutes,
+      end_time_minutes: params.endTimeMinutes,
+      repeat_days: parseRepeatDaysToServerFormat(params.repeatDays),
+      repeat_time_minutes: params.repeatIntervalMinutes,
+    });
   };
 
+  const updateHabitMutation = useMutation({
+    mutationFn: (input: HabitUpdateInputParameter) =>
+      habitsApi.updateHabit(input.id, input.update),
+    onSuccess: () => {
+      setSelectedHabit(null);
+      fetchData();
+    },
+    onError: () => {
+      addMessage({
+        message: "습관 수정에 실패했습니다.",
+        type: "error",
+      });
+    },
+  });
+
   const handleUpdateHabitSubmit = (params: HabitModalSubmitProps) => {
-    console.log(params);
+    if (!selectedHabit) {
+      return;
+    }
+
+    updateHabitMutation.mutate({
+      id: selectedHabit.id,
+      update: {
+        title: params.title,
+        start_time_minutes: params.startTimeMinutes,
+        end_time_minutes: params.endTimeMinutes,
+        repeat_days: parseRepeatDaysToServerFormat(params.repeatDays),
+        repeat_time_minutes: params.repeatIntervalMinutes,
+        activated: true,
+      },
+    });
   };
 
   const parseRepeatDays = (repeatDays: Array<number>): Array<number> => {
@@ -157,6 +209,20 @@ export default function HabitSection({ habitList, fetchData }: Props) {
 
     repeatDays.forEach((value) => {
       result[value] = 1;
+    });
+
+    return result;
+  };
+
+  const parseRepeatDaysToServerFormat = (
+    repeatDays: Array<number>
+  ): Array<number> => {
+    const result: Array<number> = [];
+
+    repeatDays.forEach((value, i) => {
+      if (value) {
+        result.push(i);
+      }
     });
 
     return result;
