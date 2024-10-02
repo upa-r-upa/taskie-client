@@ -121,3 +121,8 @@ export function formatConditionalDate(date: Date | string): string {
     return inputDate.format("YYYY년 MM월 DD일");
   }
 }
+
+export function getWeek(date: Date | string): number {
+  const day = dayjs(date).day();
+  return day === 0 ? 6 : day - 1;
+}

@@ -3,14 +3,19 @@ import { HabitPublic, HabitWithLog } from "../../api/generated";
 import EmptyCard from "../../components/EmptyCard";
 import {
   convertMinutesToHours,
+  getDayFromNumber,
   getFormatMinutesWithMeridiem,
   getTimeDifferenceFromNow,
+  getWeek,
 } from "../../utils/time";
-import HabitModal from "./HabitModal";
+import HabitModal from "../MainPage/HabitModal";
 import { habitsApi } from "../../api/client";
 import { useMessageStore } from "../../state/useMessageStore";
 import { useEffect, useRef, useState } from "react";
-import { HabitModalSubmitProps, HabitUpdateInputParameter } from "./types";
+import {
+  HabitModalSubmitProps,
+  HabitUpdateInputParameter,
+} from "../MainPage/types";
 
 interface Props {
   habitList: Array<HabitWithLog>;
@@ -19,7 +24,7 @@ interface Props {
   fullData?: boolean;
 }
 
-export default function HabitSection({ habitList, fetchData }: Props) {
+export default function HabitList({ habitList, fetchData }: Props) {
   const addMessage = useMessageStore((state) => state.addMessage);
   const achieveHabitMutation = useMutation({
     mutationFn: habitsApi.achieveHabit,
@@ -50,6 +55,20 @@ export default function HabitSection({ habitList, fetchData }: Props) {
     if (selectedHabit) updateModalRef.current?.showModal();
     else updateModalRef.current?.close();
   }, [selectedHabit]);
+
+  const renderRepeatDays = (repeatDays: Array<number>) => {
+    return (
+      <p className="mt-1 flex gap-1">
+        {repeatDays.map((data) => {
+          return (
+            <span className=" card-bordered rounded-full px-1 border-gray-300">
+              {getDayFromNumber(data)}
+            </span>
+          );
+        })}
+      </p>
+    );
+  };
 
   const renderHabitList = (list: Array<HabitWithLog>) => {
     if (list.length === 0) {
@@ -83,69 +102,118 @@ export default function HabitSection({ habitList, fetchData }: Props) {
           (data.end_time_minutes - data.start_time_minutes) /
             data.repeat_time_minutes
         ) + 1;
+      const activateDay = getWeek(new Date()) === data.near_weekday;
       const done = count <= data.log_list.length;
 
-      return (
-        <li
-          key={data.id}
-          className="card card-bordered card-compact mb-2 shadow-md"
-        >
-          <div className="card-body flex flex-row items-center">
-            <div className="flex-1" onClick={() => setSelectedHabit(data)}>
-              <span className="badge badge-primary badge-sm">
-                {convertMinutesToHours(data.repeat_time_minutes)} 주기
-              </span>
-              <div className="card-title text-lg overflow-hidden text-ellipsis text-nowrap">
-                <h2
-                  className={
-                    done ? "line-through text-gray-400 flex-1" : "flex-1"
-                  }
-                >
-                  {data.title}
-                </h2>
-              </div>
-              {done ? (
-                <p className="text-primary text-xs mt-1">
-                  오늘 총 {count}번의 습관을 모두 완료했어요!
-                </p>
-              ) : (
-                <>
-                  <p>
-                    {data.log_list.length
-                      ? `${convertMinutesToHours(getTimeDifferenceFromNow(data.log_list[0].completed_at))} 전에 실천했어요.`
-                      : `${getFormatMinutesWithMeridiem(data.start_time_minutes)} 습관 시작이에요.`}
+      if (activateDay) {
+        return (
+          <li
+            key={data.id}
+            className="card card-bordered card-compact mb-2 shadow-md order-1"
+          >
+            <div className="card-body flex flex-row items-center">
+              <div
+                className="flex-1 overflow-hidden"
+                onClick={() => setSelectedHabit(data)}
+              >
+                <span className="badge badge-primary badge-sm">
+                  {convertMinutesToHours(data.repeat_time_minutes)} 주기
+                </span>
+                <div className="card-title text-lg">
+                  <h2
+                    className={
+                      done
+                        ? "line-through overflow-hidden text-gray-400 text-ellipsis text-nowrap"
+                        : "text-ellipsis overflow-hidden text-nowrap"
+                    }
+                  >
+                    {data.title}
+                  </h2>
+                </div>
+                {renderRepeatDays(data.repeat_days)}
+                {done ? (
+                  <p className="text-primary text-xs mt-1">
+                    오늘 총 {count}번의 습관을 모두 완료했어요!
                   </p>
-                  <div>
-                    <p className="text-primary text-xs mt-1">
-                      {data.log_list.length > 0
-                        ? `오늘 총 ${count}번 중 ${data.log_list.length}번 완료!`
-                        : "지금 습관을 실천해보세요!"}
+                ) : (
+                  <>
+                    <p className="my-1 font-semibold">
+                      {getFormatMinutesWithMeridiem(data.start_time_minutes)}~
+                      {getFormatMinutesWithMeridiem(data.end_time_minutes)}
                     </p>
-                  </div>
-                </>
-              )}
-              {data.log_list.length ? (
-                <progress
-                  className="progress progress-primary w-56"
-                  value={(data.log_list.length / count) * 100}
-                  max="100"
-                />
-              ) : (
-                <></>
-              )}
+                    <p>
+                      {data.log_list.length ? (
+                        `${convertMinutesToHours(getTimeDifferenceFromNow(data.log_list[0].completed_at))} 전에 실천했어요.`
+                      ) : (
+                        <></>
+                      )}
+                    </p>
+                    <div>
+                      <p className="text-primary text-xs mt-1">
+                        {data.log_list.length > 0
+                          ? `오늘 총 ${count}번 중 ${data.log_list.length}번 완료!`
+                          : "지금 습관을 실천해보세요!"}
+                      </p>
+                    </div>
+                  </>
+                )}
+                {data.log_list.length ? (
+                  <progress
+                    className="progress progress-primary w-56"
+                    value={(data.log_list.length / count) * 100}
+                    max="100"
+                  />
+                ) : (
+                  <></>
+                )}
+              </div>
+              <input
+                type="checkbox"
+                disabled={done}
+                className="checkbox checkbox-primary checkbox-md"
+                checked={done}
+                onChange={() => {
+                  achieveHabitMutation.mutate(data.id);
+                }}
+              />
             </div>
-            <input
-              type="checkbox"
-              disabled={done}
-              className="checkbox checkbox-primary checkbox-md"
-              checked={done}
-              onChange={() => {
-                achieveHabitMutation.mutate(data.id);
-              }}
-            />
-          </div>
-        </li>
-      );
+          </li>
+        );
+      } else {
+        return (
+          <li
+            key={data.id}
+            className="card card-bordered card-compact mb-2 shadow-md order-2"
+          >
+            <div
+              className="card-body flex flex-row items-center"
+              onClick={() => setSelectedHabit(data)}
+            >
+              <div className="overflow-hidden">
+                <span className="badge badge-neutral badge-outline badge-sm">
+                  {convertMinutesToHours(data.repeat_time_minutes)} 주기
+                </span>
+                <div className="card-title text-lg overflow-hidden">
+                  <h2
+                    className={
+                      "text-gray-400 overflow-hidden text-ellipsis text-nowrap"
+                    }
+                  >
+                    {data.title}
+                  </h2>
+                </div>
+
+                <p>오늘은 실행하는 날이 아니에요.</p>
+                {renderRepeatDays(data.repeat_days)}
+                <p className="mt-1">
+                  {getFormatMinutesWithMeridiem(data.start_time_minutes)}~
+                  {getFormatMinutesWithMeridiem(data.end_time_minutes)}
+                </p>
+              </div>
+            </div>
+          </li>
+        );
+      }
     });
   };
 
@@ -253,7 +321,7 @@ export default function HabitSection({ habitList, fetchData }: Props) {
 
   return (
     <>
-      <ul>{renderHabitList(habitList)}</ul>
+      <ul className="flex flex-col">{renderHabitList(habitList)}</ul>
       {habitList.length ? (
         <button
           onClick={() => setIsCreateModalOpened(true)}
