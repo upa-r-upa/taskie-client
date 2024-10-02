@@ -17,7 +17,7 @@ export default function EditPage({ routine }: Props) {
   const navigate = useNavigate();
 
   const parseRepeatDays = (repeatDays: Array<number>): Array<number> => {
-    const result = Array.from({ length: 7 }, (v, i) => i);
+    const result = Array.from({ length: 7 }, () => 0);
 
     repeatDays.forEach((value) => {
       result[value] = 1;

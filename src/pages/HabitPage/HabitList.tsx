@@ -59,9 +59,12 @@ export default function HabitList({ habitList, fetchData }: Props) {
   const renderRepeatDays = (repeatDays: Array<number>) => {
     return (
       <p className="mt-1 flex gap-1">
-        {repeatDays.map((data) => {
+        {repeatDays.map((data, i) => {
           return (
-            <span className=" card-bordered rounded-full px-1 border-gray-300">
+            <span
+              key={i}
+              className=" card-bordered rounded-full px-1 border-gray-300"
+            >
               {getDayFromNumber(data)}
             </span>
           );
