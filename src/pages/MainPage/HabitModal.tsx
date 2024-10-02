@@ -18,6 +18,7 @@ interface HabitModalProps {
   startTimeMinutes?: number;
   endTimeMinutes?: number;
   repeatIntervalMinutes?: number;
+  extraButton?: React.ReactElement;
 
   isLoading?: boolean;
 
@@ -41,6 +42,7 @@ export default function HabitModal({
   isLoading,
   onSubmit,
   onCancel,
+  extraButton,
 }: HabitModalProps) {
   const [title, setTitle] = useState<string>(originTitle || "");
   const [repeatDays, setRepeatDays] = useState<Array<number>>(
@@ -234,6 +236,7 @@ export default function HabitModal({
           >
             취소
           </button>
+          {extraButton}
         </div>
       </div>
     </dialog>

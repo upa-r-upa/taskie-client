@@ -228,6 +228,27 @@ export default function HabitSection({ habitList, fetchData }: Props) {
     return result;
   };
 
+  const deleteHabitMutation = useMutation({
+    mutationFn: habitsApi.deleteHabit,
+    onSuccess: () => {
+      setSelectedHabit(null);
+      fetchData();
+      addMessage({
+        message: "습관을 삭제했습니다.",
+      });
+    },
+    onError: () => {
+      addMessage({
+        message: "습관 삭제에 실패했습니다.",
+        type: "error",
+      });
+    },
+  });
+
+  const handleHabitDeleteClick = (id: number) => {
+    deleteHabitMutation.mutate(id);
+  };
+
   return (
     <>
       <ul>{renderHabitList(habitList)}</ul>
@@ -267,6 +288,15 @@ export default function HabitSection({ habitList, fetchData }: Props) {
           endTimeMinutes={selectedHabit.end_time_minutes}
           repeatIntervalMinutes={selectedHabit.repeat_time_minutes}
           repeatDays={parseRepeatDays(selectedHabit.repeat_days)}
+          extraButton={
+            <button
+              disabled={deleteHabitMutation.isPending}
+              onClick={() => handleHabitDeleteClick(selectedHabit.id)}
+              className="btn btn-error"
+            >
+              삭제하기
+            </button>
+          }
         />
       ) : (
         <></>
