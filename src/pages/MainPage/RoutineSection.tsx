@@ -19,7 +19,11 @@ export default function RoutineSection({ routineList }: Props) {
     if (list.length === 0) {
       return (
         <EmptyCard label="루틴">
-          <button className="btn btn-primary btn-outline">루틴 추가하기</button>
+          <Link to={`/${Routes.ROUTINE_CREATE}`}>
+            <button className="btn btn-primary btn-outline">
+              루틴 추가하러 가기
+            </button>
+          </Link>
         </EmptyCard>
       );
     }
@@ -121,9 +125,11 @@ export default function RoutineSection({ routineList }: Props) {
     <>
       <ul>{renderRoutineList(routineList)}</ul>
       {routineList.length ? (
-        <button className="btn btn-primary btn-outline btn-sm mt-2">
-          루틴 추가하기
-        </button>
+        <Link to={`/${Routes.ROUTINE_CREATE}`}>
+          <button className="btn btn-primary btn-outline btn-sm mt-2">
+            루틴 추가하러 가기
+          </button>
+        </Link>
       ) : (
         <></>
       )}

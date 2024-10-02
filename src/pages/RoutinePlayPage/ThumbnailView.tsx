@@ -48,7 +48,7 @@ export default function ThumbnailView({ routine, goToNextStep }: Props) {
         <li key={routineElement.id} className="step">
           <div className="flex">
             <div className="ml-1">{routineElement.title}</div>
-            <div className="ml-3 badge badge-primary badge-outline">
+            <div className="ml-3 badge badge-primary badge-outline whitespace-nowrap">
               {routineElement.duration_minutes}분 소요
             </div>
           </div>

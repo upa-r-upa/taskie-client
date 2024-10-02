@@ -16,6 +16,7 @@ import HabitPage from "./pages/HabitPage";
 import RoutineEditPage from "./pages/RoutineEditPage";
 import RoutineReportPage from "./pages/RoutineReportPage";
 import HabitReportPage from "./pages/HabitReportPage";
+import RoutineCreatePage from "./pages/RoutineCreatePage";
 
 import Routes from "./constants/routes";
 import Dashboard from "./pages/Dashboard";
@@ -32,6 +33,10 @@ const router = createBrowserRouter(
         <Route path={Routes.TODO} element={<TodoPage />} />
 
         <Route path={Routes.ROUTINE} element={<RoutinePage />} />
+        <Route
+          path={`${Routes.ROUTINE_CREATE}`}
+          element={<RoutineCreatePage />}
+        />
         <Route
           path={`${Routes.ROUTINE_PLAY}:routineId`}
           element={<RoutinePlayPage />}
