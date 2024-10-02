@@ -72,6 +72,13 @@ export function isToday(date: string | Date): boolean {
   return targetDate.isSame(dayjs(), "date");
 }
 
+export function isSameDate(
+  dateA: string | Date,
+  dateB: string | Date
+): boolean {
+  return dayjs(dateA).isSame(dayjs(dateB), "date");
+}
+
 export function getFormatTime(date: string | Date): string {
   const targetDate = dayjs(date);
   const hour = targetDate.hour();
@@ -102,4 +109,15 @@ export function getFormatDayList(days: Array<number>): string {
 
 export function formatDate(date: Date): string {
   return dayjs(date).format("YYYY-MM-DD");
+}
+
+export function formatConditionalDate(date: Date | string): string {
+  const inputDate = dayjs(date);
+  const currentYear = dayjs().year();
+
+  if (inputDate.year() === currentYear) {
+    return inputDate.format("MM월 DD일");
+  } else {
+    return inputDate.format("YYYY년 MM월 DD일");
+  }
 }
