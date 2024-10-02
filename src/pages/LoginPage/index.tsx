@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 
 import { authApi } from "../../api/client";
-import useMutation from "../../hooks/useMutation";
 
-import { ResponseLoginOutput } from "../../api/generated";
 import { useAuthStore } from "../../state/useAuthStore";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Routes from "../../constants/routes";
 import { useMessageStore } from "../../state/useMessageStore";
+import { useMutation } from "@tanstack/react-query";
+import { LoginOutput } from "../../api/generated";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
@@ -20,36 +20,32 @@ const LoginPage = () => {
 
   const navigate = useNavigate();
 
-  const handleLoginSuccess = (response: AxiosResponse<ResponseLoginOutput>) => {
+  const handleLoginSuccess = (response: AxiosResponse<LoginOutput>) => {
     if (rememberMe) {
       localStorage.setItem("username", username);
     } else {
       localStorage.removeItem("username");
     }
 
-    const data = response.data.data;
+    const data = response.data;
 
     if (!data) return;
 
     setTokenWithUser(data.access_token, data.user);
-    navigate(`/${Routes.MAIN}`);
-  };
-
-  const handleLoginError = () => {
-    addMessage({
-      message: "로그인에 실패했습니다. 아이디 혹은 비밀번호를 확인해주세요.",
-      type: "error",
+    navigate(`/${Routes.MAIN}`, {
+      replace: true,
     });
   };
 
-  const { mutation, isLoading } = useMutation({
-    mutationFn: () =>
-      authApi.login({
-        username,
-        password,
-      }),
+  const { mutate, isPending } = useMutation({
+    mutationFn: authApi.login,
     onSuccess: handleLoginSuccess,
-    onError: handleLoginError,
+    onError: () => {
+      addMessage({
+        message: "로그인에 실패했습니다. 아이디 혹은 비밀번호를 확인해주세요.",
+        type: "error",
+      });
+    },
   });
 
   useEffect(() => {
@@ -62,7 +58,10 @@ const LoginPage = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    mutation();
+    mutate({
+      username,
+      password,
+    });
   };
 
   return (
@@ -112,7 +111,7 @@ const LoginPage = () => {
           </div>
 
           <div className="text-sm">
-            <p className="font-medium text-primary">비밀번호 찾기</p>
+            {/* <p className="font-medium text-primary">비밀번호 찾기</p> */}
           </div>
         </div>
 
@@ -120,9 +119,14 @@ const LoginPage = () => {
           type="submit"
           value="로그인"
           className="btn btn-primary btn-block mt-5"
-          disabled={isLoading}
+          disabled={isPending}
         />
       </form>
+      <Link to={`/${Routes.SIGN_UP}`}>
+        <button className="btn btn-outline btn-block mt-5" disabled={isPending}>
+          회원가입 페이지로 이동하기
+        </button>
+      </Link>
     </div>
   );
 };

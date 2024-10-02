@@ -1,6 +1,4 @@
-import { Habit } from "../types/habit";
-
-const habit: Array<Habit> = [
+const habit = [
   {
     id: 1,
     title: "물 마시기",

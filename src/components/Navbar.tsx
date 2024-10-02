@@ -1,9 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
 import Routes from "../constants/routes";
 import { useAuthStore } from "../state/useAuthStore";
-import useMutation from "../hooks/useMutation";
 import { authApi } from "../api/client";
 import { useMessageStore } from "../state/useMessageStore";
+import { useMutation } from "@tanstack/react-query";
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -11,8 +11,8 @@ const NavBar = () => {
   const { getIsLoggedIn, clearAuthState } = useAuthStore((state) => state);
   const addMessage = useMessageStore((state) => state.addMessage);
 
-  const { mutation, isLoading } = useMutation({
-    mutationFn: () => authApi.logout(),
+  const { mutate, isPending } = useMutation({
+    mutationFn: authApi.logout,
     onSuccess: () => {
       clearAuthState();
       navigate(`/${Routes.LOGIN}`);
@@ -30,11 +30,11 @@ const NavBar = () => {
   });
 
   const handleLogout = () => {
-    if (isLoading) {
+    if (isPending) {
       return;
     }
 
-    mutation();
+    mutate({});
   };
 
   const renderNavItems = (isAuthenticated: boolean) => {
@@ -96,7 +96,7 @@ const NavBar = () => {
         </div>
       </div>
       <div className="navbar-center">
-        <Link to={Routes.MAIN} className="btn btn-ghost text-3xl">
+        <Link to={`/${Routes.MAIN}`} className="btn btn-ghost text-3xl">
           Taskie
         </Link>
       </div>

@@ -12,12 +12,12 @@ export default function Dashboard() {
 
       <div className="flex flex-col mb-6 gap-3">
         <div>
-          <h2 className="text-2xl font-semibold">투두 목록</h2>
-          <p>이번주 총 25개의 투두를 성공적으로 완료했어요.</p>
+          <h2 className="text-2xl font-semibold">할 일 목록</h2>
+          <p>이번주 총 25개의 할 일 성공적으로 완료했어요.</p>
         </div>
 
         <div tabIndex={0} className="collapse collapse-plus border">
-          <div className="collapse-title">완료한 투두 목록 확인하기</div>
+          <div className="collapse-title">완료한 할 일 목록 확인하기</div>
           <div className="collapse-content">
             <ul className="flex flex-col gap-3 shadow-md py-3 px-3 rounded-md bg-white">
               <li className="py-1 px-1">

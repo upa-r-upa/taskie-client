@@ -9,14 +9,16 @@ import {
   BsTrash,
 } from "react-icons/bs";
 
-import routineList from "../../mock/routine";
 import Routes from "../../constants/routes";
 
-import { getFormatDayList, getFormatMinutes } from "../../utils/time";
-import { Routine, RoutineElement } from "../../types/routine";
+import {
+  getFormatDayList,
+  getFormatMinutesWithMeridiem,
+} from "../../utils/time";
+import { RoutineItem, RoutinePublic } from "../../api/generated";
 
 export default function RoutinePage() {
-  const calculateTotalRoutineMinutes = (list: Array<RoutineElement>) => {
+  const calculateTotalRoutineMinutes = (list: Array<RoutineItem>) => {
     return list.reduce((acc, cur) => acc + cur.duration_minutes, 0);
   };
 
@@ -83,7 +85,7 @@ export default function RoutinePage() {
     );
   };
 
-  const renderTodayRoutineList = (list: Array<Routine>) => {
+  const renderTodayRoutineList = (list: Array<RoutinePublic>) => {
     return list.map((routine) => (
       <li
         key={routine.id}
@@ -96,7 +98,7 @@ export default function RoutinePage() {
                 <h2 className="card-title text-lg">{routine.title}</h2>
                 <p>매주 {getFormatDayList(routine.repeat_days)}</p>
                 <p>
-                  {getFormatMinutes(routine.start_time_minutes)} |{" "}
+                  {getFormatMinutesWithMeridiem(routine.start_time_minutes)} |{" "}
                   {calculateTotalRoutineMinutes(routine.routine_elements)}분
                   동안 진행
                 </p>
@@ -124,7 +126,7 @@ export default function RoutinePage() {
     ));
   };
 
-  const renderRoutineList = (list: Array<Routine>) => {
+  const renderRoutineList = (list: Array<RoutinePublic>) => {
     return list.map((routine) => (
       <li key={routine.id} className="card card-bordered card-compact mb-2">
         <div className="card-body">
@@ -133,7 +135,7 @@ export default function RoutinePage() {
               <h2 className="card-title text-lg">{routine.title}</h2>
               <p>매주 {getFormatDayList(routine.repeat_days)}</p>
               <p>
-                {getFormatMinutes(routine.start_time_minutes)} |{" "}
+                {getFormatMinutesWithMeridiem(routine.start_time_minutes)} |{" "}
                 {calculateTotalRoutineMinutes(routine.routine_elements)}분 동안
                 진행
               </p>
@@ -154,7 +156,7 @@ export default function RoutinePage() {
     ));
   };
 
-  const renderDisabledRoutineList = (list: Array<Routine>) => {
+  const renderDisabledRoutineList = (list: Array<RoutinePublic>) => {
     return list.map((routine) => (
       <li key={routine.id} className="car card-bordered card-compact mb-2">
         <div className="card-body">
@@ -163,7 +165,7 @@ export default function RoutinePage() {
               <h2 className="card-title text-lg">{routine.title}</h2>
               <p>매주 {getFormatDayList(routine.repeat_days)}</p>
               <p>
-                {getFormatMinutes(routine.start_time_minutes)} |{" "}
+                {getFormatMinutesWithMeridiem(routine.start_time_minutes)} |{" "}
                 {calculateTotalRoutineMinutes(routine.routine_elements)}분 동안
                 진행
               </p>
@@ -182,17 +184,17 @@ export default function RoutinePage() {
 
       <div className="container mb-5">
         <h2 className="text-xl mb-2">오늘의 루틴</h2>
-        <ul>{renderTodayRoutineList(routineList)}</ul>
+        <ul>{renderTodayRoutineList([])}</ul>
       </div>
 
       <div className="container mb-5">
         <h2 className="text-xl mb-2">기타 루틴</h2>
-        <ul>{renderRoutineList(routineList)}</ul>
+        <ul>{renderRoutineList([])}</ul>
       </div>
 
       <div className="container mb-5">
         <h2 className="text-xl mb-2">비활성화 루틴</h2>
-        <ul>{renderDisabledRoutineList(routineList)}</ul>
+        <ul>{renderDisabledRoutineList([])}</ul>
       </div>
 
       <button className="btn btn-circle btn-md btn-primary absolute right-0 top-0 shadow-lg">

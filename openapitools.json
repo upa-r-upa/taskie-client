@@ -2,6 +2,24 @@
   "$schema": "./node_modules/@openapitools/openapi-generator-cli/config.schema.json",
   "spaces": 2,
   "generator-cli": {
-    "version": "7.7.0"
+    "version": "7.7.0",
+    "generators": {
+      "local": {
+        "generatorName": "typescript-axios",
+        "output": "src/api/generated",
+        "inputSpec": "http://localhost:8000/openapi.json",
+        "additionalProperties": {
+          "paramNaming": "camelCase"
+        }
+      },
+      "dev": {
+        "generatorName": "typescript-axios",
+        "output": "src/api/generated",
+        "inputSpec": "http://taskie-backend.upa-r-upa.com:2095/openapi.json",
+        "additionalProperties": {
+          "paramNaming": "camelCase"
+        }
+      }
+    }
   }
 }

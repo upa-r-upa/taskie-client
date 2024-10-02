@@ -1,6 +1,4 @@
-import { Routine } from "../types/routine";
-
-const routine: Array<Routine> = [
+const routine = [
   {
     id: 1,
     title: "미라클 점심",

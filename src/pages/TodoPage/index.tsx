@@ -1,21 +1,9 @@
 import { BsPlusLg, BsTrash } from "react-icons/bs";
 
-import useQuery from "../../hooks/useQuery";
-import { todoApi } from "../../api/client";
-import Loading from "../../components/Loading";
-
 export default function TodoPage() {
-  const { isLoading } = useQuery({
-    queryFn: () => todoApi.getTodoList(100, 0, false),
-  });
-
-  if (isLoading) {
-    return <Loading />;
-  }
-
   return (
     <div className="relative">
-      <h1 className="text-2xl font-semibold mb-3">투두 목록</h1>
+      <h1 className="text-2xl font-semibold mb-3">할 일 목록</h1>
 
       <div className="container mb-5">
         <input
@@ -36,7 +24,7 @@ export default function TodoPage() {
       </div>
 
       <div className="container mb-5">
-        <h2 className="text-xl mb-2">오늘의 투두</h2>
+        <h2 className="text-xl mb-2">오늘의 할 일</h2>
         <ul>
           <li className="mb-2 flex items-center">
             <input type="checkbox" className="checkbox" />
@@ -128,7 +116,7 @@ export default function TodoPage() {
       </div>
 
       <div className="container mb-5">
-        <h2 className="text-xl mb-2">완료한 투두</h2>
+        <h2 className="text-xl mb-2">완료한 할 일</h2>
 
         <ul>
           <li className="mb-2 flex items-center">

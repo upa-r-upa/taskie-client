@@ -1,14 +1,19 @@
 import axios from "axios";
+import { QueryClient } from "@tanstack/react-query";
 import {
   Configuration,
-  AuthApi,
-  TodosApi,
-  UsersApi,
-  HabitsApi,
+  AuthApiFactory,
+  TodosApiFactory,
+  UsersApiFactory,
+  HabitsApiFactory,
+  TaskApiFactory,
+  RoutinesApiFactory,
 } from "./generated";
 
 const API_BASE_URL = import.meta.env.VITE_APP_API_URL;
-const apiConfig = new Configuration({});
+const apiConfig = new Configuration({
+  basePath: API_BASE_URL,
+});
 
 export const client = axios.create({
   baseURL: API_BASE_URL,
@@ -18,9 +23,15 @@ export const client = axios.create({
   withCredentials: true,
 });
 
-const authApi = new AuthApi(apiConfig, "", client);
-const todoApi = new TodosApi(apiConfig, "", client);
-const usersApi = new UsersApi(apiConfig, "", client);
-const habitsApi = new HabitsApi(apiConfig, "", client);
+export const queryClient = new QueryClient({
+  defaultOptions: {},
+});
 
-export { authApi, todoApi, usersApi, habitsApi };
+const authApi = AuthApiFactory(apiConfig, API_BASE_URL, client);
+const todoApi = TodosApiFactory(apiConfig, API_BASE_URL, client);
+const usersApi = UsersApiFactory(apiConfig, API_BASE_URL, client);
+const habitsApi = HabitsApiFactory(apiConfig, API_BASE_URL, client);
+const taskApi = TaskApiFactory(apiConfig, API_BASE_URL, client);
+const routineApi = RoutinesApiFactory(apiConfig, API_BASE_URL, client);
+
+export { authApi, todoApi, usersApi, habitsApi, taskApi, routineApi };

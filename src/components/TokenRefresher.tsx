@@ -6,6 +6,7 @@ import { ErrorResponse } from "../api/generated";
 import { useAuthStore } from "../state/useAuthStore";
 import Routes from "../constants/routes";
 import { useMessageStore } from "../state/useMessageStore";
+import { useMutation } from "@tanstack/react-query";
 
 interface InternalAxiosRequestConfigWithRetry
   extends InternalAxiosRequestConfig {
@@ -23,14 +24,16 @@ export default function TokenRefresher() {
   } = useAuthStore((state) => state);
   const addMessage = useMessageStore(({ addMessage }) => addMessage);
 
+  const refreshTokenMutation = useMutation({
+    mutationKey: ["refreshToken"],
+    mutationFn: () => authApi.refreshToken(),
+  });
+
   useEffect(() => {
-    authApi
-      .refreshToken()
+    refreshTokenMutation
+      .mutateAsync()
       .then((response) =>
-        setTokenWithUser(
-          response.data.data!.access_token,
-          response.data.data!.user
-        )
+        setTokenWithUser(response.data!.access_token, response.data!.user)
       )
       .catch(() => {
         clearAuthState();
@@ -38,12 +41,13 @@ export default function TokenRefresher() {
       .finally(() => {
         setIsAccessTokenRefreshing(false);
       });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    const authorizationToken = (token: string) => `Bearer ${token}`;
+  const authorizationToken = (token: string) => `Bearer ${token}`;
 
+  useEffect(() => {
     const requestInterceptor = client.interceptors.request.use(
       (request) => {
         if (token) {
@@ -56,6 +60,12 @@ export default function TokenRefresher() {
       }
     );
 
+    return () => {
+      client.interceptors.request.eject(requestInterceptor);
+    };
+  }, [token]);
+
+  useEffect(() => {
     const accessTokenRefresh = async (
       originalRequest: InternalAxiosRequestConfigWithRetry
     ) => {
@@ -64,12 +74,9 @@ export default function TokenRefresher() {
       originalRequest._retry = true;
 
       try {
-        const response = await authApi.refreshToken();
+        const response = await refreshTokenMutation.mutateAsync();
 
-        setTokenWithUser(
-          response.data.data!.access_token,
-          response.data.data!.user
-        );
+        setTokenWithUser(response.data!.access_token, response.data!.user);
         client.defaults.headers.common["Authorization"] = authorizationToken(
           token!
         );
@@ -91,14 +98,16 @@ export default function TokenRefresher() {
     };
 
     const responseInterceptor = client.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        return response;
+      },
       async (error: AxiosError<ErrorResponse>) => {
         const originalRequest: InternalAxiosRequestConfigWithRetry | undefined =
           error.config;
 
         const isExpiredToken =
           error.response?.status === 401 &&
-          error.response?.data.message === "EXPIRED_TOKEN";
+          error.response?.data.error_type === "EXPIRED_TOKEN";
         const isAuthAPIResponse = originalRequest?.url?.includes("auth");
 
         if (
@@ -132,10 +141,8 @@ export default function TokenRefresher() {
     );
 
     return () => {
-      client.interceptors.request.eject(requestInterceptor);
       client.interceptors.response.eject(responseInterceptor);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   return <></>;
