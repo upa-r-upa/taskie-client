@@ -91,14 +91,19 @@ export default function HabitSection({ habitList, fetchData }: Props) {
           className="card card-bordered card-compact mb-2 shadow-md"
         >
           <div className="card-body flex flex-row items-center">
-            <div className="flex-1" onClick={() => setSelectedHabit(data)}>
+            <div
+              className="flex-1 overflow-hidden"
+              onClick={() => setSelectedHabit(data)}
+            >
               <span className="badge badge-primary badge-sm">
                 {convertMinutesToHours(data.repeat_time_minutes)} 주기
               </span>
               <div className="card-title text-lg overflow-hidden text-ellipsis text-nowrap">
                 <h2
                   className={
-                    done ? "line-through text-gray-400 flex-1" : "flex-1"
+                    done
+                      ? "line-through overflow-hidden text-gray-400 text-ellipsis text-nowrap"
+                      : "text-ellipsis overflow-hidden text-nowrap"
                   }
                 >
                   {data.title}
