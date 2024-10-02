@@ -98,11 +98,14 @@ export default function RoutineSection({ routineList }: Props) {
           <div className="card-body">
             <div className="flex">
               <div className="flex-1">
-                <h2 className="card-title text-lg">{routine.title}</h2>
-                <p>
-                  {getFormatMinutesWithMeridiem(routine.start_time_minutes)} |{" "}
-                  총 {calculateTotalRoutineMinutes(routine.routine_elements)}분
-                </p>
+                <Link to={`/${Routes.ROUTINE_EDIT}${routine.id}`}>
+                  <h2 className="card-title text-lg">{routine.title}</h2>
+                  <p>
+                    {getFormatMinutesWithMeridiem(routine.start_time_minutes)} |{" "}
+                    총 {calculateTotalRoutineMinutes(routine.routine_elements)}
+                    분
+                  </p>
+                </Link>
               </div>
 
               <div className="card-actions">

@@ -37,18 +37,21 @@ export default function EditPage({ routine }: Props) {
     routine.routine_elements
   );
 
+  const refetchData = () => {
+    queryClient.invalidateQueries({
+      queryKey: ["tasks"],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["routines"],
+    });
+  };
+
   const addMessage = useMessageStore((state) => state.addMessage);
   const createRoutineMutation = useMutation({
     mutationFn: (data: RoutineUpdateInput) =>
       routineApi.updateRoutine(routine.id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["tasks"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["routines"],
-      });
-
+      refetchData();
       navigate(-1);
     },
     onError: () => {
@@ -158,6 +161,28 @@ export default function EditPage({ routine }: Props) {
     return repeatDays.every((v) => v === 0) || !title;
   };
 
+  const deleteRoutineMutation = useMutation({
+    mutationFn: routineApi.deleteRoutine,
+    onSuccess: () => {
+      addMessage({
+        message: "루틴을 삭제했습니다.",
+      });
+      refetchData();
+
+      navigate(-1);
+    },
+    onError: () => {
+      addMessage({
+        message: "루틴 삭제에 실패했습니다.",
+        type: "error",
+      });
+    },
+  });
+
+  const handleRoutineDeleteClick = () => {
+    deleteRoutineMutation.mutate(routine.id);
+  };
+
   return (
     <>
       <h1 className="text-xl font-semibold">루틴 수정하기</h1>
@@ -252,19 +277,26 @@ export default function EditPage({ routine }: Props) {
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center mt-5 gap-2">
         <button
           onClick={() => {
             navigate(-1);
           }}
-          className="btn mt-5 w-24"
+          className="btn w-20"
         >
           취소
         </button>
         <button
+          disabled={deleteRoutineMutation.isPending}
+          onClick={handleRoutineDeleteClick}
+          className="btn btn-error"
+        >
+          삭제하기
+        </button>
+        <button
           onClick={handleSubmit}
-          disabled={isDisabled()}
-          className="btn btn-primary mt-5 flex-1"
+          disabled={isDisabled() || deleteRoutineMutation.isPending}
+          className="btn btn-primary flex-1"
         >
           루틴 수정하기
         </button>
