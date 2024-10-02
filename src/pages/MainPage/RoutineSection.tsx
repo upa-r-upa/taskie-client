@@ -35,19 +35,21 @@ export default function RoutineSection({ routineList }: Props) {
         return (
           <li
             key={routine.id}
-            className="card card-bordered card-compact shadow-md mb-2"
+            className="card card-bordered card-compact shadow-md mb-2 order-2"
           >
             <div className="card-body">
               <div className="flex">
                 <div className="flex-1 text-gray-400">
-                  <h2 className="card-title text-lg line-through">
-                    {routine.title}
-                  </h2>
-                  <p>
-                    {getFormatMinutesWithMeridiem(routine.start_time_minutes)} |{" "}
-                    총 {calculateTotalRoutineMinutes(routine.routine_elements)}
-                    분
-                  </p>
+                  <Link to={`/${Routes.ROUTINE_EDIT}${routine.id}`}>
+                    <h2 className="card-title text-lg line-through">
+                      {routine.title}
+                    </h2>
+                    <p>
+                      {getFormatMinutesWithMeridiem(routine.start_time_minutes)}{" "}
+                      | 총{" "}
+                      {calculateTotalRoutineMinutes(routine.routine_elements)}분
+                    </p>
+                  </Link>
                 </div>
 
                 <div className="card-actions">
@@ -61,7 +63,7 @@ export default function RoutineSection({ routineList }: Props) {
 
               <ul className="flex flex-col gap-2">
                 {routine.routine_elements.map((data) => {
-                  if (data.is_skipped) {
+                  if (data.is_skipped || !data.completed_at) {
                     return;
                   }
 
@@ -91,7 +93,7 @@ export default function RoutineSection({ routineList }: Props) {
       return (
         <li
           key={routine.id}
-          className="card card-bordered card-compact shadow-md mb-2"
+          className="card card-bordered card-compact shadow-md mb-2 order-1"
         >
           <div className="card-body">
             <div className="flex">
@@ -123,7 +125,7 @@ export default function RoutineSection({ routineList }: Props) {
 
   return (
     <>
-      <ul>{renderRoutineList(routineList)}</ul>
+      <ul className="flex flex-col">{renderRoutineList(routineList)}</ul>
       {routineList.length ? (
         <Link to={`/${Routes.ROUTINE_CREATE}`}>
           <button className="btn btn-primary btn-outline btn-sm mt-2">
