@@ -1,6 +1,4 @@
-import { Todo } from "../types/todo";
-
-const todo: Array<Todo> = [
+const todo = [
   {
     id: 1,
     title: "네비게이션 변경하기",

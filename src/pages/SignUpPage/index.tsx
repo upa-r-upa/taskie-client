@@ -76,8 +76,6 @@ const SignUpPage = () => {
           });
         } else if (location == "email") {
           addMessage({ message: messages.email[error_type], type: "warning" });
-        } else {
-          addMessage(extraErrorMessage);
         }
       } else if (error.response?.status === 409) {
         const { error_type } = error.response.data;

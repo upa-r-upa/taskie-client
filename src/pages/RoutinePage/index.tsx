@@ -9,7 +9,6 @@ import {
   BsTrash,
 } from "react-icons/bs";
 
-import routineList from "../../mock/routine";
 import Routes from "../../constants/routes";
 
 import {
@@ -185,17 +184,17 @@ export default function RoutinePage() {
 
       <div className="container mb-5">
         <h2 className="text-xl mb-2">오늘의 루틴</h2>
-        <ul>{renderTodayRoutineList(routineList)}</ul>
+        <ul>{renderTodayRoutineList([])}</ul>
       </div>
 
       <div className="container mb-5">
         <h2 className="text-xl mb-2">기타 루틴</h2>
-        <ul>{renderRoutineList(routineList)}</ul>
+        <ul>{renderRoutineList([])}</ul>
       </div>
 
       <div className="container mb-5">
         <h2 className="text-xl mb-2">비활성화 루틴</h2>
-        <ul>{renderDisabledRoutineList(routineList)}</ul>
+        <ul>{renderDisabledRoutineList([])}</ul>
       </div>
 
       <button className="btn btn-circle btn-md btn-primary absolute right-0 top-0 shadow-lg">
