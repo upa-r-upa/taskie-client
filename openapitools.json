@@ -15,7 +15,7 @@
       "prod": {
         "generatorName": "typescript-axios",
         "output": "src/api/generated",
-        "inputSpec": "http://taskie-backend.upa-r-upa.com:2095/openapi.json",
+        "inputSpec": "https://taskie-backend.upa-r-upa.com/openapi.json",
         "additionalProperties": {
           "paramNaming": "camelCase"
         }
