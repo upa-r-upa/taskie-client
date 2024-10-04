@@ -12,7 +12,7 @@
           "paramNaming": "camelCase"
         }
       },
-      "dev": {
+      "prod": {
         "generatorName": "typescript-axios",
         "output": "src/api/generated",
         "inputSpec": "http://taskie-backend.upa-r-upa.com:2095/openapi.json",

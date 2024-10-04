@@ -9,7 +9,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "generate-api-local": "openapi-generator-cli generate --generator-key local",
-    "generate-api-dev": "openapi-generator-cli generate --generator-key dev"
+    "generate-api-prod": "openapi-generator-cli generate --generator-key prod"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.56.2",

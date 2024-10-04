@@ -20,7 +20,7 @@ jobs:
         run: yarn install
 
       - name: Generate API client
-        run: yarn generate-api-test
+        run: yarn generate-api-prod
 
       - name: Build
         run: yarn build

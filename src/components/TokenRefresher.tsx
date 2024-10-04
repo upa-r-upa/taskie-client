@@ -143,6 +143,7 @@ export default function TokenRefresher() {
     return () => {
       client.interceptors.response.eject(responseInterceptor);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   return <></>;
