@@ -48,7 +48,6 @@
 ## 1. 준비
 
 Node.js >= 16
-Yarn
 
 ## 2. 레포지터리 클론
 
@@ -62,7 +61,7 @@ cd taskie-client
 ## 3. 의존성 설치
 
 ```bash
-yarn install
+npm install
 ```
 
 ## 4. 개발 환경에 맞는 api generate
@@ -70,17 +69,17 @@ yarn install
 - 배포된 서버 기준으로 generate
 
 ```bash
-yarn generate-api-prod
+npm run generate-api-prod
 ```
 
 - 로컬 서버를 기준으로 generate
 
 ```bash
-yarn generate-api-local
+npm run generate-api-local
 ```
 
 ## 5. 개발 서버 실행
 
 ```bash
-yarn dev
+npm run dev
 ```
