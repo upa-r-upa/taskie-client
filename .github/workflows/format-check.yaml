@@ -23,7 +23,7 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        uses: npm ci
+        run: npm ci
 
       - name: Format check
         run: npm run lint
