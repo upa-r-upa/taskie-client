@@ -1,12 +1,12 @@
 import { NavLink } from "react-router-dom";
 
+import Routes from "@/constants/routes";
 import {
   BsHouseDoor,
   BsCheck2Square,
   BsListCheck,
   BsCheck2Circle,
 } from "react-icons/bs";
-import Routes from "../constants/routes";
 
 export default function BottomNavigation() {
   return (

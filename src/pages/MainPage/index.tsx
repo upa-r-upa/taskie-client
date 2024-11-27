@@ -3,9 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import TodoSection from "./TodoSection";
 import HabitSection from "./HabitSection";
 import RoutineSection from "./RoutineSection";
-import { queryClient, taskApi } from "../../api/client";
-import Loading from "../../components/Loading";
-import { formatDate } from "../../utils/time";
+import { queryClient, taskApi } from "@/api/client";
+import Loading from "@/components/Loading";
+import { formatDate } from "@/utils/time";
 import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import { useState } from "react";
 
@@ -17,10 +17,6 @@ function MainPage() {
     refetchIntervalInBackground: true,
     refetchInterval: 60 * 1000,
   });
-
-  if (isLoading) {
-    return <Loading />;
-  }
 
   const refetch = () => {
     queryClient.invalidateQueries({
@@ -35,6 +31,10 @@ function MainPage() {
 
     setTargetDate(value.startDate);
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <>

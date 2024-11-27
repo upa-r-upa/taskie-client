@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
-import { RoutineItem, RoutinePublic } from "../../api/generated";
-import useStopwatch from "../../hooks/useStopwatch";
-import { getFormatMinutes } from "../../utils/time";
+import { RoutineItem, RoutinePublic } from "@/api/generated";
+import useStopwatch from "@/hooks/useStopwatch";
+import { getFormatMinutes } from "@/utils/time";
 import { RoutinePlayViewSubmitProps } from "../MainPage/types";
 
 interface Props {

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { habitsApi, queryClient } from "../../api/client";
-import { formatDate } from "../../utils/time";
-import Loading from "../../components/Loading";
+import { habitsApi, queryClient } from "@/api/client";
+import { formatDate } from "@/utils/time";
+import Loading from "@/components/Loading";
 import HabitList from "./HabitList";
 
 export default function HabitPage() {

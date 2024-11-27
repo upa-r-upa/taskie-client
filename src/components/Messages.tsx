@@ -5,7 +5,7 @@ import {
   BsExclamationCircle,
   BsInfoCircle,
 } from "react-icons/bs";
-import { MessageType, useMessageStore } from "../state/useMessageStore";
+import { MessageType, useMessageStore } from "@/state/useMessageStore";
 import { createPortal } from "react-dom";
 import { useMemo } from "react";
 

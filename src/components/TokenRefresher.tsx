@@ -1,11 +1,11 @@
 import { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { authApi, client } from "../api/client";
-import { ErrorResponse } from "../api/generated";
-import { useAuthStore } from "../state/useAuthStore";
-import Routes from "../constants/routes";
-import { useMessageStore } from "../state/useMessageStore";
+import { authApi, client } from "@/api/client";
+import { ErrorResponse } from "@/api/generated";
+import { useAuthStore } from "@/state/useAuthStore";
+import Routes from "@/constants/routes";
+import { useMessageStore } from "@/state/useMessageStore";
 import { useMutation } from "@tanstack/react-query";
 
 interface InternalAxiosRequestConfigWithRetry

@@ -1,9 +1,12 @@
 import { useState } from "react";
 import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
+
+import AutoResizeTextarea from "@/components/AutoResizeTextarea";
+import TimePicker from "@/components/TimePicker";
+
+import { getDateWithoutTime } from "@/utils/time";
+
 import { TodoModalSubmitProps } from "./types";
-import AutoResizeTextarea from "../../components/AutoResizeTextarea";
-import TimePicker from "../../components/TimePicker";
-import { getDateWithoutTime } from "../../utils/time";
 
 interface TodoModalProps {
   modalTitle: string;

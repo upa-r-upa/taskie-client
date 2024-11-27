@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 
-import { todoApi } from "../../api/client";
+import { todoApi } from "@/api/client";
 import TodoModal from "./TodoModal";
-import { TodoPublic } from "../../api/generated";
-import { getDateWithoutTime, getFormatTime, isToday } from "../../utils/time";
-import { useMessageStore } from "../../state/useMessageStore";
-import EmptyCard from "../../components/EmptyCard";
+import { TodoPublic } from "@/api/generated";
+import { getDateWithoutTime, getFormatTime, isToday } from "@/utils/time";
+import { useMessageStore } from "@/state/useMessageStore";
+import EmptyCard from "@/components/EmptyCard";
 import { TodoModalSubmitProps, TodoUpdateInputParameter } from "./types";
 
 interface Props {
@@ -124,7 +124,7 @@ export default function TodoSection({ todoList, fetchData }: Props) {
   const renderTodoUpdateModal = (
     todo: TodoPublic | null
   ): JSX.Element | null => {
-    if (!todo) return null;
+    if (!todo) return <></>;
 
     return (
       <TodoModal
@@ -289,6 +289,7 @@ export default function TodoSection({ todoList, fetchData }: Props) {
   return (
     <ul className="space-y-2">
       {renderTodoList(todoList)}
+
       {todoList.length ? (
         <button
           onClick={handleAddTodoButtonClick}

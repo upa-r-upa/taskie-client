@@ -1,14 +1,14 @@
 import { useMutation } from "@tanstack/react-query";
-import { HabitPublic, HabitWithLog } from "../../api/generated";
-import EmptyCard from "../../components/EmptyCard";
+import { HabitPublic, HabitWithLog } from "@/api/generated";
+import EmptyCard from "@/components/EmptyCard";
 import {
   convertMinutesToHours,
   getFormatMinutesWithMeridiem,
   getTimeDifferenceFromNow,
-} from "../../utils/time";
+} from "@/utils/time";
 import HabitModal from "./HabitModal";
-import { habitsApi } from "../../api/client";
-import { useMessageStore } from "../../state/useMessageStore";
+import { habitsApi } from "@/api/client";
+import { useMessageStore } from "@/state/useMessageStore";
 import { useEffect, useRef, useState } from "react";
 import { HabitModalSubmitProps, HabitUpdateInputParameter } from "./types";
 

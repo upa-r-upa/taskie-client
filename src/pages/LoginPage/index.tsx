@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 
-import { authApi } from "../../api/client";
+import { authApi } from "@/api/client";
 
-import { useAuthStore } from "../../state/useAuthStore";
+import { useAuthStore } from "@/state/useAuthStore";
 import { Link, useNavigate } from "react-router-dom";
-import Routes from "../../constants/routes";
-import { useMessageStore } from "../../state/useMessageStore";
+import Routes from "@/constants/routes";
+import { useMessageStore } from "@/state/useMessageStore";
 import { useMutation } from "@tanstack/react-query";
-import { LoginOutput } from "../../api/generated";
+import { LoginOutput } from "@/api/generated";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");

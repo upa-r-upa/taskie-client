@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import { UserData } from "../api/generated";
+import { UserData } from "@/api/generated";
 
 interface AuthState {
   token: string | null;

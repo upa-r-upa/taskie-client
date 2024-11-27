@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { routineApi } from "../../api/client";
-import Loading from "../../components/Loading";
+import { routineApi } from "@/api/client";
+import Loading from "@/components/Loading";
 import RoutineList from "./RoutineList";
 
 export default function RoutinePage() {
