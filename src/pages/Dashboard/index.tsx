@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+
 import Routes from "@/constants/routes";
 
 export default function Dashboard() {

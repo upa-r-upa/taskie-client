@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import AutoResizeTextarea from "@/components/AutoResizeTextarea";
 import {
   getDayFromNumber,
@@ -6,6 +7,7 @@ import {
   getFormatMinutesWithMeridiem,
 } from "@/utils/time";
 import TimePicker from "@/components/TimePicker";
+
 import { HabitModalSubmitProps } from "./types";
 
 interface HabitModalProps {

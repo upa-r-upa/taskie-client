@@ -1,7 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { routineApi } from "@/api/client";
 import { useParams } from "react-router-dom";
+
+import { routineApi } from "@/api/client";
 import Loading from "@/components/Loading";
+
 import EditPage from "./EditPage";
 
 export default function RoutineUpdatePage() {

@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 
 import { authApi } from "@/api/client";
-
 import { useAuthStore } from "@/state/useAuthStore";
-import { Link, useNavigate } from "react-router-dom";
 import Routes from "@/constants/routes";
 import { useMessageStore } from "@/state/useMessageStore";
-import { useMutation } from "@tanstack/react-query";
 import { LoginOutput } from "@/api/generated";
 
 const LoginPage = () => {
