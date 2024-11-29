@@ -17,7 +17,7 @@ import {
   HabitModalSubmitProps,
   HabitUpdateInputParameter,
 } from "../MainPage/types";
-import HabitModal from "../MainPage/HabitModal";
+import HabitModal from "../MainPage/Habit/HabitModal";
 
 interface Props {
   habitList: Array<HabitWithLog>;

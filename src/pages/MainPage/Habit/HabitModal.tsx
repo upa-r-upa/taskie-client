@@ -8,7 +8,7 @@ import {
 } from "@/utils/time";
 import TimePicker from "@/components/TimePicker";
 
-import { HabitModalSubmitProps } from "./types";
+import { HabitModalSubmitProps } from "../types";
 
 interface HabitModalProps {
   modalTitle: string;

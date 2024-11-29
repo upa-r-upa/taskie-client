@@ -6,15 +6,18 @@ import { queryClient, taskApi } from "@/api/client";
 import Loading from "@/components/Loading";
 import { formatDate } from "@/utils/time";
 
-import TodoSection from "./TodoSection";
-import HabitSection from "./HabitSection";
-import RoutineSection from "./RoutineSection";
+import TodoSection from "./Todo/TodoSection";
+import HabitSection from "./Habit/HabitSection";
+import RoutineSection from "./Routine/RoutineSection";
 
 function MainPage() {
-  const [targetDate, setTargetDate] = useState<Date>(new Date());
+  const [targetDate, setTargetDate] = useState<Date>(() => new Date());
+
+  const formattedDate = formatDate(targetDate);
+
   const { isLoading, data } = useQuery({
-    queryKey: ["tasks", formatDate(targetDate)],
-    queryFn: () => taskApi.getAllDailyTask(formatDate(targetDate)),
+    queryKey: ["tasks", formattedDate],
+    queryFn: () => taskApi.getAllDailyTask(formattedDate),
     refetchIntervalInBackground: true,
     refetchInterval: 60 * 1000,
   });
@@ -26,11 +29,8 @@ function MainPage() {
   };
 
   const handleValueChange = (value: DateValueType) => {
-    if (!value?.startDate) {
-      return;
-    }
-
-    setTargetDate(value.startDate);
+    const date = value?.startDate;
+    if (date) setTargetDate(date);
   };
 
   if (isLoading) {
@@ -58,6 +58,7 @@ function MainPage() {
         <h2 className="text-xl mb-2">할 일</h2>
 
         <TodoSection
+          date={targetDate}
           todoList={data?.data?.todo_list || []}
           fetchData={refetch}
         />

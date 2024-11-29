@@ -19,7 +19,7 @@ import {
   TodoModalSubmitProps,
   TodoUpdateInputParameter,
 } from "../MainPage/types";
-import TodoModal from "../MainPage/TodoModal";
+import TodoModal from "../MainPage/Todo/TodoModal";
 
 export default function TodoPage() {
   const { isLoading, data: todoList } = useQuery({
