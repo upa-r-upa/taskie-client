@@ -11,7 +11,8 @@ import {
 import { habitsApi } from "@/api/client";
 import { useMessageStore } from "@/state/useMessageStore";
 
-import { HabitModalSubmitProps, HabitUpdateInputParameter } from "./types";
+import { HabitModalSubmitProps, HabitUpdateInputParameter } from "../types";
+
 import HabitModal from "./HabitModal";
 
 interface Props {

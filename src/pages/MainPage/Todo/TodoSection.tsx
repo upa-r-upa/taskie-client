@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 
 import { todoApi } from "@/api/client";
