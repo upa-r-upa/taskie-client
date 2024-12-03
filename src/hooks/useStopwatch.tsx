@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 
-function useStopwatch(initialSeconds: number = 0) {
+const useStopwatch = (initialSeconds: number = 0) => {
   const [seconds, setSeconds] = useState(initialSeconds);
   const [isRunning, setIsRunning] = useState(true);
   const intervalRef = useRef<number | null>(null);
@@ -49,6 +49,6 @@ function useStopwatch(initialSeconds: number = 0) {
     reset,
     setSeconds,
   };
-}
+};
 
 export default useStopwatch;

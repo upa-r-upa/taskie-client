@@ -3,7 +3,7 @@ import {
   RoutineItem,
   RoutineLogPutInput,
   TodoUpdateInput,
-} from "../../api/generated";
+} from "@/api/generated";
 
 export interface TodoModalSubmitProps {
   title: string;

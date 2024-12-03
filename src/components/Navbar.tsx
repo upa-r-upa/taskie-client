@@ -1,9 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
-import Routes from "../constants/routes";
-import { useAuthStore } from "../state/useAuthStore";
-import { authApi } from "../api/client";
-import { useMessageStore } from "../state/useMessageStore";
 import { useMutation } from "@tanstack/react-query";
+
+import Routes from "@/constants/routes";
+import { useAuthStore } from "@/state/useAuthStore";
+import { authApi } from "@/api/client";
+import { useMessageStore } from "@/state/useMessageStore";
 
 const NavBar = () => {
   const navigate = useNavigate();

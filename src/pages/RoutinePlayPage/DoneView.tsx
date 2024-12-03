@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
-import Routes from "../../constants/routes";
-import { RoutinePublic } from "../../api/generated";
+
+import Routes from "@/constants/routes";
+import { RoutinePublic } from "@/api/generated";
 
 interface Props {
   routine: RoutinePublic;

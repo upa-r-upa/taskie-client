@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 import { BsArrowRight, BsFillPlayFill } from "react-icons/bs";
 
-import Routes from "../../constants/routes";
-import { RoutineItem, RoutinePublic } from "../../api/generated";
-import EmptyCard from "../../components/EmptyCard";
+import Routes from "@/constants/routes";
+import { RoutineItem, RoutinePublic } from "@/api/generated";
+import EmptyCard from "@/components/EmptyCard";
 
 interface Props {
   routine: RoutinePublic;

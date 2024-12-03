@@ -17,11 +17,11 @@
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
-    "noFallthroughCasesInSwitch": true
-    // "baseUrl": "src",
-    // "paths": {
-    //   "@/*": ["*"]
-    // }
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "include": ["src/**/*", "public/service-worker.js"],
   "references": [{ "path": "./tsconfig.node.json" }]

@@ -1,23 +1,25 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { BsPlusLg } from "react-icons/bs";
-import { queryClient, todoApi } from "../../api/client";
+import { useEffect, useRef, useState } from "react";
+
+import { queryClient, todoApi } from "@/api/client";
 import {
   formatConditionalDate,
   formatDate,
   getDateWithoutTime,
   getFormatTime,
   isSameDate,
-} from "../../utils/time";
-import Loading from "../../components/Loading";
-import EmptyCard from "../../components/EmptyCard";
-import { TodoPublic } from "../../api/generated";
-import TodoModal from "../MainPage/TodoModal";
-import { useEffect, useRef, useState } from "react";
-import { useMessageStore } from "../../state/useMessageStore";
+} from "@/utils/time";
+import Loading from "@/components/Loading";
+import EmptyCard from "@/components/EmptyCard";
+import { TodoPublic } from "@/api/generated";
+import { useMessageStore } from "@/state/useMessageStore";
+
 import {
   TodoModalSubmitProps,
   TodoUpdateInputParameter,
 } from "../MainPage/types";
+import TodoModal from "../MainPage/Todo/TodoModal";
 
 export default function TodoPage() {
   const { isLoading, data: todoList } = useQuery({

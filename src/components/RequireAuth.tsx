@@ -1,7 +1,7 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
-import { useAuthStore } from "../state/useAuthStore";
-import Routes from "../constants/routes";
+import { useAuthStore } from "@/state/useAuthStore";
+import Routes from "@/constants/routes";
 
 export default function RequireAuth() {
   const { getIsLoggedIn, isAccessTokenRefreshing } = useAuthStore(

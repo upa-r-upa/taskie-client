@@ -1,10 +1,10 @@
 import { BsFillPlayFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 
-import { getFormatMinutesWithMeridiem } from "../../utils/time";
-import Routes from "../../constants/routes";
-import EmptyCard from "../../components/EmptyCard";
-import { RoutineItem, RoutinePublic } from "../../api/generated";
+import { getFormatMinutesWithMeridiem } from "@/utils/time";
+import Routes from "@/constants/routes";
+import EmptyCard from "@/components/EmptyCard";
+import { RoutineItem, RoutinePublic } from "@/api/generated";
 
 interface Props {
   routineList: Array<RoutinePublic>;

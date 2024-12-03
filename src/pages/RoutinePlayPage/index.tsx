@@ -1,16 +1,19 @@
 import { useState } from "react";
-import ThumbnailView from "./ThumbnailView";
-import PlayView from "./PlayView";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { routineApi } from "../../api/client";
 import { useNavigate, useParams } from "react-router-dom";
-import Loading from "../../components/Loading";
+
+import { routineApi } from "@/api/client";
+import Loading from "@/components/Loading";
+import { useMessageStore } from "@/state/useMessageStore";
+import { RoutineLogBase } from "@/api/generated";
+
 import {
   RoutineAchieveInputParameter,
   RoutinePlayViewSubmitProps,
 } from "../MainPage/types";
-import { useMessageStore } from "../../state/useMessageStore";
-import { RoutineLogBase } from "../../api/generated";
+
+import ThumbnailView from "./ThumbnailView";
+import PlayView from "./PlayView";
 
 type PlayViewStepType = 0 | 1;
 

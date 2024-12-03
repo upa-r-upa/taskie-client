@@ -5,10 +5,10 @@ import {
   getDayFromNumber,
   getFormatMinutesWithMeridiem,
   getWeek,
-} from "../../utils/time";
-import Routes from "../../constants/routes";
-import EmptyCard from "../../components/EmptyCard";
-import { RoutineItem, RoutinePublic } from "../../api/generated";
+} from "@/utils/time";
+import Routes from "@/constants/routes";
+import EmptyCard from "@/components/EmptyCard";
+import { RoutineItem, RoutinePublic } from "@/api/generated";
 
 interface Props {
   routineList: Array<RoutinePublic>;

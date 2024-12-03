@@ -1,5 +1,6 @@
 import React from "react";
-import { getFormatMinutesWithMeridiem } from "../utils/time";
+
+import { getFormatMinutesWithMeridiem } from "@/utils/time";
 
 interface TimePickerProps {
   minutes: number;
