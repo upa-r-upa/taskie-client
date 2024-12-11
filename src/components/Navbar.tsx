@@ -31,9 +31,7 @@ const NavBar = () => {
   });
 
   const handleLogout = () => {
-    if (isPending) {
-      return;
-    }
+    if (isPending) return;
 
     mutate({});
   };
@@ -63,12 +61,6 @@ const NavBar = () => {
         <li onClick={handleLogout}>
           <Link to={""}>로그아웃</Link>
         </li>
-        <li>
-          <Link to={`/${Routes.DASHBOARD}`}>대시보드</Link>
-        </li>
-        <li>
-          <Link to={`/${Routes.USER}`}>마이 페이지</Link>
-        </li>
       </ul>
     );
   };
@@ -96,6 +88,7 @@ const NavBar = () => {
           {renderNavItems(getIsLoggedIn())}
         </div>
       </div>
+
       <div className="navbar-center">
         <Link to={`/${Routes.MAIN}`} className="btn btn-ghost text-3xl">
           Taskie
