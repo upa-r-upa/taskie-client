@@ -17,6 +17,7 @@ import {
   RoutinePlayPage,
   RoutineEditPage,
   HabitPage,
+  NotFoundPage,
 } from "@/pages";
 
 import Root from "./App";
@@ -46,6 +47,8 @@ const router = createBrowserRouter(
         />
 
         <Route path={Routes.HABIT} element={<HabitPage />} />
+
+        <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Route>
   )

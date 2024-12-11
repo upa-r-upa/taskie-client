@@ -8,6 +8,7 @@ import TodoPage from "./TodoPage";
 import HabitPage from "./HabitPage";
 import RoutineEditPage from "./RoutineEditPage";
 import RoutineCreatePage from "./RoutineCreatePage";
+import NotFoundPage from "./NotFoundPage";
 
 export {
   MainPage,
@@ -20,4 +21,5 @@ export {
   HabitPage,
   RoutineEditPage,
   RoutineCreatePage,
+  NotFoundPage,
 };
