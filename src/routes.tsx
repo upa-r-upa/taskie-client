@@ -4,22 +4,22 @@ import {
   Route,
 } from "react-router-dom";
 
+import Routes from "@/constants/routes";
+import RequireAuth from "@/components/RequireAuth";
+import {
+  ErrorPage,
+  LoginPage,
+  SignUpPage,
+  MainPage,
+  TodoPage,
+  RoutinePage,
+  RoutineCreatePage,
+  RoutinePlayPage,
+  RoutineEditPage,
+  HabitPage,
+} from "@/pages";
+
 import Root from "./App";
-import MainPage from "./pages/MainPage";
-import ErrorPage from "./pages/ErrorPage";
-import LoginPage from "./pages/LoginPage";
-import SignUpPage from "./pages/SignUpPage";
-import RoutinePlayPage from "./pages/RoutinePlayPage";
-import RoutinePage from "./pages/RoutinePage";
-import TodoPage from "./pages/TodoPage";
-import HabitPage from "./pages/HabitPage";
-import RoutineEditPage from "./pages/RoutineEditPage";
-import RoutineReportPage from "./pages/RoutineReportPage";
-import HabitReportPage from "./pages/HabitReportPage";
-import RoutineCreatePage from "./pages/RoutineCreatePage";
-import Routes from "./constants/routes";
-import Dashboard from "./pages/Dashboard";
-import RequireAuth from "./components/RequireAuth";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -44,18 +44,8 @@ const router = createBrowserRouter(
           path={`${Routes.ROUTINE_EDIT}:routineId`}
           element={<RoutineEditPage />}
         />
-        <Route
-          path={`${Routes.ROUTINE_REPORT}:routineId`}
-          element={<RoutineReportPage />}
-        />
 
         <Route path={Routes.HABIT} element={<HabitPage />} />
-        <Route
-          path={`${Routes.HABIT_REPORT}:habitId`}
-          element={<HabitReportPage />}
-        />
-
-        <Route path={Routes.DASHBOARD} element={<Dashboard />} />
       </Route>
     </Route>
   )
