@@ -1,23 +1,24 @@
 import { useMutation } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
 
 import { HabitPublic, HabitWithLog } from "@/api/generated";
-import EmptyCard from "@/components/EmptyCard";
 import {
   convertMinutesToHours,
-  getDayFromNumber,
   getFormatMinutesWithMeridiem,
   getTimeDifferenceFromNow,
   getWeek,
+  parseRepeatDays,
+  parseRepeatDaysToServerFormat,
 } from "@/utils/time";
 import { habitsApi } from "@/api/client";
 import { useMessageStore } from "@/state/useMessageStore";
+import useModalWithState from "@/hooks/useModalWithState";
+import useModal from "@/hooks/useModal";
+import { HabitModalSubmitProps } from "@/components/HabitModal/types";
+import HabitModal from "@/components/HabitModal";
+import WeekList from "@/components/WeekList";
+import HabitInformation from "@/components/HabitInformation";
 
-import {
-  HabitModalSubmitProps,
-  HabitUpdateInputParameter,
-} from "../MainPage/types";
-import HabitModal from "../MainPage/Habit/HabitModal";
+import { HabitUpdateInputParameter } from "../MainPage/types";
 
 interface Props {
   habitList: Array<HabitWithLog>;
@@ -41,64 +42,21 @@ export default function HabitList({ habitList, fetchData }: Props) {
     },
   });
 
-  const addModalRef = useRef<HTMLDialogElement>(null);
-  const updateModalRef = useRef<HTMLDialogElement>(null);
-
-  const [selectedHabit, setSelectedHabit] = useState<HabitPublic | null>(null);
-  const [isCreateModalOpened, setIsCreateModalOpened] =
-    useState<boolean>(false);
-
-  useEffect(() => {
-    if (isCreateModalOpened) addModalRef.current?.showModal();
-    else addModalRef.current?.close();
-  }, [isCreateModalOpened]);
-
-  useEffect(() => {
-    if (selectedHabit) updateModalRef.current?.showModal();
-    else updateModalRef.current?.close();
-  }, [selectedHabit]);
-
-  const renderRepeatDays = (repeatDays: Array<number>) => {
-    return (
-      <p className="mt-1 flex gap-1">
-        {repeatDays.map((data, i) => {
-          return (
-            <span
-              key={i}
-              className=" card-bordered rounded-full px-1 border-gray-300"
-            >
-              {getDayFromNumber(data)}
-            </span>
-          );
-        })}
-      </p>
-    );
-  };
+  const {
+    modalRef: updateModalRef,
+    modalState: selectedHabit,
+    openModal: openUpdateModal,
+    closeModal: closeUpdateModal,
+  } = useModalWithState<HabitPublic>();
+  const {
+    modalRef: createModalRef,
+    openModal: openCreateModal,
+    closeModal: closeCreateModal,
+  } = useModal();
 
   const renderHabitList = (list: Array<HabitWithLog>) => {
     if (list.length === 0) {
-      return (
-        <EmptyCard label="습관">
-          <div>
-            <div className="text-sm text-gray-500">
-              <p>
-                습관은 <b>하루에 여러번 반복되는 일</b>을<br /> 편리하게 관리할
-                수 있어요.
-              </p>
-              <p className="mt-1">
-                주기적으로 반복되는 할 일이라고
-                <br /> 생각하면 편해요.
-              </p>
-            </div>
-            <button
-              className="btn btn-primary btn-outline mt-2"
-              onClick={() => setIsCreateModalOpened(true)}
-            >
-              습관 추가하기
-            </button>
-          </div>
-        </EmptyCard>
-      );
+      return <HabitInformation onModalOpen={openCreateModal} />;
     }
 
     return list.map((data) => {
@@ -119,7 +77,7 @@ export default function HabitList({ habitList, fetchData }: Props) {
             <div className="card-body flex flex-row items-center">
               <div
                 className="flex-1 overflow-hidden"
-                onClick={() => setSelectedHabit(data)}
+                onClick={() => openUpdateModal(data)}
               >
                 <span className="badge badge-primary badge-sm">
                   {convertMinutesToHours(data.repeat_time_minutes)} 주기
@@ -135,7 +93,9 @@ export default function HabitList({ habitList, fetchData }: Props) {
                     {data.title}
                   </h2>
                 </div>
-                {renderRepeatDays(data.repeat_days)}
+
+                <WeekList weekList={data.repeat_days} className="mt-1" />
+
                 {done ? (
                   <p className="text-primary text-xs mt-1">
                     오늘 총 {count}번의 습관을 모두 완료했어요!
@@ -192,7 +152,7 @@ export default function HabitList({ habitList, fetchData }: Props) {
           >
             <div
               className="card-body flex flex-row items-center"
-              onClick={() => setSelectedHabit(data)}
+              onClick={() => openUpdateModal(data)}
             >
               <div className="overflow-hidden">
                 <span className="badge badge-neutral badge-outline badge-sm">
@@ -209,7 +169,9 @@ export default function HabitList({ habitList, fetchData }: Props) {
                 </div>
 
                 <p>오늘은 실행하는 날이 아니에요.</p>
-                {renderRepeatDays(data.repeat_days)}
+
+                <WeekList weekList={data.repeat_days} className="mt-1" />
+
                 <p className="mt-1">
                   {getFormatMinutesWithMeridiem(data.start_time_minutes)}~
                   {getFormatMinutesWithMeridiem(data.end_time_minutes)}
@@ -225,7 +187,7 @@ export default function HabitList({ habitList, fetchData }: Props) {
   const createHabitMutation = useMutation({
     mutationFn: habitsApi.createHabit,
     onSuccess: () => {
-      setIsCreateModalOpened(false);
+      closeCreateModal();
       fetchData();
     },
     onError: () => {
@@ -250,7 +212,7 @@ export default function HabitList({ habitList, fetchData }: Props) {
     mutationFn: (input: HabitUpdateInputParameter) =>
       habitsApi.updateHabit(input.id, input.update),
     onSuccess: () => {
-      setSelectedHabit(null);
+      closeUpdateModal();
       fetchData();
     },
     onError: () => {
@@ -262,9 +224,7 @@ export default function HabitList({ habitList, fetchData }: Props) {
   });
 
   const handleUpdateHabitSubmit = (params: HabitModalSubmitProps) => {
-    if (!selectedHabit) {
-      return;
-    }
+    if (!selectedHabit) return;
 
     updateHabitMutation.mutate({
       id: selectedHabit.id,
@@ -279,34 +239,10 @@ export default function HabitList({ habitList, fetchData }: Props) {
     });
   };
 
-  const parseRepeatDays = (repeatDays: Array<number>): Array<number> => {
-    const result = Array.from({ length: 7 }, () => 0);
-
-    repeatDays.forEach((value) => {
-      result[value] = 1;
-    });
-
-    return result;
-  };
-
-  const parseRepeatDaysToServerFormat = (
-    repeatDays: Array<number>
-  ): Array<number> => {
-    const result: Array<number> = [];
-
-    repeatDays.forEach((value, i) => {
-      if (value) {
-        result.push(i);
-      }
-    });
-
-    return result;
-  };
-
   const deleteHabitMutation = useMutation({
     mutationFn: habitsApi.deleteHabit,
     onSuccess: () => {
-      setSelectedHabit(null);
+      closeUpdateModal();
       fetchData();
       addMessage({
         message: "습관을 삭제했습니다.",
@@ -329,7 +265,7 @@ export default function HabitList({ habitList, fetchData }: Props) {
       <ul className="flex flex-col">{renderHabitList(habitList)}</ul>
       {habitList.length ? (
         <button
-          onClick={() => setIsCreateModalOpened(true)}
+          onClick={openCreateModal}
           className="btn btn-primary btn-outline btn-sm mt-2"
         >
           습관 추가하기
@@ -339,11 +275,8 @@ export default function HabitList({ habitList, fetchData }: Props) {
       )}
 
       <HabitModal
-        key={isCreateModalOpened ? "open" : "close"}
-        modalRef={addModalRef}
-        onCancel={() => {
-          setIsCreateModalOpened(false);
-        }}
+        modalRef={createModalRef}
+        onCancel={closeCreateModal}
         onSubmit={handleAddHabitSubmit}
         modalId="habit-add-modal"
         modalTitle="습관 추가하기"
@@ -352,9 +285,7 @@ export default function HabitList({ habitList, fetchData }: Props) {
       {selectedHabit ? (
         <HabitModal
           modalRef={updateModalRef}
-          onCancel={() => {
-            setSelectedHabit(null);
-          }}
+          onCancel={closeUpdateModal}
           onSubmit={handleUpdateHabitSubmit}
           modalId="habit-add-modal"
           modalTitle="습관 수정하기"
