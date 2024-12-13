@@ -7,7 +7,7 @@ import importPlugin from "eslint-plugin-import";
 export default [
   // 무시할 디렉토리 설정
   {
-    ignores: ["dist", "node_modules", "src/api/generated"], // 빌드 결과물과 자동 생성된 API 무시
+    ignores: ["dist", "dev-dist", "node_modules", "src/api/generated"], // 빌드 결과물과 자동 생성된 API 무시
   },
   // JavaScript 및 TypeScript 설정
   {

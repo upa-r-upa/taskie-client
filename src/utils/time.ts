@@ -126,3 +126,27 @@ export function getWeek(date: Date | string): number {
   const day = dayjs(date).day();
   return day === 0 ? 6 : day - 1;
 }
+
+export function parseRepeatDays(repeatDays: Array<number>): Array<number> {
+  const result = Array.from({ length: 7 }, () => 0);
+
+  repeatDays.forEach((value) => {
+    result[value] = 1;
+  });
+
+  return result;
+}
+
+export function parseRepeatDaysToServerFormat(
+  repeatDays: Array<number>
+): Array<number> {
+  const result: Array<number> = [];
+
+  repeatDays.forEach((value, i) => {
+    if (value) {
+      result.push(i);
+    }
+  });
+
+  return result;
+}
