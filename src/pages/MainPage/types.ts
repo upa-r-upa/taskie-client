@@ -16,14 +16,6 @@ export interface TodoUpdateInputParameter {
   update: TodoUpdateInput;
 }
 
-export interface HabitModalSubmitProps {
-  title: string;
-  startTimeMinutes: number;
-  endTimeMinutes: number;
-  repeatIntervalMinutes: number;
-  repeatDays: Array<number>;
-}
-
 export interface RoutinePlayViewSubmitProps {
   id: number;
   routineTodoList: Array<RoutineItem>;
