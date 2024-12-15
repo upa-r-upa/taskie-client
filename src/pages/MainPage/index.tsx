@@ -68,7 +68,7 @@ function MainPage() {
         <h2 className="text-xl mb-2">습관</h2>
         <HabitSection
           habitList={data?.data?.habit_list || []}
-          fetchData={refetch}
+          reloadHabitList={refetch}
         />
       </div>
 
