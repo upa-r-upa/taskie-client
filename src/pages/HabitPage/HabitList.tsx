@@ -1,20 +1,8 @@
-import { useMutation } from "@tanstack/react-query";
-
-import { HabitPublic, HabitWithLog } from "@/api/generated";
-import {
-  getWeek,
-  parseRepeatDays,
-  parseRepeatDaysToServerFormat,
-} from "@/utils/time";
-import useModalWithState from "@/hooks/useModalWithState";
-import useModal from "@/hooks/useModal";
+import { HabitWithLog } from "@/api/generated";
+import { getWeek, parseRepeatDays } from "@/utils/time";
 import HabitModal from "@/components/HabitModal";
 import HabitInformation from "@/components/HabitInformation";
-import { habitsApi } from "@/api/client";
-import { useMessageStore } from "@/state/useMessageStore";
-import { HabitModalSubmitProps } from "@/components/HabitModal/types";
-
-import { HabitUpdateInputParameter } from "../MainPage/types";
+import useHabitMutations from "@/hooks/useHabitMutations";
 
 import ActiveHabit from "./ActivatedHabit";
 import DisabledHabit from "./DisabledHabit";
@@ -27,44 +15,26 @@ interface Props {
 }
 
 export default function HabitList({ date, habitList, reloadHabitList }: Props) {
-  const addMessage = useMessageStore((state) => state.addMessage);
-
-  const achieveHabitMutation = useMutation({
-    mutationFn: habitsApi.achieveHabit,
-    onSuccess: reloadHabitList,
-    onError: () => {
-      addMessage({
-        message: "습관 달성 요청에 실패했습니다.",
-        type: "error",
-      });
-    },
-  });
-
-  const createHabitMutation = useMutation({
-    mutationFn: habitsApi.createHabit,
-    onSuccess: () => {
-      closeCreateModal();
-      reloadHabitList();
-    },
-    onError: () => {
-      addMessage({
-        message: "습관 추가에 실패했습니다.",
-        type: "error",
-      });
-    },
-  });
-
   const {
-    modalRef: updateModalRef,
+    createHabitModal,
+    updateHabitModal,
+    achieveHabitMutation,
+    deleteHabitMutation,
+    createHabit,
+    updateHabit,
+    deleteHabit,
+  } = useHabitMutations({ reloadHabitList });
+  const {
     modalState: selectedHabit,
     openModal: openUpdateModal,
     closeModal: closeUpdateModal,
-  } = useModalWithState<HabitPublic>();
+    modalRef: updateModalRef,
+  } = updateHabitModal;
   const {
-    modalRef: createModalRef,
-    openModal: openCreateModal,
     closeModal: closeCreateModal,
-  } = useModal();
+    openModal: openCreateModal,
+    modalRef: createModalRef,
+  } = createHabitModal;
 
   const renderHabitList = (list: Array<HabitWithLog>) => {
     if (!list.length) {
@@ -95,68 +65,6 @@ export default function HabitList({ date, habitList, reloadHabitList }: Props) {
     });
   };
 
-  const handleAddHabitSubmit = (params: HabitModalSubmitProps) => {
-    createHabitMutation.mutate({
-      title: params.title,
-      start_time_minutes: params.startTimeMinutes,
-      end_time_minutes: params.endTimeMinutes,
-      repeat_days: parseRepeatDaysToServerFormat(params.repeatDays),
-      repeat_time_minutes: params.repeatIntervalMinutes,
-    });
-  };
-
-  const updateHabitMutation = useMutation({
-    mutationFn: (input: HabitUpdateInputParameter) =>
-      habitsApi.updateHabit(input.id, input.update),
-    onSuccess: () => {
-      closeUpdateModal();
-      reloadHabitList();
-    },
-    onError: () => {
-      addMessage({
-        message: "습관 수정에 실패했습니다.",
-        type: "error",
-      });
-    },
-  });
-
-  const handleUpdateHabitSubmit = (params: HabitModalSubmitProps) => {
-    if (!selectedHabit) return;
-
-    updateHabitMutation.mutate({
-      id: selectedHabit.id,
-      update: {
-        title: params.title,
-        start_time_minutes: params.startTimeMinutes,
-        end_time_minutes: params.endTimeMinutes,
-        repeat_days: parseRepeatDaysToServerFormat(params.repeatDays),
-        repeat_time_minutes: params.repeatIntervalMinutes,
-        activated: true,
-      },
-    });
-  };
-
-  const deleteHabitMutation = useMutation({
-    mutationFn: habitsApi.deleteHabit,
-    onSuccess: () => {
-      closeUpdateModal();
-      reloadHabitList();
-      addMessage({
-        message: "습관을 삭제했습니다.",
-      });
-    },
-    onError: () => {
-      addMessage({
-        message: "습관 삭제에 실패했습니다.",
-        type: "error",
-      });
-    },
-  });
-
-  const handleHabitDeleteClick = (id: number) => {
-    deleteHabitMutation.mutate(id);
-  };
-
   return (
     <>
       <ul className="flex flex-col">{renderHabitList(habitList)}</ul>
@@ -172,7 +80,7 @@ export default function HabitList({ date, habitList, reloadHabitList }: Props) {
       <HabitModal
         modalRef={createModalRef}
         onCancel={closeCreateModal}
-        onSubmit={handleAddHabitSubmit}
+        onSubmit={createHabit}
         modalId="habit-add-modal"
         modalTitle="습관 추가하기"
       />
@@ -181,7 +89,7 @@ export default function HabitList({ date, habitList, reloadHabitList }: Props) {
         <HabitModal
           modalRef={updateModalRef}
           onCancel={closeUpdateModal}
-          onSubmit={handleUpdateHabitSubmit}
+          onSubmit={updateHabit}
           modalId="habit-update-modal"
           modalTitle="습관 수정하기"
           title={selectedHabit.title}
@@ -192,7 +100,7 @@ export default function HabitList({ date, habitList, reloadHabitList }: Props) {
           extraButton={
             <button
               disabled={deleteHabitMutation.isPending}
-              onClick={() => handleHabitDeleteClick(selectedHabit.id)}
+              onClick={() => deleteHabit(selectedHabit.id)}
               className="btn btn-error"
             >
               삭제하기

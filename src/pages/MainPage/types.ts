@@ -1,5 +1,4 @@
 import {
-  HabitUpdateInput,
   RoutineItem,
   RoutineLogPutInput,
   TodoUpdateInput,
@@ -19,11 +18,6 @@ export interface TodoUpdateInputParameter {
 export interface RoutinePlayViewSubmitProps {
   id: number;
   routineTodoList: Array<RoutineItem>;
-}
-
-export interface HabitUpdateInputParameter {
-  id: number;
-  update: HabitUpdateInput;
 }
 
 export interface RoutineAchieveInputParameter {
