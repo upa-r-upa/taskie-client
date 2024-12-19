@@ -19,7 +19,7 @@ export default function RoutineSection({ routineList }: Props) {
     return (
       <ul className="flex flex-col gap-2">
         {items.map((data) => {
-          if (data.is_skipped || !data.completed_at) return <></>;
+          if (data.is_skipped || !data.completed_at) return;
 
           return (
             <li
