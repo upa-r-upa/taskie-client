@@ -27,10 +27,14 @@ export default function IncompleteRoutine({
   headerChildren,
   children,
 }: Props) {
+  const getOrder = () => {
+    return !disabled ? "order-1" : "order-2";
+  };
+
   return (
     <li
       key={routine.id}
-      className="card card-bordered card-compact mb-2 order-3 shadow-md"
+      className={`card card-bordered card-compact mb-2 shadow-md ${getOrder()}`}
     >
       <div className="card-body">
         <div className="flex">

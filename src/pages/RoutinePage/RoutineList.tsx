@@ -39,6 +39,7 @@ export default function RoutineList({ routineList }: Props) {
         return (
           <CompletedRoutine
             key={routine.id}
+            showWeekList
             badgeLabel={"오늘의 루틴"}
             routine={routine}
           />

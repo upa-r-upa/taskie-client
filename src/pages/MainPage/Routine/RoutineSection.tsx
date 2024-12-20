@@ -5,6 +5,8 @@ import { getFormatMinutesWithMeridiem } from "@/utils/time";
 import Routes from "@/constants/routes";
 import EmptyCard from "@/components/EmptyCard";
 import { RoutineItem, RoutinePublic } from "@/api/generated";
+import IncompleteRoutine from "@/components/routine/IncompleteRoutine";
+import CompletedRoutine from "@/components/routine/CompletedRoutine";
 
 interface Props {
   routineList: Array<RoutinePublic>;
@@ -78,37 +80,6 @@ export default function RoutineSection({ routineList }: Props) {
     );
   };
 
-  const renderDisabledRoutine = (routine: RoutinePublic) => {
-    return (
-      <li
-        key={routine.id}
-        className="card card-bordered card-compact shadow-md mb-2 order-1"
-      >
-        <div className="card-body">
-          <div className="flex">
-            <div className="flex-1">
-              <Link to={`/${Routes.ROUTINE_EDIT}${routine.id}`}>
-                <h2 className="card-title text-lg">{routine.title}</h2>
-                <p>
-                  {getFormatMinutesWithMeridiem(routine.start_time_minutes)} |{" "}
-                  총 {calculateTotalRoutineMinutes(routine.routine_elements)}분
-                </p>
-              </Link>
-            </div>
-
-            <div className="card-actions">
-              <Link to={`/${Routes.ROUTINE_PLAY}${routine.id}`}>
-                <button className="btn btn-sm btn-circle btn-outline btn-primary">
-                  <BsFillPlayFill />
-                </button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </li>
-    );
-  };
-
   const renderRoutineList = (list: Array<RoutinePublic>) => {
     if (list.length === 0) {
       return (
@@ -122,12 +93,16 @@ export default function RoutineSection({ routineList }: Props) {
       );
     }
 
+    // FIXME: ORDER 고치기
+
     return list.map((routine) => {
       const isDone = routine.routine_elements.some((data) => data.completed_at);
 
-      return isDone
-        ? renderActiveRoutine(routine)
-        : renderDisabledRoutine(routine);
+      return isDone ? (
+        <CompletedRoutine key={routine.id} routine={routine} />
+      ) : (
+        <IncompleteRoutine key={routine.id} routine={routine} />
+      );
     });
   };
 

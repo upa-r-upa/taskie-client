@@ -10,11 +10,16 @@ import RoutineTileDescription from "./RoutineTimeDescription";
 
 interface Props {
   routine: RoutinePublic;
+  showWeekList?: boolean;
 
   badgeLabel?: React.ReactNode;
 }
 
-export default function CompletedRoutine({ routine, badgeLabel }: Props) {
+export default function CompletedRoutine({
+  showWeekList,
+  routine,
+  badgeLabel,
+}: Props) {
   const renderRoutineTodoList = () => {
     return (
       <ul className="flex flex-col gap-2">
@@ -44,19 +49,19 @@ export default function CompletedRoutine({ routine, badgeLabel }: Props) {
   };
 
   return (
-    <li className="card card-bordered card-compact shadow-md mb-2 order-2">
+    <li className="card card-bordered card-compact shadow-md mb-2 order-3">
       <div className="card-body">
         <div className="flex">
           <div className="flex-1 text-gray-400">
             <Link to={`/${Routes.ROUTINE_EDIT}${routine.id}`}>
               <p>
                 {badgeLabel && (
-                  <span className="badge badge-primary badge-outline badge-sm">
+                  <span className="badge badge-primary badge-outline badge-sm mr-2">
                     {badgeLabel}
                   </span>
                 )}
 
-                <span className="badge badge-primary badge-sm ml-2">완료!</span>
+                <span className="badge badge-primary badge-sm">완료!</span>
               </p>
 
               <h2 className="card-title text-lg line-through">
@@ -69,7 +74,7 @@ export default function CompletedRoutine({ routine, badgeLabel }: Props) {
               />
             </Link>
 
-            <WeekList weekList={routine.repeat_days} />
+            {showWeekList && <WeekList weekList={routine.repeat_days} />}
           </div>
 
           <div className="card-actions">
