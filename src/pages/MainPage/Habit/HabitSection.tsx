@@ -5,7 +5,7 @@ import {
   getTimeDifferenceFromNow,
   parseRepeatDays,
 } from "@/utils/time";
-import HabitModal from "@/components/HabitModal";
+import HabitModal from "@/components/habit/HabitModal";
 import HabitInformation from "@/components/HabitInformation";
 import useHabitMutations from "@/hooks/useHabitMutations";
 
