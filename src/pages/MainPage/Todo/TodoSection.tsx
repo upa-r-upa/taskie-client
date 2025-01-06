@@ -110,12 +110,12 @@ export default function TodoSection({ date, todoList, fetchData }: Props) {
 
     return (
       <TodoModal
+        ref={updateModalRef}
         modalTitle="할 일 수정하기"
         modalId="todo-update"
         title={todo.title}
         content={todo.content}
         targetDate={new Date(todo.target_date)}
-        modalRef={updateModalRef}
         onTodoSubmit={handleUpdateTodoSubmit}
         isLoading={updateTodoMutation.isPending || deleteTodoMutation.isPending}
         onCancel={closeUpdateModal}
@@ -142,7 +142,7 @@ export default function TodoSection({ date, todoList, fetchData }: Props) {
           title={""}
           content={""}
           targetDate={getDateWithoutTime(date)}
-          modalRef={addModalRef}
+          ref={addModalRef}
           onTodoSubmit={handleAddTodoSubmit}
           isLoading={createTodoMutation.isPending}
           onCancel={closeAddModal}

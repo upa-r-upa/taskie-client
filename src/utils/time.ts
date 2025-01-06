@@ -1,9 +1,9 @@
 import dayjs from "dayjs";
 
-const weeks = ["월", "화", "수", "목", "금", "토", "일"];
+export const Weeks = ["월", "화", "수", "목", "금", "토", "일"];
 
 export function getDayFromNumber(week: number): string {
-  return week >= 0 && week <= 7 ? weeks[week] : "존재하지 않는 요일";
+  return week >= 0 && week <= 7 ? Weeks[week] : "존재하지 않는 요일";
 }
 
 export function getTimeDifferenceFromNow(dateString: string): number {

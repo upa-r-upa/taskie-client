@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { habitsApi } from "@/api/client";
 import { useMessageStore } from "@/state/useMessageStore";
 import { HabitPublic } from "@/api/generated";
-import { HabitModalSubmitProps } from "@/components/HabitModal/types";
+import { HabitModalSubmitProps } from "@/components/habit/HabitModal/types";
 import { parseRepeatDaysToServerFormat } from "@/utils/time";
 
 import useModalWithState from "../useModalWithState";

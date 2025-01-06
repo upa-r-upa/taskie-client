@@ -271,12 +271,12 @@ export default function TodoPage() {
 
     return (
       <TodoModal
+        ref={updateModalRef}
         modalTitle="할 일 수정하기"
         modalId="todo-update"
         title={todo.title}
         content={todo.content}
         targetDate={new Date(todo.target_date)}
-        modalRef={updateModalRef}
         onTodoSubmit={handleUpdateTodoSubmit}
         isLoading={updateTodoMutation.isPending || deleteTodoMutation.isPending}
         onCancel={handleUpdateModalClose}
@@ -303,7 +303,7 @@ export default function TodoPage() {
           title={""}
           content={""}
           targetDate={getDateWithoutTime()}
-          modalRef={addModalRef}
+          ref={addModalRef}
           onTodoSubmit={handleAddTodoSubmit}
           isLoading={createTodoMutation.isPending}
           onCancel={() => setIsCreateTodoModalOpened(false)}
