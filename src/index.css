@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* daisyui의 modal 오픈 시 생기는 scrollbar gutter 제거  */
+:root:has(
+    :is(
+      .modal-open,
+      .modal:target,
+      .modal-toggle:checked + .modal,
+      .modal[open]
+    )
+  ) {
+  scrollbar-gutter: inherit;
+}
