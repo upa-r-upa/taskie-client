@@ -68,7 +68,7 @@ export default function HabitList({ date, habitList, reloadHabitList }: Props) {
   return (
     <>
       <ul className="flex flex-col">{renderHabitList(habitList)}</ul>
-      {habitList.length && (
+      {habitList.length > 0 && (
         <button
           onClick={openCreateModal}
           className="btn btn-primary btn-outline btn-sm mt-2"

@@ -39,7 +39,7 @@ export default function RoutineSection({ routineList }: Props) {
     <>
       <ul className="flex flex-col">{renderRoutineList(routineList)}</ul>
 
-      {routineList.length && (
+      {routineList.length > 0 && (
         <Link to={`/${Routes.RoutineCreate}`}>
           <button className="btn btn-primary btn-outline btn-sm mt-2">
             루틴 추가하러 가기
