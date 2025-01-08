@@ -10,11 +10,10 @@ export default function RoutineUpdatePage() {
   const { routineId } = useParams();
 
   const { isLoading, data } = useQuery({
-    queryKey: ["routine", routineId],
+    queryKey: ["routines", routineId],
     queryFn: () => routineApi.getRoutine(parseInt(routineId!)),
     enabled: !!(routineId && !isNaN(parseInt(routineId))),
     refetchOnWindowFocus: true,
-    retry: false,
   });
 
   if (isLoading) {
