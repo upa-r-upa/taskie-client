@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-const useModal = (defaultModalOpened: boolean = false) => {
+export default function useModal(defaultModalOpened: boolean = false) {
   const modalRef = useRef<HTMLDialogElement>(null);
   const [isModalOpened, setIsModalOpened] =
     useState<boolean>(defaultModalOpened);
@@ -22,6 +22,4 @@ const useModal = (defaultModalOpened: boolean = false) => {
   }, [isModalOpened]);
 
   return { modalRef, isModalOpened, closeModal, openModal };
-};
-
-export default useModal;
+}
