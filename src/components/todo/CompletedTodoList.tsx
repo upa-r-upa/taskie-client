@@ -25,14 +25,14 @@ export default function CompletedTodoList({
         const beforeTodo = i > 0 ? todoList[i - 1] : null;
         const isTitleVisible =
           (beforeTodo &&
-            !isSameDate(beforeTodo.completed_at!, item.completed_at!)) ||
+            !isSameDate(beforeTodo.target_date, item.target_date)) ||
           !beforeTodo;
 
         return (
           <>
             {isTitleVisible && (
               <p className="font-semibold mb-2">
-                {formatConditionalDate(item.completed_at!)}
+                {formatConditionalDate(item.target_date)}
               </p>
             )}
 
