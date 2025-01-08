@@ -4,10 +4,7 @@
 
 서비스의 더욱 자세한 설명은 [해당 레포지터리](https://github.com/upa-r-upa/taskie-backend)에 설명되어 있습니다.
 
-현재 서비스는 임시로 모바일 뷰로만 제공중입니다. 나중엔 피씨 뷰도 제작할 예정입니다.
-현재는 PWA로 앱을 다운받아 사용할 수 있습니다.
-
-배포된 서비스는 [여기](https://taskie.upa-r-upa.com/login) 입니다. 현재 정식 배포가 아닌 상태로, 많이 불안정합니다. 열심히 개발 진행중입니다.
+배포된 서비스는 [여기](https://taskie.upa-r-upa.com/login) 입니다(베타 버전).
 
 # 서비스 화면
 
@@ -39,7 +36,6 @@
 
 # 스펙
 
-- Yarn
 - React + TS + vite
 - daisyui + tailwindcss
 - zustand
@@ -48,7 +44,11 @@
 
 ## 1. 준비
 
-Node.js >= 16
+- Node.js >= 21 
+- Pnpm 설치
+    ```bash
+    npm install -g pnpm
+    ```
 
 ## 2. 레포지터리 클론
 
@@ -62,7 +62,7 @@ cd taskie-client
 ## 3. 의존성 설치
 
 ```bash
-npm install
+pnpm install
 ```
 
 ## 4. 개발 환경에 맞는 api generate
@@ -70,17 +70,17 @@ npm install
 - 배포된 서버 기준으로 generate
 
 ```bash
-npm run generate-api-prod
+pnpm run generate-api-prod
 ```
 
 - 로컬 서버를 기준으로 generate
 
 ```bash
-npm run generate-api-local
+pnpm run generate-api-local
 ```
 
 ## 5. 개발 서버 실행
 
 ```bash
-npm run dev
+pnpm run dev
 ```
