@@ -1,5 +1,6 @@
 import { TodoPublic } from "@/api/generated";
 import EmptyCard from "@/components/EmptyCard";
+import { formatConditionalDate, isSameDate } from "@/utils/time";
 
 import CompletedTodoItem from "./CompletedTodoItem";
 import IncompleteTodoItem from "./IncompleteTodoItem";
@@ -37,26 +38,38 @@ export default function TodoList({
   return (
     <>
       <ul className="space-y-2">
-        {todoList.map((item) => {
-          if (item.completed_at) {
-            return (
-              <CompletedTodoItem
-                key={item.id}
-                todo={item}
-                onTodoClick={onTodoClick}
-                onTodoCheck={onTodoCheck}
-              />
-            );
-          } else {
-            return (
-              <IncompleteTodoItem
-                key={item.id}
-                todo={item}
-                onTodoClick={onTodoClick}
-                onTodoCheck={onTodoCheck}
-              />
-            );
-          }
+        {todoList.map((item, i) => {
+          const beforeTodo = i > 0 ? todoList[i - 1] : null;
+          const isTitleVisible =
+            (beforeTodo &&
+              !isSameDate(beforeTodo.target_date, item.target_date)) ||
+            !beforeTodo;
+
+          return (
+            <>
+              {isGrouped && isTitleVisible && (
+                <p className="font-semibold mb-2">
+                  {formatConditionalDate(item.target_date)}
+                </p>
+              )}
+
+              {item.completed_at ? (
+                <CompletedTodoItem
+                  key={item.id}
+                  todo={item}
+                  onTodoClick={onTodoClick}
+                  onTodoCheck={onTodoCheck}
+                />
+              ) : (
+                <IncompleteTodoItem
+                  key={item.id}
+                  todo={item}
+                  onTodoClick={onTodoClick}
+                  onTodoCheck={onTodoCheck}
+                />
+              )}
+            </>
+          );
         })}
       </ul>
 

@@ -85,6 +85,7 @@ export default function TodoPage() {
       <h1 className="text-2xl font-semibold mb-3">할 일 목록</h1>
 
       <TodoList
+        isGrouped
         todoList={todoList?.data || []}
         onAddTodoClick={createModalState.openModal}
         onTodoClick={updateModalState.openModal}
