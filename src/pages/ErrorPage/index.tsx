@@ -1,5 +1,7 @@
 import { AxiosError } from "axios";
-import { useRouteError } from "react-router-dom";
+import { NavLink, useRouteError } from "react-router-dom";
+
+import Routes from "@/constants/routes";
 
 const ErrorPage = () => {
   const error = useRouteError();
@@ -32,7 +34,9 @@ const ErrorPage = () => {
           </div>
 
           <div className="card-actions justify-end">
-            <button className="btn btn-primary">홈으로 돌아가기</button>
+            <NavLink to={`/${Routes.Main}`}>
+              <button className="btn btn-primary">홈으로 돌아가기</button>
+            </NavLink>
           </div>
         </div>
       </div>
