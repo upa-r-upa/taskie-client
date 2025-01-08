@@ -31,7 +31,7 @@ const LoginPage = () => {
     if (!data) return;
 
     setTokenWithUser(data.access_token, data.user);
-    navigate(`/${Routes.MAIN}`, {
+    navigate(`/${Routes.Main}`, {
       replace: true,
     });
   };
@@ -121,7 +121,7 @@ const LoginPage = () => {
           disabled={isPending}
         />
       </form>
-      <Link to={`/${Routes.SIGN_UP}`}>
+      <Link to={`/${Routes.SignUp}`}>
         <button className="btn btn-outline btn-block mt-5" disabled={isPending}>
           회원가입 페이지로 이동하기
         </button>

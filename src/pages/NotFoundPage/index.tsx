@@ -11,7 +11,7 @@ export default function NotFoundPage() {
           <p>현재 페이지는 존재하지 않는 페이지에요.</p>
 
           <div className="card-actions justify-end">
-            <NavLink to={`/${Routes.MAIN}`}>
+            <NavLink to={`/${Routes.Main}`}>
               <button className="btn btn-primary">홈으로 돌아가기</button>
             </NavLink>
           </div>

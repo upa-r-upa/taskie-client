@@ -84,7 +84,7 @@ export default function TokenRefresher() {
 
         return client(originalRequest);
       } catch (error) {
-        navigate(Routes.LOGIN);
+        navigate(Routes.Login);
         addMessage({
           message: "토큰이 만료되어 로그아웃 되었습니다. 다시 로그인해주세요.",
           type: "warning",
@@ -119,7 +119,7 @@ export default function TokenRefresher() {
         ) {
           await accessTokenRefresh(originalRequest);
         } else if (error.response?.status === 403) {
-          navigate(Routes.LOGIN, { replace: true });
+          navigate(Routes.Login, { replace: true });
           addMessage({
             message: "현재 요청한 작업을 처리 할 권한이 없습니다.",
             type: "warning",

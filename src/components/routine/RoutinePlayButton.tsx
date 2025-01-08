@@ -9,7 +9,7 @@ interface Props {
 
 export default function RoutinePlayButton({ routineId }: Props) {
   return (
-    <Link to={`/${Routes.ROUTINE_PLAY}${routineId}`}>
+    <Link to={`/${Routes.RoutinePlay}${routineId}`}>
       <button className="btn btn-sm btn-circle btn-outline btn-primary">
         <BsFillPlayFill />
       </button>
