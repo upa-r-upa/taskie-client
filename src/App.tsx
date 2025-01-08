@@ -8,7 +8,7 @@ import Messages from "./components/Messages";
 function App() {
   return (
     <>
-      <div className="container max-w-xl mx-auto flex flex-col h-screen">
+      <div className="relative container max-w-xl mx-auto flex flex-col h-screen">
         <NavBar />
 
         <div className="flex-1 w-full overflow-y-auto">
@@ -18,10 +18,10 @@ function App() {
         </div>
 
         <BottomNavigation />
+        <Messages />
       </div>
 
       <TokenRefresher />
-      <Messages />
     </>
   );
 }
