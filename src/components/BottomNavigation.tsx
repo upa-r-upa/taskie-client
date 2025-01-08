@@ -12,7 +12,7 @@ export default function BottomNavigation() {
   return (
     <div className="btm-nav static bordered btm-nav-md">
       <button className="[&:has(.active)]:active">
-        <NavLink to={`/${Routes.MAIN}`}>
+        <NavLink to={`/${Routes.Main}`}>
           <span className="block max-w-max mx-auto text-2xl">
             <BsHouseDoor />
           </span>
@@ -21,7 +21,7 @@ export default function BottomNavigation() {
       </button>
 
       <button className="[&:has(.active)]:active">
-        <NavLink to={`/${Routes.TODO}`}>
+        <NavLink to={`/${Routes.Todo}`}>
           <span className="block max-w-max mx-auto text-2xl">
             <BsCheck2Square />
           </span>
@@ -30,7 +30,7 @@ export default function BottomNavigation() {
       </button>
 
       <button className="[&:has(.active)]:active">
-        <NavLink to={`/${Routes.ROUTINE}`}>
+        <NavLink to={`/${Routes.Routine}`}>
           <span className="block max-w-max mx-auto text-2xl">
             <BsListCheck />
           </span>
@@ -39,7 +39,7 @@ export default function BottomNavigation() {
       </button>
 
       <button className="[&:has(.active)]:active">
-        <NavLink to={`/${Routes.HABIT}`}>
+        <NavLink to={`/${Routes.Habit}`}>
           <span className="block max-w-max mx-auto text-2xl">
             <BsCheck2Circle />
           </span>

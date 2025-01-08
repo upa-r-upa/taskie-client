@@ -16,7 +16,7 @@ const NavBar = () => {
     mutationFn: authApi.logout,
     onSuccess: () => {
       clearAuthState();
-      navigate(`/${Routes.LOGIN}`);
+      navigate(`/${Routes.Login}`);
       addMessage({
         message: "로그아웃이 완료되었습니다.",
       });
@@ -44,10 +44,10 @@ const NavBar = () => {
           className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
         >
           <li>
-            <Link to={`/${Routes.LOGIN}`}>로그인</Link>
+            <Link to={`/${Routes.Login}`}>로그인</Link>
           </li>
           <li>
-            <Link to={`/${Routes.SIGN_UP}`}>회원가입</Link>
+            <Link to={`/${Routes.SignUp}`}>회원가입</Link>
           </li>
         </ul>
       );
@@ -90,7 +90,7 @@ const NavBar = () => {
       </div>
 
       <div className="navbar-center">
-        <Link to={`/${Routes.MAIN}`} className="btn btn-ghost text-3xl">
+        <Link to={`/${Routes.Main}`} className="btn btn-ghost text-3xl">
           Taskie
         </Link>
       </div>

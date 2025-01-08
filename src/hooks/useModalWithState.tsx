@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-function useModalWithState<T = boolean>(modalState?: T) {
+export default function useModalWithState<T = boolean>(modalState?: T) {
   const modalRef = useRef<HTMLDialogElement>(null);
   const [innerModalState, setInnerModalState] = useState<T | null>(
     modalState || null
@@ -28,5 +28,3 @@ function useModalWithState<T = boolean>(modalState?: T) {
 
   return { modalRef, modalState: innerModalState, closeModal, openModal };
 }
-
-export default useModalWithState;

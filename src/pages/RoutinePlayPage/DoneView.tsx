@@ -34,7 +34,7 @@ export default function DoneView({ routine, goToInitialStep }: Props) {
           다시 진행하기
         </button>
 
-        <NavLink to={`/${Routes.MAIN}`}>
+        <NavLink to={`/${Routes.Main}`}>
           <button className="mt-4 btn w-full btn-primary btn-outline">
             홈으로
           </button>

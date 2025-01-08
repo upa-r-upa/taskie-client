@@ -53,7 +53,7 @@ export default function CompletedRoutine({
       <div className="card-body">
         <div className="flex">
           <div className="flex-1 text-gray-400">
-            <Link to={`/${Routes.ROUTINE_EDIT}${routine.id}`}>
+            <Link to={`/${Routes.RoutineEdit}${routine.id}`}>
               <p>
                 {badgeLabel && (
                   <span className="badge badge-primary badge-outline badge-sm mr-2">

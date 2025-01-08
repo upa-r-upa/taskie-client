@@ -32,7 +32,7 @@ export default function ThumbnailView({ routine, goToNextStep }: Props) {
             루틴에 작업을 추가해서 루틴을 실행해보세요.
           </p>
 
-          <Link to={`/${Routes.ROUTINE_EDIT}${routine.id}`}>
+          <Link to={`/${Routes.RoutineEdit}${routine.id}`}>
             <button className="btn btn-sm btn-outline btn-primary">
               <BsArrowRight /> 루틴 수정하기
             </button>

@@ -61,7 +61,7 @@ export default function RoutineList({ routineList }: Props) {
     <>
       <ul className="flex flex-col">{renderRoutineList(routineList)}</ul>
 
-      <Link to={`/${Routes.ROUTINE_CREATE}`}>
+      <Link to={`/${Routes.RoutineCreate}`}>
         <button className="btn btn-circle btn-md btn-primary absolute right-0 top-0 shadow-lg">
           <BsPlusLg />
         </button>

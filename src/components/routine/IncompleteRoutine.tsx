@@ -39,7 +39,7 @@ export default function IncompleteRoutine({
       <div className="card-body">
         <div className="flex">
           <div className="flex-1">
-            <Link to={`/${Routes.ROUTINE_EDIT}${routine.id}`}>
+            <Link to={`/${Routes.RoutineEdit}${routine.id}`}>
               {badgeLabel && (
                 <span className="badge badge-primary badge-outline badge-sm">
                   {badgeLabel}

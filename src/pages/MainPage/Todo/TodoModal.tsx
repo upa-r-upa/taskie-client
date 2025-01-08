@@ -11,9 +11,10 @@ import { TodoModalSubmitProps } from "../types";
 interface TodoModalProps {
   modalTitle: string;
   modalId: string;
-  title: string;
+
   targetDate: Date;
 
+  title?: string;
   content?: string;
   isLoading?: boolean;
   extraButton?: React.ReactElement;
@@ -28,8 +29,8 @@ const TodoModal = forwardRef<HTMLDialogElement, TodoModalProps>(
       modalTitle,
       modalId,
       isLoading,
-      title: originTitle,
-      content: originContent,
+      title: originTitle = "",
+      content: originContent = "",
       targetDate: originTargetDate,
       onCancel,
       onTodoSubmit,
@@ -38,7 +39,7 @@ const TodoModal = forwardRef<HTMLDialogElement, TodoModalProps>(
     ref
   ) => {
     const [title, setTitle] = useState<string>(originTitle);
-    const [content, setContent] = useState<string>(originContent || "");
+    const [content, setContent] = useState<string>(originContent);
     const [targetDate, setTargetDate] = useState<Date>(
       getDateWithoutTime(originTargetDate)
     );

@@ -66,7 +66,7 @@ export default function ActivatedHabit({
               </p>
 
               <p>
-                {log_list.length &&
+                {log_list.length > 0 &&
                   `${convertMinutesToHours(getTimeDifferenceFromNow(log_list[0].completed_at))} 전에 실천했어요.`}
               </p>
 
@@ -80,7 +80,7 @@ export default function ActivatedHabit({
             </>
           )}
 
-          {log_list.length && (
+          {log_list.length > 0 && (
             <progress
               className="progress progress-primary w-56"
               value={(log_list.length / count) * 100}
