@@ -1,6 +1,5 @@
 import { getFormatTime, isToday } from "@/utils/time";
-
-import { TodoItemProps } from "./types";
+import { TodoItemProps } from "@/pages/MainPage/Todo/types";
 
 interface Props extends TodoItemProps {}
 

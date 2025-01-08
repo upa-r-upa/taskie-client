@@ -10,6 +10,8 @@ interface Props {
   onAddTodoClick: () => void;
   onTodoClick: (todo: TodoPublic) => void;
   onTodoCheck: (todo: TodoPublic, checked: boolean) => void;
+
+  isGrouped?: boolean;
 }
 
 export default function TodoList({
@@ -17,6 +19,7 @@ export default function TodoList({
   onAddTodoClick,
   onTodoClick,
   onTodoCheck,
+  isGrouped,
 }: Props) {
   if (todoList.length === 0) {
     return (
@@ -57,15 +60,13 @@ export default function TodoList({
         })}
       </ul>
 
-      {todoList.length ? (
+      {todoList.length > 0 && (
         <button
           onClick={onAddTodoClick}
-          className="btn btn-primary btn-outline btn-sm"
+          className="btn btn-primary btn-outline btn-sm mt-4"
         >
           할 일 추가하기
         </button>
-      ) : (
-        <></>
       )}
     </>
   );

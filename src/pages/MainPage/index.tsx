@@ -60,7 +60,7 @@ function MainPage() {
         <TodoSection
           date={targetDate}
           todoList={data?.data?.todo_list || []}
-          fetchData={refetch}
+          reloadTodoList={refetch}
         />
       </div>
 
