@@ -5,7 +5,6 @@ import {
   BsExclamationCircle,
   BsInfoCircle,
 } from "react-icons/bs";
-import { createPortal } from "react-dom";
 import { useMemo } from "react";
 
 import { MessageType, useMessageStore } from "@/state/useMessageStore";
@@ -64,13 +63,10 @@ export default function Messages() {
   }, [clearMessage, messages]);
 
   return (
-    <>
-      {createPortal(
-        <div className={`fixed bottom-0 w-full p-3 flex flex-col gap-3 z-50`}>
-          {messageList}
-        </div>,
-        document.body
-      )}
-    </>
+    <div
+      className={`absolute left-0 right-0 bottom-0 flex flex-col gap-3 z-50`}
+    >
+      {messageList}
+    </div>
   );
 }
