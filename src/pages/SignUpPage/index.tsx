@@ -14,7 +14,7 @@ const messages: { [key: string]: { [key: string]: string } } = {
     VALUE_TOO_SHORT: "아이디는 4자 이상이어야 합니다.",
     VALUE_TOO_LONG: "아이디는 20자 이하이어야 합니다.",
     VALUE_MUST_BE_ALPHANUM: "아이디는 영문 혹은 영문과 숫자를 조합해주세요.",
-    UserNAME_ALREADY_EXISTS:
+    USERNAME_ALREADY_EXISTS:
       "이미 사용중인 아이디입니다. 다른 아이디를 입력해주세요.",
   },
   password: {
@@ -78,7 +78,8 @@ const SignUpPage = () => {
         }
       } else if (error.response?.status === 409) {
         const { error_type } = error.response.data;
-        if (error_type == "UserNAME_ALREADY_EXISTS") {
+
+        if (error_type == "USERNAME_ALREADY_EXISTS") {
           addMessage({
             message: messages.username[error_type],
             type: "warning",
