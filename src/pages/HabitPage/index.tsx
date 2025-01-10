@@ -3,7 +3,6 @@ import { useState } from "react";
 
 import { habitsApi, queryClient } from "@/api/client";
 import { formatDate } from "@/utils/time";
-import Loading from "@/components/Loading";
 
 import HabitList from "./HabitList";
 
