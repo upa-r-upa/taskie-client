@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { BsPlusLg } from "react-icons/bs";
 import { useState } from "react";
 
-import Loading from "@/components/Loading";
 import TodoList from "@/components/todo/TodoList";
 import CompletedTodoList from "@/components/todo/CompletedTodoList";
 import useTodoMutations from "@/hooks/useTodoMutations";
@@ -12,6 +11,16 @@ import { TodoPublic } from "@/api/generated";
 import { API_REFETCH_INTERVAL } from "@/constants/api";
 
 import TodoModal from "../MainPage/Todo/TodoModal";
+
+function TodoLoadingSkeleton() {
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="skeleton h-10 w-28"></div>
+      <div className="skeleton h-10"></div>
+      <div className="skeleton h-10"></div>
+    </div>
+  );
+}
 
 export default function TodoPage() {
   const [date] = useState(() => new Date());
@@ -49,10 +58,6 @@ export default function TodoPage() {
     createTodoMutation,
   } = useTodoMutations(reloadTodoList);
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
   const renderTodoUpdateModal = (todo: TodoPublic | null) => {
     if (!todo) return;
 
@@ -84,13 +89,17 @@ export default function TodoPage() {
     <div className="relative">
       <h1 className="text-2xl font-semibold mb-3">할 일 목록</h1>
 
-      <TodoList
-        isGrouped
-        todoList={todoList?.data || []}
-        onAddTodoClick={createModalState.openModal}
-        onTodoClick={updateModalState.openModal}
-        onTodoCheck={onUpdateTodoChecked}
-      />
+      {isLoading ? (
+        <TodoLoadingSkeleton />
+      ) : (
+        <TodoList
+          isGrouped
+          todoList={todoList?.data || []}
+          onAddTodoClick={createModalState.openModal}
+          onTodoClick={updateModalState.openModal}
+          onTodoCheck={onUpdateTodoChecked}
+        />
+      )}
 
       <button
         onClick={createModalState.openModal}
@@ -107,7 +116,7 @@ export default function TodoPage() {
 
         <div className="p-2 bg-white">
           {doneTodoListIsLoading ? (
-            <Loading />
+            <TodoLoadingSkeleton />
           ) : (
             <CompletedTodoList
               todoList={doneTodoList?.data || []}

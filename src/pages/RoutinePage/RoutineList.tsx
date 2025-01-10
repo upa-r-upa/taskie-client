@@ -9,10 +9,21 @@ import IncompleteRoutine from "@/components/routine/IncompleteRoutine";
 import CompletedRoutine from "@/components/routine/CompletedRoutine";
 
 interface Props {
+  isLoading: boolean;
   routineList: Array<RoutinePublic>;
 }
 
-export default function RoutineList({ routineList }: Props) {
+function RoutineLoadingSkeleton() {
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="skeleton h-20 w-48"></div>
+      <div className="skeleton h-20"></div>
+      <div className="skeleton h-20"></div>
+    </div>
+  );
+}
+
+export default function RoutineList({ isLoading, routineList }: Props) {
   const renderRoutineList = (list: Array<RoutinePublic>) => {
     if (list.length === 0) {
       return <EmptyCard label="루틴" />;
@@ -59,7 +70,11 @@ export default function RoutineList({ routineList }: Props) {
 
   return (
     <>
-      <ul className="flex flex-col">{renderRoutineList(routineList)}</ul>
+      {isLoading ? (
+        <RoutineLoadingSkeleton />
+      ) : (
+        <ul className="flex flex-col">{renderRoutineList(routineList)}</ul>
+      )}
 
       <Link to={`/${Routes.RoutineCreate}`}>
         <button className="btn btn-circle btn-md btn-primary absolute right-0 top-0 shadow-lg">

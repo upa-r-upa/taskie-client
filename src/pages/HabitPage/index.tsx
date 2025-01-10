@@ -30,15 +30,12 @@ export default function HabitPage() {
     refetchInterval: 60 * 1000,
   });
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
   return (
     <div>
       <h1 className="text-2xl font-semibold mb-3">습관</h1>
       <HabitList
         reloadHabitList={invalidateQueries}
+        isLoading={isLoading}
         habitList={data?.data || []}
         date={date}
       />
