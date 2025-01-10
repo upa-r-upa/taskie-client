@@ -72,10 +72,13 @@ export default function RoutineCreatePage() {
         onTodoUpdate={onTodoUpdate}
         buttons={
           <>
+            <button onClick={() => navigate(-1)} className="btn flex-1">
+              취소
+            </button>
             <button
               onClick={handleSubmit}
               disabled={isDisabled()}
-              className="btn btn-primary mt-5"
+              className="btn btn-primary flex-[2]"
             >
               루틴 추가하기
             </button>
