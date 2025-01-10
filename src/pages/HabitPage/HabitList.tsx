@@ -1,3 +1,5 @@
+import { BsPlusLg } from "react-icons/bs";
+
 import { HabitWithLog } from "@/api/generated";
 import { getWeek, parseRepeatDays } from "@/utils/time";
 import HabitModal from "@/components/habit/HabitModal";
@@ -89,14 +91,10 @@ export default function HabitList({
         <ul className="flex flex-col">{renderHabitList(habitList)}</ul>
       )}
 
-      {habitList.length > 0 && (
-        <button
-          onClick={openCreateModal}
-          className="btn btn-primary btn-outline btn-sm mt-2"
-        >
-          습관 추가하기
-        </button>
-      )}
+      <button onClick={openCreateModal} className="float-btn">
+        <BsPlusLg />
+        습관 추가하기
+      </button>
 
       <HabitModal
         modalRef={createModalRef}

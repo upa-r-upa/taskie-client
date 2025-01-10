@@ -72,15 +72,6 @@ export default function TodoList({
           );
         })}
       </ul>
-
-      {todoList.length > 0 && (
-        <button
-          onClick={onAddTodoClick}
-          className="btn btn-primary btn-outline btn-sm mt-4"
-        >
-          할 일 추가하기
-        </button>
-      )}
     </>
   );
 }

@@ -17,3 +17,7 @@
 .root-content {
   @apply max-w-lg mx-auto;
 }
+
+.float-btn {
+  @apply btn px-6 btn-primary fixed right-4 bottom-16 rounded-badge shadow-lg z-10;
+}

@@ -77,8 +77,9 @@ export default function RoutineList({ isLoading, routineList }: Props) {
       )}
 
       <Link to={`/${Routes.RoutineCreate}`}>
-        <button className="btn btn-circle btn-md btn-primary absolute right-0 top-0 shadow-lg">
+        <button className="float-btn">
           <BsPlusLg />
+          루틴 추가하기
         </button>
       </Link>
     </>

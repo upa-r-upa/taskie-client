@@ -41,7 +41,7 @@ export default function RoutineSection({ routineList }: Props) {
 
       {routineList.length > 0 && (
         <Link to={`/${Routes.RoutineCreate}`}>
-          <button className="btn btn-primary btn-outline btn-sm mt-2">
+          <button className="btn btn-primary btn-outline btn-block mt-2">
             루틴 추가하러 가기
           </button>
         </Link>

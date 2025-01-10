@@ -16,7 +16,7 @@ export default function CompletedTodoList({
   onTodoClick,
 }: Props) {
   if (todoList.length === 0) {
-    return <p className="text-center my-4">완료한 투두 목록이 없어요.</p>;
+    return <p className="text-center my-4">완료한 할일 목록이 없어요.</p>;
   }
 
   return (
