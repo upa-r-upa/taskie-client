@@ -8,15 +8,14 @@ export default {
     "./node_modules/react-tailwindcss-datepicker/dist/index.esm.js",
   ],
   daisyui: {
-    themes: [
-      "emerald", // good
-      "night", // good
-      "winter", // good
-      "dim", // good
-      "light",
-      "dark",
-      "sunset",
-    ],
+    themes: ["winter"],
   },
   plugins: [daisyui],
+  theme: {
+    extend: {
+      height: {
+        screen: ["100vh", "100dvh"],
+      },
+    },
+  },
 };
