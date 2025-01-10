@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { routineApi } from "@/api/client";
-import Loading from "@/components/Loading";
 
 import RoutineList from "./RoutineList";
 
@@ -13,15 +12,11 @@ export default function RoutinePage() {
     refetchInterval: 60 * 1000,
   });
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
   return (
     <div className="relative">
       <h1 className="text-2xl font-semibold mb-3">루틴 목록</h1>
 
-      <RoutineList routineList={data?.data || []} />
+      <RoutineList isLoading={isLoading} routineList={data?.data || []} />
     </div>
   );
 }

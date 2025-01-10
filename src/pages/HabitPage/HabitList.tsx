@@ -1,3 +1,5 @@
+import { BsPlusLg } from "react-icons/bs";
+
 import { HabitWithLog } from "@/api/generated";
 import { getWeek, parseRepeatDays } from "@/utils/time";
 import HabitModal from "@/components/habit/HabitModal";
@@ -9,12 +11,28 @@ import DisabledHabit from "./DisabledHabit";
 
 interface Props {
   date: Date;
+  isLoading: boolean;
   habitList: HabitWithLog[];
 
   reloadHabitList: () => void;
 }
 
-export default function HabitList({ date, habitList, reloadHabitList }: Props) {
+function HabitSkeleton() {
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="skeleton h-24 w-48"></div>
+      <div className="skeleton h-24"></div>
+      <div className="skeleton h-24"></div>
+    </div>
+  );
+}
+
+export default function HabitList({
+  isLoading,
+  date,
+  habitList,
+  reloadHabitList,
+}: Props) {
   const {
     createHabitModal,
     updateHabitModal,
@@ -67,15 +85,16 @@ export default function HabitList({ date, habitList, reloadHabitList }: Props) {
 
   return (
     <>
-      <ul className="flex flex-col">{renderHabitList(habitList)}</ul>
-      {habitList.length > 0 && (
-        <button
-          onClick={openCreateModal}
-          className="btn btn-primary btn-outline btn-sm mt-2"
-        >
-          습관 추가하기
-        </button>
+      {isLoading ? (
+        <HabitSkeleton />
+      ) : (
+        <ul className="flex flex-col">{renderHabitList(habitList)}</ul>
       )}
+
+      <button onClick={openCreateModal} className="float-btn">
+        <BsPlusLg />
+        습관 추가하기
+      </button>
 
       <HabitModal
         modalRef={createModalRef}

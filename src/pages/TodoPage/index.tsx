@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { BsPlusLg } from "react-icons/bs";
 import { useState } from "react";
 
-import Loading from "@/components/Loading";
 import TodoList from "@/components/todo/TodoList";
 import CompletedTodoList from "@/components/todo/CompletedTodoList";
 import useTodoMutations from "@/hooks/useTodoMutations";
@@ -12,6 +11,16 @@ import { TodoPublic } from "@/api/generated";
 import { API_REFETCH_INTERVAL } from "@/constants/api";
 
 import TodoModal from "../MainPage/Todo/TodoModal";
+
+function TodoLoadingSkeleton() {
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="skeleton h-10 w-28"></div>
+      <div className="skeleton h-10"></div>
+      <div className="skeleton h-10"></div>
+    </div>
+  );
+}
 
 export default function TodoPage() {
   const [date] = useState(() => new Date());
@@ -49,10 +58,6 @@ export default function TodoPage() {
     createTodoMutation,
   } = useTodoMutations(reloadTodoList);
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
   const renderTodoUpdateModal = (todo: TodoPublic | null) => {
     if (!todo) return;
 
@@ -81,33 +86,35 @@ export default function TodoPage() {
   };
 
   return (
-    <div className="relative">
+    <div className="relative pb-4">
       <h1 className="text-2xl font-semibold mb-3">할 일 목록</h1>
 
-      <TodoList
-        isGrouped
-        todoList={todoList?.data || []}
-        onAddTodoClick={createModalState.openModal}
-        onTodoClick={updateModalState.openModal}
-        onTodoCheck={onUpdateTodoChecked}
-      />
+      {isLoading ? (
+        <TodoLoadingSkeleton />
+      ) : (
+        <TodoList
+          isGrouped
+          todoList={todoList?.data || []}
+          onAddTodoClick={createModalState.openModal}
+          onTodoClick={updateModalState.openModal}
+          onTodoCheck={onUpdateTodoChecked}
+        />
+      )}
 
-      <button
-        onClick={createModalState.openModal}
-        className="btn btn-circle btn-md btn-primary absolute right-0 top-0 shadow-lg"
-      >
+      <button onClick={createModalState.openModal} className="float-btn">
         <BsPlusLg />
+        할일 추가하기
       </button>
 
       <div className="collapse collapse-arrow card-bordered shadow-sm mt-6 bg-slate-50">
         <input type="radio" name="done-todos" defaultChecked={false} />
         <div className="collapse-title text-lg font-medium">
-          완료한 투두 목록
+          완료한 할일 목록
         </div>
 
         <div className="p-2 bg-white">
           {doneTodoListIsLoading ? (
-            <Loading />
+            <TodoLoadingSkeleton />
           ) : (
             <CompletedTodoList
               todoList={doneTodoList?.data || []}

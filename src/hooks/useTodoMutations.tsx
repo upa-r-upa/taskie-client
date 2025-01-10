@@ -40,7 +40,7 @@ export default function useTodoMutations(reloadTodoList: () => void) {
       updateModalState.closeModal();
       reloadTodoList();
     },
-    onError: () => addFailureMessage("투두 추가에 실패했습니다."),
+    onError: () => addFailureMessage("할일 추가에 실패했습니다."),
   });
 
   const onTodoUpdateSuccess = () => {
@@ -52,7 +52,7 @@ export default function useTodoMutations(reloadTodoList: () => void) {
     mutationFn: (input: TodoUpdateInputParameter) =>
       todoApi.updateTodo(input.id, input.update),
     onSuccess: onTodoUpdateSuccess,
-    onError: () => addFailureMessage("투두 수정에 실패했습니다."),
+    onError: () => addFailureMessage("할일 수정에 실패했습니다."),
   });
 
   const onUpdateTodoSubmit = (todo: TodoModalSubmitProps) => {
@@ -71,7 +71,7 @@ export default function useTodoMutations(reloadTodoList: () => void) {
   const deleteTodoMutation = useMutation({
     mutationFn: todoApi.deleteTodo,
     onSuccess: onTodoUpdateSuccess,
-    onError: () => addFailureMessage("투두 삭제에 실패했습니다."),
+    onError: () => addFailureMessage("할일 삭제에 실패했습니다."),
   });
 
   const onUpdateTodoChecked = (todo: TodoPublic, checked: boolean) => {

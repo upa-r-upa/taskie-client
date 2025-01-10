@@ -3,7 +3,6 @@ import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import { useState } from "react";
 
 import { queryClient, taskApi } from "@/api/client";
-import Loading from "@/components/Loading";
 import { formatDate } from "@/utils/time";
 
 import TodoSection from "./Todo/TodoSection";
@@ -33,10 +32,6 @@ function MainPage() {
     if (date) setTargetDate(date);
   };
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
   return (
     <>
       <Datepicker
@@ -57,24 +52,46 @@ function MainPage() {
       <div className="container my-5">
         <h2 className="text-xl mb-2">할 일</h2>
 
-        <TodoSection
-          date={targetDate}
-          todoList={data?.data?.todo_list || []}
-          reloadTodoList={refetch}
-        />
+        {isLoading ? (
+          <div className="flex flex-col gap-4">
+            <div className="skeleton h-10 w-28"></div>
+            <div className="skeleton h-10"></div>
+            <div className="skeleton h-10"></div>
+          </div>
+        ) : (
+          <TodoSection
+            date={targetDate}
+            todoList={data?.data?.todo_list || []}
+            reloadTodoList={refetch}
+          />
+        )}
       </div>
 
       <div className="container mb-5">
         <h2 className="text-xl mb-2">습관</h2>
-        <HabitSection
-          habitList={data?.data?.habit_list || []}
-          reloadHabitList={refetch}
-        />
+        {isLoading ? (
+          <div className="flex flex-col gap-4">
+            <div className="skeleton h-12"></div>
+            <div className="skeleton h-12"></div>
+          </div>
+        ) : (
+          <HabitSection
+            habitList={data?.data?.habit_list || []}
+            reloadHabitList={refetch}
+          />
+        )}
       </div>
 
       <div className="container mb-5">
         <h2 className="text-xl mb-2">루틴</h2>
-        <RoutineSection routineList={data?.data?.routine_list || []} />
+        {isLoading ? (
+          <div className="flex flex-col gap-4">
+            <div className="skeleton h-20"></div>
+            <div className="skeleton h-20"></div>
+          </div>
+        ) : (
+          <RoutineSection routineList={data?.data?.routine_list || []} />
+        )}
       </div>
     </>
   );

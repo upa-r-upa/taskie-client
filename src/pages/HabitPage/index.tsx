@@ -3,7 +3,6 @@ import { useState } from "react";
 
 import { habitsApi, queryClient } from "@/api/client";
 import { formatDate } from "@/utils/time";
-import Loading from "@/components/Loading";
 
 import HabitList from "./HabitList";
 
@@ -30,15 +29,12 @@ export default function HabitPage() {
     refetchInterval: 60 * 1000,
   });
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
   return (
     <div>
       <h1 className="text-2xl font-semibold mb-3">습관</h1>
       <HabitList
         reloadHabitList={invalidateQueries}
+        isLoading={isLoading}
         habitList={data?.data || []}
         date={date}
       />

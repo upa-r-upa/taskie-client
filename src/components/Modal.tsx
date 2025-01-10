@@ -1,4 +1,5 @@
 import { forwardRef } from "react";
+import { createPortal } from "react-dom";
 
 interface Props {
   title: string;
@@ -11,11 +12,11 @@ interface Props {
 
 const Modal = forwardRef<HTMLDialogElement, Props>(
   ({ id, title, children, buttons }, ref) => {
-    return (
+    return createPortal(
       <dialog
         ref={ref}
         id={id}
-        className="modal rounded-lg shadow-lg p-3 pb-0 modal-bottom z-1"
+        className="modal rounded-lg shadow-lg p-3 modal-bottom pb-0 z-1"
       >
         <div className="modal-box flex flex-col max-w-lg mx-auto">
           <div className="flex-1">
@@ -30,7 +31,8 @@ const Modal = forwardRef<HTMLDialogElement, Props>(
             {buttons}
           </div>
         </div>
-      </dialog>
+      </dialog>,
+      document.getElementById("root") || document.body
     );
   }
 );

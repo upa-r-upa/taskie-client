@@ -60,6 +60,15 @@ export default function TodoSection({ date, todoList, reloadTodoList }: Props) {
         onTodoCheck={onUpdateTodoChecked}
       />
 
+      {todoList.length > 0 && (
+        <button
+          onClick={createModalState.openModal}
+          className="btn btn-primary btn-outline btn-block mt-4"
+        >
+          할 일 추가하기
+        </button>
+      )}
+
       <TodoModal
         ref={createModalState.modalRef}
         key={createModalState.isModalOpened ? "open" : "close"}

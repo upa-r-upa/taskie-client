@@ -134,15 +134,14 @@ export default function HabitSection({ habitList, reloadHabitList }: Props) {
   return (
     <>
       <ul>{renderHabitList(habitList)}</ul>
-      {habitList.length ? (
+
+      {habitList.length > 0 && (
         <button
           onClick={openCreateModal}
-          className="btn btn-primary btn-outline btn-sm mt-2"
+          className="btn btn-primary btn-outline btn-block mt-2"
         >
           습관 추가하기
         </button>
-      ) : (
-        <></>
       )}
 
       <HabitModal
