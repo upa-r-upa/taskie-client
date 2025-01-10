@@ -13,3 +13,7 @@
   ) {
   scrollbar-gutter: inherit;
 }
+
+.root-content {
+  @apply max-w-lg mx-auto;
+}

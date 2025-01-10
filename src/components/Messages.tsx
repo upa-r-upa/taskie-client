@@ -64,7 +64,7 @@ export default function Messages() {
 
   return (
     <div
-      className={`absolute left-0 right-0 bottom-0 flex flex-col gap-3 z-50`}
+      className={`fixed left-0 right-0 bottom-0 flex flex-col gap-3 z-50 root-content`}
     >
       {messageList}
     </div>

@@ -8,13 +8,11 @@ import Messages from "./components/Messages";
 function App() {
   return (
     <>
-      <div className="relative container max-w-xl mx-auto flex flex-col h-screen">
+      <div className="relative overflow-y-auto min-h-screen flex flex-col root-content">
         <NavBar />
 
-        <div className="flex-1 w-full overflow-y-auto">
-          <div className="w-full min-h-full flex flex-col mx-auto max-w-md font-sans py-5 px-10">
-            <Outlet />
-          </div>
+        <div className="px-8 pt-20 pb-20 flex-1">
+          <Outlet />
         </div>
 
         <BottomNavigation />
