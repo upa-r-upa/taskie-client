@@ -37,18 +37,18 @@
 # 스펙
 
 - React + TS + vite
-- daisyui + tailwindcss
+- shadcn + tailwindcss
 - zustand
 
 # 실행 방법
 
 ## 1. 준비
 
-- Node.js >= 21 
+- Node.js >= 21
 - Pnpm 설치
-    ```bash
-    npm install -g pnpm
-    ```
+  ```bash
+  npm install -g pnpm
+  ```
 
 ## 2. 레포지터리 클론
 
