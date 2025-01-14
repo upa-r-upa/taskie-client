@@ -11,7 +11,7 @@ export default function RequireAuth() {
 
   if (isAccessTokenRefreshing) {
     return (
-      <div className="fixed top-0 left-0 w-full flex items-center h-full z-30">
+      <div className="fixed top-0 left-0 right-0 w-full flex items-center h-full z-30 root-content">
         <div className="w-full h-full bg-black bg-opacity-20 absolute"></div>
         <div className="text-center w-full ">
           <span className="loading loading-dots loading-lg"></span>

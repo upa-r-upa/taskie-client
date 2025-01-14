@@ -19,5 +19,5 @@
 }
 
 .float-btn {
-  @apply btn px-6 btn-primary fixed right-4 bottom-16 rounded-badge shadow-lg z-10;
+  @apply btn px-6 btn-primary absolute right-4 bottom-20 rounded-badge shadow-lg z-10;
 }

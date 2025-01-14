@@ -30,7 +30,7 @@ export default function HabitPage() {
   });
 
   return (
-    <div>
+    <>
       <h1 className="text-2xl font-semibold mb-3">습관</h1>
       <HabitList
         reloadHabitList={invalidateQueries}
@@ -38,6 +38,6 @@ export default function HabitPage() {
         habitList={data?.data || []}
         date={date}
       />
-    </div>
+    </>
   );
 }

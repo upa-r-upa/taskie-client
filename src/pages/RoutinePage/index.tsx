@@ -13,10 +13,10 @@ export default function RoutinePage() {
   });
 
   return (
-    <div className="relative">
+    <>
       <h1 className="text-2xl font-semibold mb-3">루틴 목록</h1>
 
       <RoutineList isLoading={isLoading} routineList={data?.data || []} />
-    </div>
+    </>
   );
 }
