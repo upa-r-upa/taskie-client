@@ -86,57 +86,59 @@ export default function TodoPage() {
   };
 
   return (
-    <div className="relative pb-4">
-      <h1 className="text-2xl font-semibold mb-3">할 일 목록</h1>
+    <>
+      <div className="relative pb-4">
+        <h1 className="text-2xl font-semibold mb-3">할 일 목록</h1>
 
-      {isLoading ? (
-        <TodoLoadingSkeleton />
-      ) : (
-        <TodoList
-          isGrouped
-          todoList={todoList?.data || []}
-          onAddTodoClick={createModalState.openModal}
-          onTodoClick={updateModalState.openModal}
-          onTodoCheck={onUpdateTodoChecked}
+        {isLoading ? (
+          <TodoLoadingSkeleton />
+        ) : (
+          <TodoList
+            isGrouped
+            todoList={todoList?.data || []}
+            onAddTodoClick={createModalState.openModal}
+            onTodoClick={updateModalState.openModal}
+            onTodoCheck={onUpdateTodoChecked}
+          />
+        )}
+
+        <div className="collapse collapse-arrow card-bordered shadow-sm mt-6 bg-slate-50">
+          <input type="radio" name="done-todos" defaultChecked={false} />
+          <div className="collapse-title text-lg font-medium">
+            완료한 할일 목록
+          </div>
+
+          <div className="p-2 bg-white">
+            {doneTodoListIsLoading ? (
+              <TodoLoadingSkeleton />
+            ) : (
+              <CompletedTodoList
+                todoList={doneTodoList?.data || []}
+                onTodoCheck={onUpdateTodoChecked}
+                onTodoClick={updateModalState.openModal}
+              />
+            )}
+          </div>
+        </div>
+
+        <TodoModal
+          ref={createModalState.modalRef}
+          key={createModalState.isModalOpened ? "open" : "close"}
+          modalTitle="할 일 추가하기"
+          modalId="todo-create"
+          targetDate={getDateWithoutTime(date)}
+          onTodoSubmit={onAddTodoSubmit}
+          isLoading={createTodoMutation.isPending}
+          onCancel={createModalState.closeModal}
         />
-      )}
+
+        {renderTodoUpdateModal(updateModalState.modalState)}
+      </div>
 
       <button onClick={createModalState.openModal} className="float-btn">
         <BsPlusLg />
         할일 추가하기
       </button>
-
-      <div className="collapse collapse-arrow card-bordered shadow-sm mt-6 bg-slate-50">
-        <input type="radio" name="done-todos" defaultChecked={false} />
-        <div className="collapse-title text-lg font-medium">
-          완료한 할일 목록
-        </div>
-
-        <div className="p-2 bg-white">
-          {doneTodoListIsLoading ? (
-            <TodoLoadingSkeleton />
-          ) : (
-            <CompletedTodoList
-              todoList={doneTodoList?.data || []}
-              onTodoCheck={onUpdateTodoChecked}
-              onTodoClick={updateModalState.openModal}
-            />
-          )}
-        </div>
-      </div>
-
-      <TodoModal
-        ref={createModalState.modalRef}
-        key={createModalState.isModalOpened ? "open" : "close"}
-        modalTitle="할 일 추가하기"
-        modalId="todo-create"
-        targetDate={getDateWithoutTime(date)}
-        onTodoSubmit={onAddTodoSubmit}
-        isLoading={createTodoMutation.isPending}
-        onCancel={createModalState.closeModal}
-      />
-
-      {renderTodoUpdateModal(updateModalState.modalState)}
-    </div>
+    </>
   );
 }

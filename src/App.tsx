@@ -8,10 +8,10 @@ import Messages from "./components/Messages";
 function App() {
   return (
     <>
-      <div className="relative overflow-y-auto min-h-screen flex flex-col root-content">
+      <div className="overflow-y-auto min-h-screen flex flex-col root-content">
         <NavBar />
 
-        <div className="px-8 pt-20 pb-20 flex-1">
+        <div className="px-8 pt-20 pb-20 flex-1 relative">
           <Outlet />
         </div>
 
