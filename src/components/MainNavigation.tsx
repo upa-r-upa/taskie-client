@@ -1,34 +1,41 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 import Routes from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
 export default function MainNavigation() {
+  const getLinkClassName = ({ isActive }: { isActive: boolean }) => {
+    return cn(
+      "transition-colors hover:text-foreground/80",
+      isActive ? "text-foreground" : "text-muted-foreground"
+    );
+  };
+
   return (
     <div className="mr-4 flex px-4">
       <Link to={Routes.Main} className="mr-4 lg:mr-6">
         <span className="font-bold">TASKIE</span>
       </Link>
 
-      <nav className="flex items-center gap-4 text-sm xl:gap-6">
-        <Link
+      <nav className="flex items-center gap-4 text-sm xl:gap-6 [&:has(.active)]:text-cyan-300">
+        <NavLink
           to={Routes.Todo}
-          className={cn("transition-colors hover:text-foreground/80")}
+          className={({ isActive }) => getLinkClassName({ isActive })}
         >
-          할 일
-        </Link>
-        <Link
+          할일
+        </NavLink>
+        <NavLink
           to={Routes.Routine}
-          className={cn("transition-colors hover:text-foreground/80")}
+          className={({ isActive }) => getLinkClassName({ isActive })}
         >
           루틴
-        </Link>
-        <Link
+        </NavLink>
+        <NavLink
           to={Routes.Habit}
-          className={cn("transition-colors hover:text-foreground/80")}
+          className={({ isActive }) => getLinkClassName({ isActive })}
         >
           습관
-        </Link>
+        </NavLink>
       </nav>
     </div>
   );
