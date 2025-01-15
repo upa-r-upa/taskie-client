@@ -1,27 +1,23 @@
 import { Outlet } from "react-router-dom";
 
-import NavBar from "./components/Navbar";
-import BottomNavigation from "./components/BottomNavigation";
-import TokenRefresher from "./components/TokenRefresher";
-import Messages from "./components/Messages";
+import TokenRefresher from "@/components/TokenRefresher";
+import Messages from "@/components/Messages";
+import PageHeader from "@/components/PageHeader";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
-function App() {
+export default function App() {
   return (
-    <>
-      <div className="overflow-y-auto min-h-screen flex flex-col root-content">
-        <NavBar />
+    <ScrollArea>
+      <div className="min-h-screen flex flex-col">
+        <PageHeader />
 
-        <div className="px-8 pt-20 pb-20 flex-1 relative">
+        <div className="px-8 pt-20 pb-4 flex-1 relative">
           <Outlet />
         </div>
 
-        <BottomNavigation />
         <Messages />
+        <TokenRefresher />
       </div>
-
-      <TokenRefresher />
-    </>
+    </ScrollArea>
   );
 }
-
-export default App;

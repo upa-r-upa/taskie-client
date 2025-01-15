@@ -9,6 +9,9 @@ export default {
   ],
   theme: {
     extend: {
+      height: {
+        screen: ["100vh", "100dvh"],
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

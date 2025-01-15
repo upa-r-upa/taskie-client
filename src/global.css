@@ -2,14 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.root-content {
-  @apply max-w-lg mx-auto;
-}
-
-/* .float-btn {
-  @apply btn px-6 btn-primary absolute right-4 bottom-20 rounded-badge shadow-lg z-10;
-} */
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -121,3 +113,11 @@
     @apply bg-background text-foreground;
   }
 }
+
+.root-content {
+  @apply max-w-lg mx-auto;
+}
+
+/* .float-btn {
+  @apply btn px-6 btn-primary absolute right-4 bottom-20 rounded-badge shadow-lg z-10;
+} */
