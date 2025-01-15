@@ -82,7 +82,7 @@ export default function UserNavigation() {
         <DropdownMenuSeparator />
 
         <DropdownMenuGroup>
-          <DropdownMenuItem>마이페이지</DropdownMenuItem>
+          {/* <DropdownMenuItem>마이페이지</DropdownMenuItem> */}
           <DropdownMenuItem onClick={handleLogout}>로그아웃</DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>

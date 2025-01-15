@@ -8,7 +8,6 @@ import { toast } from "sonner";
 
 import { authApi } from "@/api/client";
 import Routes from "@/constants/routes";
-import InputField from "@/components/InputField";
 import { ErrorResponse } from "@/api/generated";
 import {
   Form,
@@ -25,7 +24,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -109,14 +107,14 @@ const SignUpPage = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  const handleSubmit = (values: z.infer<typeof formSchema>) => {
     mutate({
       username: values.username,
       password: values.password,
       password_confirm: values.passwordConfirm,
       email: values.email,
     });
-  }
+  };
 
   return (
     <Card className="max-w-xl mx-auto">
@@ -127,7 +125,10 @@ const SignUpPage = () => {
 
       <CardContent className="grid gap-4">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-8"
+          >
             <FormField
               control={form.control}
               name="username"

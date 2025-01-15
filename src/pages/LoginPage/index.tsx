@@ -3,15 +3,47 @@ import { AxiosResponse } from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
 import { authApi } from "@/api/client";
 import { useAuthStore } from "@/state/useAuthStore";
 import Routes from "@/constants/routes";
 import { LoginOutput } from "@/api/generated";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+
+const formSchema = z.object({
+  username: z.string(),
+  password: z.string(),
+});
 
 const LoginPage = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+  });
   const [rememberMe, setRememberMe] = useState(false);
 
   const { setTokenWithUser } = useAuthStore((state) => state);
@@ -20,7 +52,7 @@ const LoginPage = () => {
 
   const handleLoginSuccess = (response: AxiosResponse<LoginOutput>) => {
     if (rememberMe) {
-      localStorage.setItem("username", username);
+      localStorage.setItem("username", form.getValues().username);
     } else {
       localStorage.removeItem("username");
     }
@@ -46,84 +78,101 @@ const LoginPage = () => {
 
   useEffect(() => {
     const savedUsername = localStorage.getItem("username");
+
     if (savedUsername) {
-      setUsername(savedUsername);
+      form.setValue("username", savedUsername);
       setRememberMe(true);
     }
   }, []);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = (values: z.infer<typeof formSchema>) => {
     mutate({
-      username,
-      password,
+      username: values.username,
+      password: values.password,
     });
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <label className="form-control">
-          <div className="label">
-            <span className="label-text">아이디를 입력하세요.</span>
-          </div>
-          <input
-            required
-            type="text"
-            placeholder="ID"
-            className="input input-bordered"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </label>
+    <Card className="max-w-xl mx-auto">
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-2xl">로그인</CardTitle>
+        <CardDescription>
+          로그인하고 태스키로 간편하게 일정을 관리해보세요.
+        </CardDescription>
+      </CardHeader>
 
-        <label className="form-control">
-          <div className="label">
-            <span className="label-text">비밀번호를 입력하세요.</span>
-          </div>
-          <input
-            required
-            type="password"
-            placeholder="Password"
-            className="input input-bordered"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </label>
+      <CardContent className="grid gap-4">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-8"
+          >
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>아이디</FormLabel>
 
-        <div className="flex mt-3 items-center justify-between">
-          <div className="flex items-center">
-            <div className="form-control">
-              <label className="label cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="checkbox mr-2"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                />
-                <span className="label-text">아이디 기억하기</span>
-              </label>
+                  <FormControl>
+                    <Input
+                      className="text-sm"
+                      placeholder="아이디를 입력하세요."
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>비밀번호</FormLabel>
+
+                  <FormControl>
+                    <Input
+                      className="text-sm"
+                      type="password"
+                      placeholder="비밀번호를 입력하세요."
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="terms"
+                checked={rememberMe}
+                onCheckedChange={(e) => setRememberMe(e as boolean)}
+              />
+              <Label htmlFor="terms">아이디 기억하기</Label>
             </div>
-          </div>
 
-          <div className="text-sm">
-            {/* <p className="font-medium text-primary">비밀번호 찾기</p> */}
-          </div>
-        </div>
+            <Button className="w-full" disabled={isPending} type="submit">
+              로그인
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
 
-        <input
-          type="submit"
-          value="로그인"
-          className="btn btn-primary btn-block mt-5"
-          disabled={isPending}
-        />
-      </form>
-      <Link to={`/${Routes.SignUp}`}>
-        <button className="btn btn-outline btn-block mt-5" disabled={isPending}>
-          회원가입 페이지로 이동하기
-        </button>
-      </Link>
-    </div>
+      <CardFooter>
+        <Link className="w-full" to={`/${Routes.SignUp}`}>
+          <Button
+            variant="outline"
+            className="w-full"
+            disabled={isPending}
+            type="submit"
+          >
+            회원가입 페이지로 이동하기
+          </Button>
+        </Link>
+      </CardFooter>
+    </Card>
   );
 };
 

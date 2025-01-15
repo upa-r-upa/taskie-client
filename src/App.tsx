@@ -11,7 +11,7 @@ export default function App() {
       <div className="min-h-screen flex flex-col">
         <PageHeader />
 
-        <div className="px-8 pt-20 pb-4 flex-1 relative container mx-auto">
+        <div className="md:px-8 px-6 pt-20 pb-4 flex-1 relative container mx-auto">
           <Outlet />
         </div>
 
