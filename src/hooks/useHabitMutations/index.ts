@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import { habitsApi } from "@/api/client";
-import { useMessageStore } from "@/state/useMessageStore";
 import { HabitPublic } from "@/api/generated";
 import { HabitModalSubmitProps } from "@/components/habit/HabitModal/types";
 import { parseRepeatDaysToServerFormat } from "@/utils/time";
@@ -16,8 +16,6 @@ interface Props {
 }
 
 export default function useHabitMutations({ reloadHabitList }: Props) {
-  const addMessage = useMessageStore((state) => state.addMessage);
-
   const updateHabitModal = useModalWithState<HabitPublic>();
   const { modalState: selectedHabit, closeModal: closeUpdateModal } =
     updateHabitModal;
@@ -26,12 +24,7 @@ export default function useHabitMutations({ reloadHabitList }: Props) {
   const achieveHabitMutation = useMutation({
     mutationFn: habitsApi.achieveHabit,
     onSuccess: reloadHabitList,
-    onError: () => {
-      addMessage({
-        message: "습관 달성 요청에 실패했습니다.",
-        type: "error",
-      });
-    },
+    onError: () => toast.error("습관 달성 요청에 실패했습니다."),
   });
 
   const createHabitMutation = useMutation({
@@ -40,12 +33,7 @@ export default function useHabitMutations({ reloadHabitList }: Props) {
       closeCreateModal();
       reloadHabitList();
     },
-    onError: () => {
-      addMessage({
-        message: "습관 추가에 실패했습니다.",
-        type: "error",
-      });
-    },
+    onError: () => toast.error("습관 추가에 실패했습니다."),
   });
 
   const updateHabitMutation = useMutation({
@@ -55,12 +43,7 @@ export default function useHabitMutations({ reloadHabitList }: Props) {
       closeUpdateModal();
       reloadHabitList();
     },
-    onError: () => {
-      addMessage({
-        message: "습관 수정에 실패했습니다.",
-        type: "error",
-      });
-    },
+    onError: () => toast.error("습관 수정에 실패했습니다."),
   });
 
   const deleteHabitMutation = useMutation({
@@ -68,16 +51,10 @@ export default function useHabitMutations({ reloadHabitList }: Props) {
     onSuccess: () => {
       closeUpdateModal();
       reloadHabitList();
-      addMessage({
-        message: "습관을 삭제했습니다.",
-      });
+
+      toast.success("습관을 삭제했습니다.");
     },
-    onError: () => {
-      addMessage({
-        message: "습관 삭제에 실패했습니다.",
-        type: "error",
-      });
-    },
+    onError: () => toast.error("습관 삭제에 실패했습니다."),
   });
 
   const createHabit = (params: HabitModalSubmitProps) => {

@@ -4,6 +4,7 @@ import { AxiosError } from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { toast } from "sonner";
 
 import { authApi } from "@/api/client";
 import Routes from "@/constants/routes";
@@ -70,6 +71,13 @@ const formSchema = z
     }
   });
 
+const ErrorMessages: { [key: string]: string } = {
+  USERNAME_ALREADY_EXISTS:
+    "이미 사용중인 아이디입니다. 다른 아이디를 입력해주세요.",
+  EMAIL_ALREADY_EXISTS:
+    "이미 사용중인 이메일입니다. 다른 이메일을 입력해주세요.",
+};
+
 const SignUpPage = () => {
   const navigate = useNavigate();
 
@@ -87,46 +95,17 @@ const SignUpPage = () => {
     mutationFn: authApi.signup,
     onSuccess: () => {
       navigate(`/${Routes.Login}`);
-      // addMessage({
-      //   message: "회원가입이 완료되었습니다. 로그인을 해주세요.",
-      //   type: "success",
-      // });
+      toast.success("회원가입이 완료되었습니다. 로그인을 해주세요.");
     },
     onError: (error: AxiosError<ErrorResponse>) => {
-      // if (error.response?.status === 422 && error.response?.data.location) {
-      //   const { location, error_type } = error.response.data;
-      //   if (location == "username" && messages.username[error_type] != null) {
-      //     addMessage({
-      //       message: messages.username[error_type],
-      //       type: "warning",
-      //     });
-      //   } else if (location == "password") {
-      //     addMessage({
-      //       message: messages.password[error_type],
-      //       type: "warning",
-      //     });
-      //   } else if (location == "password_confirm") {
-      //     addMessage({
-      //       message: messages.password_confirm[error_type],
-      //       type: "warning",
-      //     });
-      //   } else if (location == "email") {
-      //     addMessage({ message: messages.email[error_type], type: "warning" });
-      //   }
-      // } else if (error.response?.status === 409) {
-      //   const { error_type } = error.response.data;
-      //   if (error_type == "USERNAME_ALREADY_EXISTS") {
-      //     addMessage({
-      //       message: messages.username[error_type],
-      //       type: "warning",
-      //     });
-      //   } else if (error_type == "EMAIL_ALREADY_EXISTS") {
-      //     addMessage({
-      //       message: messages.email[error_type],
-      //       type: "warning",
-      //     });
-      //   }
-      // }
+      if (error.response?.status === 409) {
+        const { error_type } = error.response.data;
+        const message = ErrorMessages[error_type];
+
+        if (message) {
+          toast.error(message);
+        }
+      }
     },
   });
 

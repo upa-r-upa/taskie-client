@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
-import { useMessageStore } from "@/state/useMessageStore";
 import {
   TodoModalSubmitProps,
   TodoUpdateInputParameter,
@@ -12,8 +12,6 @@ import useModal from "./useModal";
 import useModalWithState from "./useModalWithState";
 
 export default function useTodoMutations(reloadTodoList: () => void) {
-  const addMessage = useMessageStore((state) => state.addMessage);
-
   const createModalState = useModal();
   const updateModalState = useModalWithState<TodoPublic>();
 
@@ -26,13 +24,6 @@ export default function useTodoMutations(reloadTodoList: () => void) {
     });
   };
 
-  const addFailureMessage = (message: string) => {
-    addMessage({
-      message: message,
-      type: "error",
-    });
-  };
-
   const createTodoMutation = useMutation({
     mutationFn: todoApi.createTodo,
     onSuccess: () => {
@@ -40,7 +31,7 @@ export default function useTodoMutations(reloadTodoList: () => void) {
       updateModalState.closeModal();
       reloadTodoList();
     },
-    onError: () => addFailureMessage("할일 추가에 실패했습니다."),
+    onError: () => toast.error("할일 추가에 실패했습니다."),
   });
 
   const onTodoUpdateSuccess = () => {
@@ -52,7 +43,7 @@ export default function useTodoMutations(reloadTodoList: () => void) {
     mutationFn: (input: TodoUpdateInputParameter) =>
       todoApi.updateTodo(input.id, input.update),
     onSuccess: onTodoUpdateSuccess,
-    onError: () => addFailureMessage("할일 수정에 실패했습니다."),
+    onError: () => toast.error("할일 수정에 실패했습니다."),
   });
 
   const onUpdateTodoSubmit = (todo: TodoModalSubmitProps) => {
@@ -71,7 +62,7 @@ export default function useTodoMutations(reloadTodoList: () => void) {
   const deleteTodoMutation = useMutation({
     mutationFn: todoApi.deleteTodo,
     onSuccess: onTodoUpdateSuccess,
-    onError: () => addFailureMessage("할일 삭제에 실패했습니다."),
+    onError: () => toast.error("할일 삭제에 실패했습니다."),
   });
 
   const onUpdateTodoChecked = (todo: TodoPublic, checked: boolean) => {

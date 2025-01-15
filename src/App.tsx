@@ -1,9 +1,9 @@
 import { Outlet } from "react-router-dom";
 
 import TokenRefresher from "@/components/TokenRefresher";
-import Messages from "@/components/Messages";
 import PageHeader from "@/components/PageHeader";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function App() {
   return (
@@ -15,7 +15,7 @@ export default function App() {
           <Outlet />
         </div>
 
-        <Messages />
+        <Toaster />
         <TokenRefresher />
       </div>
     </ScrollArea>

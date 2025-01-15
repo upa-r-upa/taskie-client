@@ -1,10 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import Routes from "@/constants/routes";
 import { useAuthStore } from "@/state/useAuthStore";
 import { authApi } from "@/api/client";
-import { useMessageStore } from "@/state/useMessageStore";
 
 import {
   DropdownMenu,
@@ -22,22 +22,18 @@ export default function UserNavigation() {
   const navigate = useNavigate();
 
   const { clearAuthState, user } = useAuthStore((state) => state);
-  const addMessage = useMessageStore((state) => state.addMessage);
 
   const handleLogoutSuccess = () => {
     clearAuthState();
     navigate(`/${Routes.Login}`);
 
-    addMessage({
-      message: "로그아웃이 완료되었습니다.",
-    });
+    toast.success("로그아웃이 완료되었습니다.");
   };
 
   const handleLogoutError = () => {
-    addMessage({
-      message: "로그아웃이 정상적으로 완료되지 못했습니다. 다시 시도해주세요.",
-      type: "error",
-    });
+    toast.error(
+      "로그아웃이 정상적으로 완료되지 못했습니다. 다시 시도해주세요."
+    );
   };
 
   const { mutate, isPending } = useMutation({

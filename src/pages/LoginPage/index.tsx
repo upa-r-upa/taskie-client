@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import { authApi } from "@/api/client";
 import { useAuthStore } from "@/state/useAuthStore";
 import Routes from "@/constants/routes";
-import { useMessageStore } from "@/state/useMessageStore";
 import { LoginOutput } from "@/api/generated";
 
 const LoginPage = () => {
@@ -15,7 +15,6 @@ const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState(false);
 
   const { setTokenWithUser } = useAuthStore((state) => state);
-  const { addMessage } = useMessageStore((state) => state);
 
   const navigate = useNavigate();
 
@@ -39,12 +38,10 @@ const LoginPage = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: authApi.login,
     onSuccess: handleLoginSuccess,
-    onError: () => {
-      addMessage({
-        message: "로그인에 실패했습니다. 아이디 혹은 비밀번호를 확인해주세요.",
-        type: "error",
-      });
-    },
+    onError: () =>
+      toast.error(
+        "로그인에 실패했습니다. 아이디 혹은 비밀번호를 확인해주세요."
+      ),
   });
 
   useEffect(() => {

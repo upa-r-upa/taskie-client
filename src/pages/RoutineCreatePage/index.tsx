@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
-import { useMessageStore } from "@/state/useMessageStore";
 import { queryClient, routineApi } from "@/api/client";
 import useRoutineForm from "@/hooks/useRoutineForm";
 import { parseRepeatDaysToServerFormat } from "@/utils/time";
@@ -9,8 +9,6 @@ import RoutineForm from "@/components/routine/RoutineForm";
 
 export default function RoutineCreatePage() {
   const navigate = useNavigate();
-
-  const addMessage = useMessageStore((state) => state.addMessage);
 
   const {
     title,
@@ -39,12 +37,7 @@ export default function RoutineCreatePage() {
       });
       navigate(-1);
     },
-    onError: () => {
-      addMessage({
-        message: "루틴 생성에 실패했습니다.",
-        type: "error",
-      });
-    },
+    onError: () => toast.error("루틴 생성에 실패했습니다."),
   });
 
   const handleSubmit = () => {
