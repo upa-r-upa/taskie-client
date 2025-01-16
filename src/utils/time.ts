@@ -84,10 +84,6 @@ export function getFormatTime(date: string | Date): string {
   const hour = targetDate.hour();
   const minute = targetDate.minute();
 
-  if (hour === 0 && minute === 0) {
-    return "";
-  }
-
   const period = hour < 12 ? "오전" : "오후";
   const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
   const formattedMinute = minute.toString().padStart(2, "0");
@@ -109,6 +105,10 @@ export function getFormatDayList(days: Array<number>): string {
 
 export function formatDate(date: Date): string {
   return dayjs(date).format("YYYY-MM-DD");
+}
+
+export function formatDateWithTime(date: Date): string {
+  return `${formatDate(date)} ${getFormatTime(date)}`;
 }
 
 export function formatConditionalDate(date: Date | string): string {
