@@ -1,40 +1,34 @@
 import React, { useRef, useEffect } from "react";
 
-interface AutoResizeTextareaProps {
-  value: string;
-  required?: boolean;
-  onChange: (value: string) => void;
+import { cn } from "@/lib/utils";
 
-  placeholder?: string;
-}
+import { Textarea } from "./ui/textarea";
 
-const AutoResizeTextarea: React.FC<AutoResizeTextareaProps> = ({
-  placeholder,
-  value,
-  required,
-  onChange,
-}) => {
+const AutoResizeTextarea = React.forwardRef<
+  HTMLTextAreaElement,
+  React.ComponentProps<"textarea">
+>(({ className, value, ...props }, parentRef) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
+  const ref =
+    !parentRef || typeof parentRef === "function" ? textareaRef : parentRef;
+
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    if (ref.current) {
+      ref.current.style.height = "auto";
+      ref.current.style.height = `${ref.current.scrollHeight}px`;
     }
-  }, [value]);
+  }, [ref, value]);
 
   return (
-    <textarea
-      ref={textareaRef}
+    <Textarea
+      ref={ref}
       value={value}
-      required={required}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      className="textarea textarea-bordered w-full max-w-lg resize-none overflow-hidden"
+      className={cn("overflow-hidden min-h-10 resize-none", className)}
       rows={1}
-      style={{ minHeight: "3rem" }}
+      {...props}
     />
   );
-};
+});
 
 export default AutoResizeTextarea;

@@ -1,30 +1,39 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+
+import useModal from "./useModal";
 
 export default function useModalWithState<T = boolean>(modalState?: T) {
-  const modalRef = useRef<HTMLDialogElement>(null);
-  const [innerModalState, setInnerModalState] = useState<T | null>(
-    modalState || null
-  );
+  const modal = useModal();
+  const modalStateRef = useRef<T | null>(modalState || null);
 
   useEffect(() => {
-    setInnerModalState(modalState || null);
-  }, [setInnerModalState, modalState]);
+    if (!modal.isModalOpened) {
+      modalStateRef.current = null;
+    }
+  }, [modal.isModalOpened]);
 
   const closeModal = () => {
-    setInnerModalState(null);
+    modal.closeModal();
   };
 
-  const openModal = (nextModalState: T) => {
-    setInnerModalState(nextModalState);
+  const openModal = (modalState: T) => {
+    modalStateRef.current = modalState;
+    modal.openModal();
   };
 
-  useEffect(() => {
-    if (innerModalState) {
-      modalRef.current?.showModal();
+  const setIsOpened = (isOpened: boolean) => {
+    if (isOpened) {
+      modal.openModal();
     } else {
-      modalRef.current?.close();
+      modal.closeModal();
     }
-  }, [innerModalState]);
+  };
 
-  return { modalRef, modalState: innerModalState, closeModal, openModal };
+  return {
+    isOpened: modal.isModalOpened,
+    setIsOpened: setIsOpened,
+    modalState: modalStateRef.current,
+    closeModal,
+    openModal,
+  };
 }

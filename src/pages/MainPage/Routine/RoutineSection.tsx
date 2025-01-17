@@ -5,6 +5,7 @@ import EmptyCard from "@/components/EmptyCard";
 import IncompleteRoutine from "@/components/routine/IncompleteRoutine";
 import CompletedRoutine from "@/components/routine/CompletedRoutine";
 import { RoutinePublic } from "@/api/generated";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   routineList: Array<RoutinePublic>;
@@ -39,13 +40,11 @@ export default function RoutineSection({ routineList }: Props) {
     <>
       <ul className="flex flex-col">{renderRoutineList(routineList)}</ul>
 
-      {routineList.length > 0 && (
-        <Link to={`/${Routes.RoutineCreate}`}>
-          <button className="btn btn-primary btn-outline btn-block mt-2">
-            루틴 추가하러 가기
-          </button>
-        </Link>
-      )}
+      <Link to={`/${Routes.RoutineCreate}`}>
+        <Button variant={"outline"} size="lg" className="mt-4 w-full">
+          루틴 추가하러 가기
+        </Button>
+      </Link>
     </>
   );
 }

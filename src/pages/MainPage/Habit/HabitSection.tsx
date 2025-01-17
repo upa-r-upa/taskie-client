@@ -8,6 +8,7 @@ import {
 import HabitModal from "@/components/habit/HabitModal";
 import HabitInformation from "@/components/HabitInformation";
 import useHabitMutations from "@/hooks/useHabitMutations";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   habitList: Array<HabitWithLog>;
@@ -135,14 +136,9 @@ export default function HabitSection({ habitList, reloadHabitList }: Props) {
     <>
       <ul>{renderHabitList(habitList)}</ul>
 
-      {habitList.length > 0 && (
-        <button
-          onClick={openCreateModal}
-          className="btn btn-primary btn-outline btn-block mt-2"
-        >
-          습관 추가하기
-        </button>
-      )}
+      <Button size="lg" onClick={openCreateModal} className="mt-4 w-full">
+        습관 추가하기
+      </Button>
 
       <HabitModal
         key={isCreateModalOpened ? "open" : "close"}

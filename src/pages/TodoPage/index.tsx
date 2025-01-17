@@ -3,12 +3,12 @@ import { BsPlusLg } from "react-icons/bs";
 import { useState } from "react";
 
 import TodoList from "@/components/todo/TodoList";
-import CompletedTodoList from "@/components/todo/CompletedTodoList";
 import useTodoMutations from "@/hooks/useTodoMutations";
 import { queryClient, todoApi } from "@/api/client";
 import { getDateWithoutTime } from "@/utils/time";
 import { TodoPublic } from "@/api/generated";
 import { API_REFETCH_INTERVAL } from "@/constants/api";
+import CompletedTodoList from "@/components/todo/CompletedTodoList";
 
 import TodoModal from "../MainPage/Todo/TodoModal";
 
@@ -51,6 +51,7 @@ export default function TodoPage() {
     createModalState,
     updateModalState,
     onAddTodoSubmit,
+    onDeleteTodo,
     onUpdateTodoSubmit,
     onUpdateTodoChecked,
     updateTodoMutation,
@@ -59,28 +60,19 @@ export default function TodoPage() {
   } = useTodoMutations(reloadTodoList);
 
   const renderTodoUpdateModal = (todo: TodoPublic | null) => {
-    if (!todo) return;
-
     return (
       <TodoModal
-        ref={updateModalState.modalRef}
+        deletable
+        isOpened={updateModalState.isOpened}
+        setIsOpened={updateModalState.setIsOpened}
+        submitButtonLabel="할 일 수정하기"
         modalTitle="할 일 수정하기"
-        modalId="todo-update"
-        title={todo.title}
-        content={todo.content}
-        targetDate={new Date(todo.target_date)}
+        title={todo?.title || ""}
+        content={todo?.content || ""}
+        targetDate={todo?.target_date ? new Date(todo.target_date) : new Date()}
         onTodoSubmit={onUpdateTodoSubmit}
         isLoading={updateTodoMutation.isPending || deleteTodoMutation.isPending}
-        onCancel={updateModalState.closeModal}
-        extraButton={
-          <button
-            disabled={deleteTodoMutation.isPending}
-            onClick={() => deleteTodoMutation.mutate(todo.id)}
-            className="btn btn-error"
-          >
-            삭제하기
-          </button>
-        }
+        onTodoDelete={onDeleteTodo}
       />
     );
   };
@@ -96,7 +88,6 @@ export default function TodoPage() {
           <TodoList
             isGrouped
             todoList={todoList?.data || []}
-            onAddTodoClick={createModalState.openModal}
             onTodoClick={updateModalState.openModal}
             onTodoCheck={onUpdateTodoChecked}
           />
@@ -122,14 +113,13 @@ export default function TodoPage() {
         </div>
 
         <TodoModal
-          ref={createModalState.modalRef}
-          key={createModalState.isModalOpened ? "open" : "close"}
+          isOpened={createModalState.isModalOpened}
+          setIsOpened={createModalState.setIsOpened}
           modalTitle="할 일 추가하기"
-          modalId="todo-create"
           targetDate={getDateWithoutTime(date)}
           onTodoSubmit={onAddTodoSubmit}
           isLoading={createTodoMutation.isPending}
-          onCancel={createModalState.closeModal}
+          submitButtonLabel="할 일 추가하기"
         />
 
         {renderTodoUpdateModal(updateModalState.modalState)}

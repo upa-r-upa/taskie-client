@@ -24,6 +24,12 @@ export default function useTodoMutations(reloadTodoList: () => void) {
     });
   };
 
+  const onDeleteTodo = () => {
+    if (!updateModalState.modalState) return;
+
+    deleteTodoMutation.mutate(updateModalState.modalState.id);
+  };
+
   const createTodoMutation = useMutation({
     mutationFn: todoApi.createTodo,
     onSuccess: () => {
@@ -80,6 +86,7 @@ export default function useTodoMutations(reloadTodoList: () => void) {
     createModalState,
     onUpdateTodoSubmit,
     onAddTodoSubmit,
+    onDeleteTodo,
     onUpdateTodoChecked,
     deleteTodoMutation,
     updateTodoMutation,

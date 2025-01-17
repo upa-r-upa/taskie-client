@@ -1,9 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import { useState } from "react";
 
 import { queryClient, taskApi } from "@/api/client";
-import { formatDate } from "@/utils/time";
+import { formatConditionalDate, formatDate } from "@/utils/time";
+import DatePicker from "@/components/ui/date-picker";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import TodoSection from "./Todo/TodoSection";
 import HabitSection from "./Habit/HabitSection";
@@ -27,71 +29,82 @@ function MainPage() {
     });
   };
 
-  const handleValueChange = (value: DateValueType) => {
-    const date = value?.startDate;
-    if (date) setTargetDate(date);
-  };
-
   return (
     <>
-      <Datepicker
-        i18n="ko"
-        asSingle={true}
-        useRange={false}
-        displayFormat="YYYY년 MM월 DD일"
-        value={{
-          endDate: targetDate,
-          startDate: targetDate,
-        }}
-        placeholder="날짜를 지정해주세요."
-        popoverDirection="down"
-        onChange={handleValueChange}
-        inputClassName="input input-bordered w-full text-sm input-md "
-      />
+      <div className="block sm:flex items-center justify-between space-y-2">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">Daily task</h2>
+          <p className="text-muted-foreground text-sm mt-1 mb-3">
+            {formatConditionalDate(targetDate)}의 태스크를 확인해보세요.
+          </p>
+        </div>
 
-      <div className="container my-5">
-        <h2 className="text-xl mb-2">할 일</h2>
-
-        {isLoading ? (
-          <div className="flex flex-col gap-4">
-            <div className="skeleton h-10 w-28"></div>
-            <div className="skeleton h-10"></div>
-            <div className="skeleton h-10"></div>
-          </div>
-        ) : (
-          <TodoSection
-            date={targetDate}
-            todoList={data?.data?.todo_list || []}
-            reloadTodoList={refetch}
-          />
-        )}
+        <div className="flex items-center space-x-2">
+          <DatePicker date={targetDate} onDateChange={setTargetDate} />
+        </div>
       </div>
 
-      <div className="container mb-5">
-        <h2 className="text-xl mb-2">습관</h2>
-        {isLoading ? (
-          <div className="flex flex-col gap-4">
-            <div className="skeleton h-12"></div>
-            <div className="skeleton h-12"></div>
-          </div>
-        ) : (
-          <HabitSection
-            habitList={data?.data?.habit_list || []}
-            reloadHabitList={refetch}
-          />
-        )}
-      </div>
+      <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Card className="p-4 flex-1 h-max lg:order-3">
+          <CardHeader className="p-0">
+            <CardTitle>할 일</CardTitle>
+          </CardHeader>
 
-      <div className="container mb-5">
-        <h2 className="text-xl mb-2">루틴</h2>
-        {isLoading ? (
-          <div className="flex flex-col gap-4">
-            <div className="skeleton h-20"></div>
-            <div className="skeleton h-20"></div>
-          </div>
-        ) : (
-          <RoutineSection routineList={data?.data?.routine_list || []} />
-        )}
+          <CardContent className="p-0 py-4">
+            {isLoading ? (
+              <div className="flex flex-col gap-4">
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-16 w-full" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+            ) : (
+              <TodoSection
+                date={targetDate}
+                todoList={data?.data?.todo_list || []}
+                reloadTodoList={refetch}
+              />
+            )}
+          </CardContent>
+        </Card>
+
+        <div className="grid grid-rows-2 gap-4">
+          <Card className="p-4 sm:p-6 h-max">
+            <CardHeader className="p-0">
+              <CardTitle>루틴</CardTitle>
+            </CardHeader>
+
+            <CardContent className="p-0 py-4">
+              {isLoading ? (
+                <div className="flex flex-col gap-4">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : (
+                <RoutineSection routineList={data?.data?.routine_list || []} />
+              )}
+            </CardContent>
+          </Card>
+
+          <Card className="p-4 sm:p-6 h-max">
+            <CardHeader className="p-0">
+              <CardTitle>습관</CardTitle>
+            </CardHeader>
+
+            <CardContent className="p-0 py-4">
+              {isLoading ? (
+                <div className="flex flex-col gap-4">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : (
+                <HabitSection
+                  habitList={data?.data?.habit_list || []}
+                  reloadHabitList={refetch}
+                />
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </>
   );
