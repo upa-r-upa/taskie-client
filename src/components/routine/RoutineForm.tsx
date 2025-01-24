@@ -54,7 +54,7 @@ export default function RoutineForm({
             placeholder="루틴 이름을 입력하세요."
             required
             value={title}
-            onChange={onTitleChange}
+            onChange={(e) => onTitleChange(e.target.value)}
           />
 
           {!title && (

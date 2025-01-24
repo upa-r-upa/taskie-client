@@ -143,7 +143,7 @@ export default function HabitModal({
         value={title}
         required
         placeholder={"습관 이름을 입력하세요."}
-        onChange={(value) => setTitle(value)}
+        onChange={(e) => setTitle(e.target.value)}
       />
       {!title ? (
         <p className="text-error text-sm ml-2">* 습관 이름을 입력해주세요.</p>

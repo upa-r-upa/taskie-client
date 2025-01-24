@@ -1,10 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 import { routineApi } from "@/api/client";
-
-import RoutineList from "./RoutineList";
+import RoutineList from "@/components/routine/RoutineList";
 
 export default function RoutinePage() {
+  const [date] = useState<Date>(() => new Date());
+
   const { isLoading, data } = useQuery({
     queryKey: ["routines"],
     queryFn: () => routineApi.getRoutineList(),
@@ -16,7 +18,7 @@ export default function RoutinePage() {
     <>
       <h1 className="text-2xl font-semibold mb-3">루틴 목록</h1>
 
-      <RoutineList isLoading={isLoading} routineList={data?.data || []} />
+      {!isLoading && <RoutineList date={date} routineList={data?.data || []} />}
     </>
   );
 }

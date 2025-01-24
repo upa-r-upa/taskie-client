@@ -12,9 +12,9 @@ import HabitSection from "./Habit/HabitSection";
 import RoutineSection from "./Routine/RoutineSection";
 
 function MainPage() {
-  const [targetDate, setTargetDate] = useState<Date>(() => new Date());
+  const [date, setDate] = useState<Date>(() => new Date());
 
-  const formattedDate = formatDate(targetDate);
+  const formattedDate = formatDate(date);
 
   const { isLoading, data } = useQuery({
     queryKey: ["tasks", formattedDate],
@@ -35,12 +35,12 @@ function MainPage() {
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Daily task</h2>
           <p className="text-muted-foreground text-sm mt-1 mb-3">
-            {formatConditionalDate(targetDate)}의 태스크를 확인해보세요.
+            {formatConditionalDate(date)}의 태스크를 확인해보세요.
           </p>
         </div>
 
         <div className="flex items-center space-x-2">
-          <DatePicker date={targetDate} onDateChange={setTargetDate} />
+          <DatePicker date={date} onDateChange={setDate} />
         </div>
       </div>
 
@@ -59,7 +59,7 @@ function MainPage() {
               </div>
             ) : (
               <TodoSection
-                date={targetDate}
+                date={date}
                 todoList={data?.data?.todo_list || []}
                 reloadTodoList={refetch}
               />
@@ -68,7 +68,7 @@ function MainPage() {
         </Card>
 
         <div className="grid grid-rows-2 gap-4">
-          <Card className="p-4 sm:p-6 h-max">
+          <Card className="p-4 sm:p-6 h-max overflow-hidden">
             <CardHeader className="p-0">
               <CardTitle>루틴</CardTitle>
             </CardHeader>
@@ -80,12 +80,15 @@ function MainPage() {
                   <Skeleton className="h-8 w-full" />
                 </div>
               ) : (
-                <RoutineSection routineList={data?.data?.routine_list || []} />
+                <RoutineSection
+                  date={date}
+                  routineList={data?.data?.routine_list || []}
+                />
               )}
             </CardContent>
           </Card>
 
-          <Card className="p-4 sm:p-6 h-max">
+          <Card className="p-4 sm:p-6 h-max overflow-hidden">
             <CardHeader className="p-0">
               <CardTitle>습관</CardTitle>
             </CardHeader>

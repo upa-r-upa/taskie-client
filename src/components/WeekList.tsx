@@ -4,30 +4,15 @@ interface Props {
   weekList: number[];
 
   className?: string;
-  WeekClassName?: string;
-
-  onWeekClick?: (week: number) => void;
 }
 
-export default function WeekList({
-  weekList,
-  className,
-  WeekClassName,
-  onWeekClick,
-}: Props) {
+export default function WeekList({ weekList, className }: Props) {
   return (
-    <ul className={`flex gap-1 ${className}`}>
-      {weekList.map((data, i) => {
-        return (
-          <li
-            key={i}
-            onClick={() => onWeekClick?.(data)}
-            className={`card-bordered rounded-full px-1 border-gray-300 ${WeekClassName}`}
-          >
-            {getDayFromNumber(data)}
-          </li>
-        );
-      })}
-    </ul>
+    <div
+      className={`flex ${className} tracking-wider font-normal gap-1 text-xs`}
+    >
+      <span className="text-muted-foreground">매주</span>
+      <span>{weekList.map((week) => getDayFromNumber(week)).join("")}</span>
+    </div>
   );
 }

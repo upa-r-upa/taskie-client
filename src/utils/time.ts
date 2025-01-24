@@ -15,6 +15,14 @@ export function getTimeDifferenceFromNow(dateString: string): number {
   return diffInMinutes;
 }
 
+export function convertSecondsToMinutes(seconds: number): string {
+  if (seconds < 60) {
+    return `${seconds}초`;
+  }
+
+  return convertMinutesToHours(Math.round(seconds / 60));
+}
+
 export function convertMinutesToHours(minutes: number): string {
   const hours = Math.floor(minutes / 60);
   const remainingMinutes = minutes % 60;
