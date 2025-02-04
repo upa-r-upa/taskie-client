@@ -1,7 +1,7 @@
 import { CalendarIcon } from "lucide-react";
 import { PropsWithChildren } from "react";
 
-import { Calendar } from "@/components/ui/Calendar";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,

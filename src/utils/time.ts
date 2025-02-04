@@ -1,5 +1,7 @@
 import dayjs from "dayjs";
 
+export type AMPM = "오전" | "오후";
+
 export const Weeks = ["월", "화", "수", "목", "금", "토", "일"];
 
 export function getDayFromNumber(week: number): string {
