@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,6 +24,7 @@ import TimePicker from "@/components/ui/time-picker";
 import { Button } from "@/components/ui/button";
 import usePrevious from "@/hooks/usePrevious";
 import IntervalDropdown from "@/components/IntervalDropdown";
+import { HabitUpdateInput } from "@/api/generated";
 
 import { HabitModalSubmitProps } from "./types";
 
@@ -31,19 +32,13 @@ interface HabitModalProps {
   isOpened: boolean;
   setIsOpened: (isOpened: boolean) => void;
   modalTitle: string;
-
-  title?: string;
-  repeatDays?: Array<number>;
-  startTimeMinutes?: number;
-  endTimeMinutes?: number;
-  repeatIntervalMinutes?: number;
-
-  isLoading?: boolean;
   deletable?: boolean;
   submitButtonLabel?: string;
+  isLoading?: boolean;
+
+  initialHabit?: HabitUpdateInput;
 
   onSubmit: (param: HabitModalSubmitProps) => void;
-
   onHabitDelete?: () => void;
 }
 
@@ -62,50 +57,35 @@ export default function HabitModal({
   submitButtonLabel,
   modalTitle,
 
-  title: originTitle = "",
-  repeatDays: originRepeatDays = [0, 1, 2, 3, 4],
-  startTimeMinutes: originStartTimeMinutes = 720,
-  endTimeMinutes: originEndTimeMinutes = 1080,
-  repeatIntervalMinutes: originRepeatIntervalMinutes = 60,
-
+  initialHabit,
   isLoading,
 
   onSubmit,
   onHabitDelete,
 }: HabitModalProps) {
+  const defaultHabit = useMemo(
+    () => ({
+      title: initialHabit?.title || "",
+      repeatDays: initialHabit?.repeat_days || [0, 1, 2, 3, 4],
+      startTimeMinutes: initialHabit?.start_time_minutes || 720,
+      endTimeMinutes: initialHabit?.end_time_minutes || 1080,
+      repeatIntervalMinutes: initialHabit?.repeat_time_minutes || 60,
+    }),
+    [initialHabit]
+  );
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: originTitle,
-      repeatDays: originRepeatDays,
-      startTimeMinutes: originStartTimeMinutes,
-      endTimeMinutes: originEndTimeMinutes,
-      repeatIntervalMinutes: originRepeatIntervalMinutes,
-    },
+    defaultValues: defaultHabit,
   });
 
   const previousIsOpened = usePrevious(isOpened);
 
   useEffect(() => {
     if (isOpened !== previousIsOpened && isOpened) {
-      form.reset({
-        title: originTitle,
-        repeatDays: originRepeatDays,
-        startTimeMinutes: originStartTimeMinutes,
-        endTimeMinutes: originEndTimeMinutes,
-        repeatIntervalMinutes: originRepeatIntervalMinutes,
-      });
+      form.reset(defaultHabit);
     }
-  }, [
-    form,
-    isOpened,
-    originEndTimeMinutes,
-    originRepeatDays,
-    originRepeatIntervalMinutes,
-    originStartTimeMinutes,
-    originTitle,
-    previousIsOpened,
-  ]);
+  }, [form, defaultHabit, isOpened, previousIsOpened]);
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
     if (isLoading) return;

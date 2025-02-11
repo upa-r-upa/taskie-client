@@ -1,10 +1,4 @@
-import {
-  CheckIcon,
-  CircleCheck,
-  CircleCheckBig,
-  Flag,
-  ListCheck,
-} from "lucide-react";
+import { Flag } from "lucide-react";
 
 import { HabitWithLog } from "@/api/generated";
 import { Badge } from "@/components/ui/badge";
@@ -94,7 +88,7 @@ export default function Habit({
               size="sm"
               variant={isDone ? "outline" : "default"}
             >
-              {isDone ? "추가로 달성하기" : "습관 달성하기"}
+              {isDone ? "추가 달성하기" : "습관 달성하기"}
             </Button>
           </div>
         </div>

@@ -18,7 +18,6 @@ export default function HabitSection({ habitList, reloadHabitList }: Props) {
     createHabitModal,
     updateHabitModal,
     achieveHabitMutation,
-    deleteHabitMutation,
     createHabit,
     updateHabit,
     deleteHabit,
@@ -61,16 +60,14 @@ export default function HabitSection({ habitList, reloadHabitList }: Props) {
 
       {selectedHabit && (
         <HabitModal
+          deletable
           modalTitle="습관 수정하기"
           submitButtonLabel="수정하기"
           isOpened={updateHabitModal.isOpened}
           setIsOpened={updateHabitModal.setIsOpened}
+          initialHabit={selectedHabit}
           onSubmit={updateHabit}
-          title={selectedHabit.title}
-          startTimeMinutes={selectedHabit.start_time_minutes}
-          endTimeMinutes={selectedHabit.end_time_minutes}
-          repeatIntervalMinutes={selectedHabit.repeat_time_minutes}
-          repeatDays={selectedHabit.repeat_days}
+          onHabitDelete={() => deleteHabit(selectedHabit.id)}
         />
       )}
     </>
