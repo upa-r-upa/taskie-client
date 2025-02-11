@@ -25,9 +25,9 @@ export default function useTodoMutations(reloadTodoList: () => void) {
   };
 
   const onDeleteTodo = () => {
-    if (!updateModalState.modalState) return;
+    if (!updateModalState.visibleState) return;
 
-    deleteTodoMutation.mutate(updateModalState.modalState.id);
+    deleteTodoMutation.mutate(updateModalState.visibleState.id);
   };
 
   const createTodoMutation = useMutation({
@@ -53,13 +53,13 @@ export default function useTodoMutations(reloadTodoList: () => void) {
   });
 
   const onUpdateTodoSubmit = (todo: TodoModalSubmitProps) => {
-    if (!updateModalState.modalState) return;
+    if (!updateModalState.visibleState) return;
 
     updateTodoMutation.mutate({
-      id: updateModalState.modalState.id,
+      id: updateModalState.visibleState.id,
       update: {
         ...todo,
-        completed: !!updateModalState.modalState.completed_at,
+        completed: !!updateModalState.visibleState.completed_at,
         target_date: todo.targetDate.toISOString(),
       },
     });

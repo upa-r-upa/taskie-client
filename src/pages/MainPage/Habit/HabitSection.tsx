@@ -23,7 +23,7 @@ export default function HabitSection({ habitList, reloadHabitList }: Props) {
     deleteHabit,
   } = useHabitMutations({ reloadHabitList });
 
-  const { modalState: selectedHabit } = updateHabitModal;
+  const { visibleState: selectedHabit } = updateHabitModal;
 
   return (
     <>
@@ -65,6 +65,7 @@ export default function HabitSection({ habitList, reloadHabitList }: Props) {
           submitButtonLabel="수정하기"
           isOpened={updateHabitModal.isOpened}
           setIsOpened={updateHabitModal.setIsOpened}
+          onModalInvisible={updateHabitModal.invisibleModal}
           initialHabit={selectedHabit}
           onSubmit={updateHabit}
           onHabitDelete={() => deleteHabit(selectedHabit.id)}

@@ -1,36 +1,34 @@
-import { useEffect, useMemo, useState } from "react";
+export interface HabitModalSubmitProps {
+  title: string;
+  startTimeMinutes: number;
+  endTimeMinutes: number;
+  repeatIntervalMinutes: number;
+  repeatDays: Array<number>;
+}
+
+import { useMemo } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TrashIcon } from "lucide-react";
 
-import Modal from "@/components/ui/modal";
-import {
-  getDayName,
-  formatDuration,
-  formatMinutesWithAMPM,
-} from "@/utils/time";
+import Modal, { ModalOpenProps } from "@/components/ui/modal";
 import AutoResizeTextarea from "@/components/AutoResizeTextarea";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import CheckableWeekList from "@/components/CheckableWeekList";
 import TimePicker from "@/components/ui/time-picker";
 import { Button } from "@/components/ui/button";
-import usePrevious from "@/hooks/usePrevious";
 import IntervalDropdown from "@/components/IntervalDropdown";
 import { HabitUpdateInput } from "@/api/generated";
 
-import { HabitModalSubmitProps } from "./types";
-
 interface HabitModalProps {
-  isOpened: boolean;
-  setIsOpened: (isOpened: boolean) => void;
   modalTitle: string;
   deletable?: boolean;
   submitButtonLabel?: string;
@@ -62,7 +60,8 @@ export default function HabitModal({
 
   onSubmit,
   onHabitDelete,
-}: HabitModalProps) {
+  onModalInvisible,
+}: HabitModalProps & ModalOpenProps) {
   const defaultHabit = useMemo(
     () => ({
       title: initialHabit?.title || "",
@@ -79,14 +78,6 @@ export default function HabitModal({
     defaultValues: defaultHabit,
   });
 
-  const previousIsOpened = usePrevious(isOpened);
-
-  useEffect(() => {
-    if (isOpened !== previousIsOpened && isOpened) {
-      form.reset(defaultHabit);
-    }
-  }, [form, defaultHabit, isOpened, previousIsOpened]);
-
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
     if (isLoading) return;
 
@@ -95,19 +86,14 @@ export default function HabitModal({
     });
   };
 
-  const getRepeatCount = () => {
-    const { startTimeMinutes, endTimeMinutes, repeatIntervalMinutes } =
-      form.getValues();
-    const times = Math.floor(
-      (endTimeMinutes - startTimeMinutes) / repeatIntervalMinutes
-    );
-    return times < 0 ? 0 : times;
-  };
-
-  const repeatCount = getRepeatCount();
-
   return (
-    <Modal isOpened={isOpened} setIsOpened={setIsOpened} title={modalTitle}>
+    <Modal
+      isOpened={isOpened}
+      title={modalTitle}
+      setIsOpened={setIsOpened}
+      onModalInvisible={onModalInvisible}
+      onModalOpen={() => form.reset(defaultHabit)}
+    >
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
@@ -144,6 +130,10 @@ export default function HabitModal({
                     onWeekChange={field.onChange}
                   />
                 </FormControl>
+
+                {field.value.length === 0 && (
+                  <FormMessage>반복 요일이 하루라도 있어야 해요.</FormMessage>
+                )}
               </FormItem>
             )}
           />
@@ -178,6 +168,12 @@ export default function HabitModal({
                     onTotalMinutesChange={field.onChange}
                   />
                 </FormControl>
+
+                {field && (
+                  <FormMessage>
+                    시작 시간보다 종료 시간이 이르거나, 같을 수 없어요.
+                  </FormMessage>
+                )}
               </FormItem>
             )}
           />
@@ -185,44 +181,63 @@ export default function HabitModal({
           <FormField
             control={form.control}
             name="repeatIntervalMinutes"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="block">반복 간격</FormLabel>
+            render={({ field }) => {
+              const getRepeatCount = () => {
+                const {
+                  startTimeMinutes,
+                  endTimeMinutes,
+                  repeatIntervalMinutes,
+                } = form.getValues();
+                const times = Math.floor(
+                  (endTimeMinutes - startTimeMinutes) / repeatIntervalMinutes
+                );
+                return times < 0 ? 0 : times;
+              };
 
-                <FormControl>
-                  <IntervalDropdown
-                    interval={field.value}
-                    onIntervalChange={field.onChange}
-                    maxInterval={
-                      form.getValues().endTimeMinutes -
-                      form.getValues().startTimeMinutes
-                    }
-                  />
-                </FormControl>
+              const repeatCount = getRepeatCount();
 
-                <FormDescription className="flex flex-col gap-2">
-                  <p>
-                    시작 시간과 종료 시간 이내에, 습관을 실행할 수 있도록 설정한
-                    반복 간격마다 알림이 울려요.
-                  </p>
+              return (
+                <FormItem>
+                  <FormLabel className="block">반복 간격</FormLabel>
 
-                  {repeatCount > 0 ? (
+                  <FormControl>
+                    <IntervalDropdown
+                      interval={field.value}
+                      onIntervalChange={field.onChange}
+                      maxInterval={
+                        form.getValues().endTimeMinutes -
+                        form.getValues().startTimeMinutes
+                      }
+                    />
+                  </FormControl>
+
+                  <div className="text-sm text-muted-foreground">
                     <p>
-                      현재 설정한 값으론 알림이{" "}
-                      <span className="text-foreground">
-                        총 {repeatCount}번
-                      </span>{" "}
-                      울릴거에요.
+                      시작 시간과 종료 시간 이내에, 습관을 실행할 수 있도록
+                      설정한 반복 간격마다 알림이 울려요.
                     </p>
-                  ) : (
-                    <div className="text-destructive">
-                      <p>현재 설정한 시간을 다시 확인해보세요.</p>
-                      <p>현재 설정한 시간으로는 알림이 한번도 울리지 않아요.</p>
-                    </div>
+
+                    {repeatCount > 0 && (
+                      <p>
+                        현재 설정한 값으론 알림이{" "}
+                        <span className="text-foreground">
+                          총 {repeatCount}번
+                        </span>{" "}
+                        울릴거에요.
+                      </p>
+                    )}
+                  </div>
+
+                  {repeatCount <= 0 && (
+                    <FormMessage>
+                      현재 설정한 시간을 다시 확인해보세요.
+                      <br />
+                      현재 설정한 시간으로는 알림이 한번도 울리지 않아요.
+                    </FormMessage>
                   )}
-                </FormDescription>
-              </FormItem>
-            )}
+                </FormItem>
+              );
+            }}
           />
 
           {deletable && (

@@ -37,11 +37,12 @@ export default function HabitList({
     createHabitModal,
     updateHabitModal,
     achieveHabitMutation,
-    deleteHabitMutation,
     createHabit,
     updateHabit,
     deleteHabit,
   } = useHabitMutations({ reloadHabitList });
+
+  const { visibleState: selectedHabit } = updateHabitModal;
 
   const renderHabitList = (list: Array<HabitWithLog>) => {
     if (!list.length) {
@@ -84,16 +85,24 @@ export default function HabitList({
       <HabitModal
         onSubmit={createHabit}
         modalTitle="습관 추가하기"
+        submitButtonLabel="추가하기"
         isOpened={createHabitModal.isModalOpened}
-        setIsOpened={createHabitModal.setIsOpened}
+        setIsOpened={createHabitModal.closeModal}
       />
 
-      <HabitModal
-        modalTitle="습관 수정하기"
-        isOpened={updateHabitModal.isOpened}
-        setIsOpened={updateHabitModal.setIsOpened}
-        onSubmit={updateHabit}
-      />
+      {selectedHabit && (
+        <HabitModal
+          deletable
+          modalTitle="습관 수정하기"
+          submitButtonLabel="수정하기"
+          isOpened={updateHabitModal.isOpened}
+          setIsOpened={updateHabitModal.setIsOpened}
+          onModalInvisible={updateHabitModal.invisibleModal}
+          initialHabit={selectedHabit}
+          onSubmit={updateHabit}
+          onHabitDelete={() => deleteHabit(selectedHabit.id)}
+        />
+      )}
     </>
   );
 }

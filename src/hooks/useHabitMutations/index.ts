@@ -16,7 +16,7 @@ interface Props {
 
 export default function useHabitMutations({ reloadHabitList }: Props) {
   const updateHabitModal = useModalWithState<HabitPublic>();
-  const { modalState: selectedHabit, closeModal: closeUpdateModal } =
+  const { visibleState: selectedHabit, closeModal: closeUpdateModal } =
     updateHabitModal;
   const createHabitModal = useModal();
   const { closeModal: closeCreateModal } = createHabitModal;

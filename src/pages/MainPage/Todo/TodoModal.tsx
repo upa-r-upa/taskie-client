@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
+import { useMemo } from "react";
 import { TrashIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -15,26 +15,30 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import DateTimePicker from "@/components/ui/date-time-picker";
 import AutoResizeTextarea from "@/components/AutoResizeTextarea";
-import usePrevious from "@/hooks/usePrevious";
 import Modal from "@/components/ui/modal";
 
 import { TodoModalSubmitProps } from "../types";
 
+interface TodoBase {
+  title: string;
+  content?: string;
+}
+
 interface TodoModalProps {
   isOpened: boolean;
+  submitButtonLabel: string;
   setIsOpened: (open: boolean) => void;
 
-  modalTitle: string;
+  title: string;
   targetDate: Date;
 
-  submitButtonLabel: string;
+  initialTodo?: TodoBase;
 
-  title?: string;
-  content?: string;
   isLoading?: boolean;
   deletable?: boolean;
 
   onTodoSubmit: (todo: TodoModalSubmitProps) => void;
+  onModalInvisible?: () => void;
   onTodoDelete?: () => void;
 }
 
@@ -47,43 +51,31 @@ const formSchema = z.object({
 export default function TodoModal({
   isOpened,
   setIsOpened,
-  modalTitle,
+  title,
   submitButtonLabel,
   isLoading,
   deletable,
-  title: originTitle = "",
-  content: originContent = "",
+  initialTodo,
   targetDate: originTargetDate,
+  onModalInvisible,
   onTodoSubmit,
   onTodoDelete,
 }: TodoModalProps) {
+  const defaultTodo = useMemo(
+    () => ({
+      title: initialTodo?.title || "",
+      content: initialTodo?.content || "",
+    }),
+    [initialTodo]
+  );
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       targetDate: originTargetDate,
-      title: originTitle,
-      content: originContent,
+      ...defaultTodo,
     },
   });
-
-  const previousIsOpened = usePrevious(isOpened);
-
-  useEffect(() => {
-    if (isOpened !== previousIsOpened && isOpened) {
-      form.reset({
-        targetDate: originTargetDate,
-        title: originTitle,
-        content: originContent,
-      });
-    }
-  }, [
-    form,
-    isOpened,
-    originContent,
-    originTargetDate,
-    originTitle,
-    previousIsOpened,
-  ]);
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
     if (isLoading) return;
@@ -97,7 +89,18 @@ export default function TodoModal({
 
   return (
     <>
-      <Modal isOpened={isOpened} setIsOpened={setIsOpened} title={modalTitle}>
+      <Modal
+        isOpened={isOpened}
+        onModalInvisible={onModalInvisible}
+        onModalOpen={() =>
+          form.reset({
+            targetDate: originTargetDate,
+            ...defaultTodo,
+          })
+        }
+        setIsOpened={setIsOpened}
+        title={title}
+      >
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}

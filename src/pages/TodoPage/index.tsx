@@ -59,23 +59,10 @@ export default function TodoPage() {
     createTodoMutation,
   } = useTodoMutations(reloadTodoList);
 
-  const renderTodoUpdateModal = (todo: TodoPublic | null) => {
-    return (
-      <TodoModal
-        deletable
-        isOpened={updateModalState.isOpened}
-        setIsOpened={updateModalState.setIsOpened}
-        submitButtonLabel="할 일 수정하기"
-        modalTitle="할 일 수정하기"
-        title={todo?.title || ""}
-        content={todo?.content || ""}
-        targetDate={todo?.target_date ? new Date(todo.target_date) : new Date()}
-        onTodoSubmit={onUpdateTodoSubmit}
-        isLoading={updateTodoMutation.isPending || deleteTodoMutation.isPending}
-        onTodoDelete={onDeleteTodo}
-      />
-    );
-  };
+  const { visibleState: selectedTodo } = updateModalState;
+
+  const isUpdateModalLoading =
+    updateTodoMutation.isPending || deleteTodoMutation.isPending;
 
   return (
     <>
@@ -111,24 +98,42 @@ export default function TodoPage() {
             )}
           </div>
         </div>
-
-        <TodoModal
-          isOpened={createModalState.isModalOpened}
-          setIsOpened={createModalState.setIsOpened}
-          modalTitle="할 일 추가하기"
-          targetDate={getDateWithoutTime(date)}
-          onTodoSubmit={onAddTodoSubmit}
-          isLoading={createTodoMutation.isPending}
-          submitButtonLabel="할 일 추가하기"
-        />
-
-        {renderTodoUpdateModal(updateModalState.modalState)}
       </div>
 
       <button onClick={createModalState.openModal} className="float-btn">
         <BsPlusLg />
         할일 추가하기
       </button>
+
+      <TodoModal
+        title="할 일 추가하기"
+        isOpened={createModalState.isModalOpened}
+        setIsOpened={createModalState.setIsOpened}
+        targetDate={getDateWithoutTime(date)}
+        onTodoSubmit={onAddTodoSubmit}
+        isLoading={createTodoMutation.isPending}
+        submitButtonLabel="할 일 추가하기"
+      />
+
+      {selectedTodo && (
+        <TodoModal
+          deletable
+          isOpened={updateModalState.isOpened}
+          setIsOpened={updateModalState.setIsOpened}
+          submitButtonLabel="할 일 수정하기"
+          title="할 일 수정하기"
+          initialTodo={{ ...selectedTodo }}
+          isLoading={isUpdateModalLoading}
+          targetDate={
+            selectedTodo?.target_date
+              ? new Date(selectedTodo.target_date)
+              : new Date()
+          }
+          onTodoSubmit={onUpdateTodoSubmit}
+          onModalInvisible={updateModalState.invisibleModal}
+          onTodoDelete={onDeleteTodo}
+        />
+      )}
     </>
   );
 }

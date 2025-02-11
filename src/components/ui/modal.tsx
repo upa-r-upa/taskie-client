@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect } from "react";
 
 import {
   Drawer,
@@ -17,46 +17,71 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import usePrevious from "@/hooks/usePrevious";
 
 import { ScrollArea } from "./scroll-area";
 
-interface Props {
+export interface ModalOpenProps {
   isOpened: boolean;
-  title: string;
-
   setIsOpened: (open: boolean) => void;
 
+  onModalInvisible?: () => void;
+  onModalOpen?: () => void;
+}
+
+interface Props extends ModalOpenProps {
+  title: string;
   description?: string;
 }
 
 export default function Modal({
   isOpened,
-  setIsOpened,
   title,
   description,
+  setIsOpened,
+  onModalInvisible,
+  onModalOpen,
   children,
 }: Props & PropsWithChildren) {
-  const isDesktop = useMediaQuery("(min-width: 640px)");
+  const previousIsOpened = usePrevious(isOpened);
 
-  if (isDesktop) {
-    return (
-      <Dialog open={isOpened} onOpenChange={setIsOpened}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            {description && (
-              <DialogDescription>{description}</DialogDescription>
-            )}
-          </DialogHeader>
+  useEffect(() => {
+    if (isOpened !== previousIsOpened && isOpened) {
+      onModalOpen?.();
+    }
+  }, [isOpened, previousIsOpened, onModalOpen]);
 
-          <div className="grid gap-4 py-4">{children}</div>
-        </DialogContent>
-      </Dialog>
-    );
-  }
+  // const isDesktop = useMediaQuery("(min-width: 640px)");
+
+  // if (isDesktop) {
+  //   return (
+  //     <Dialog open={isOpened} onOpenChange={setIsOpened}>
+  //       <DialogContent>
+  //         <DialogHeader>
+  //           <DialogTitle>{title}</DialogTitle>
+  //           {description && (
+  //             <DialogDescription>{description}</DialogDescription>
+  //           )}
+  //         </DialogHeader>
+
+  //         <div className="grid gap-4 py-4">{children}</div>
+  //       </DialogContent>
+  //     </Dialog>
+  //   );
+  // }
+
+  const handleAnimationEnd = (isOpen: boolean) => {
+    if (!isOpen) {
+      onModalInvisible?.();
+    }
+  };
 
   return (
-    <Drawer open={isOpened} onOpenChange={setIsOpened}>
+    <Drawer
+      open={isOpened}
+      onOpenChange={setIsOpened}
+      onAnimationEnd={handleAnimationEnd}
+    >
       <DrawerContent className="p-6 pt-0 max-h-[95vh]">
         <DrawerHeader>
           <DrawerTitle>{title}</DrawerTitle>

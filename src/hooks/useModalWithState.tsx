@@ -1,23 +1,19 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import useModal from "./useModal";
 
 export default function useModalWithState<T>(initialState?: T) {
   const modal = useModal();
-  const [modalState, setModalState] = useState<T | null>(initialState || null);
-
-  useEffect(() => {
-    if (!modal.isModalOpened) {
-      setModalState(null);
-    }
-  }, [modal.isModalOpened]);
+  const [visibleState, setVisibleState] = useState<T | null>(
+    initialState || null
+  );
 
   const closeModal = () => {
     modal.closeModal();
   };
 
   const openModal = (modalState: T) => {
-    setModalState(modalState);
+    setVisibleState(modalState);
     modal.openModal();
   };
 
@@ -29,10 +25,15 @@ export default function useModalWithState<T>(initialState?: T) {
     }
   };
 
+  const invisibleModal = () => {
+    setVisibleState(null);
+  };
+
   return {
     isOpened: modal.isModalOpened,
     setIsOpened: setIsOpened,
-    modalState,
+    invisibleModal: invisibleModal,
+    visibleState,
     closeModal,
     openModal,
   };
