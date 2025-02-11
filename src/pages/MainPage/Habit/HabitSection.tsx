@@ -27,7 +27,7 @@ export default function HabitSection({ habitList, reloadHabitList }: Props) {
 
   return (
     <>
-      <ul>
+      <ul className="flex flex-col gap-2">
         {habitList.length === 0 ? (
           <HabitInformation />
         ) : (
