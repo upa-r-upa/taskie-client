@@ -77,9 +77,6 @@ importers:
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
-      dayjs:
-        specifier: ^1.11.12
-        version: 1.11.13
       embla-carousel-react:
         specifier: ^8.5.2
         version: 8.5.2(react@18.3.1)
