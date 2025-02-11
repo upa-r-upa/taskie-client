@@ -67,8 +67,8 @@ function MainPage() {
           </CardContent>
         </Card>
 
-        <div className="grid grid-rows-2 gap-4">
-          <Card className="p-4 sm:p-6 h-max overflow-hidden">
+        <div className="flex flex-col gap-4">
+          <Card className="p-4 sm:p-6 overflow-hidden">
             <CardHeader className="p-0">
               <CardTitle>루틴</CardTitle>
             </CardHeader>
@@ -88,7 +88,7 @@ function MainPage() {
             </CardContent>
           </Card>
 
-          <Card className="p-4 sm:p-6 h-max overflow-hidden">
+          <Card className="p-4 sm:p-6 overflow-hidden">
             <CardHeader className="p-0">
               <CardTitle>습관</CardTitle>
             </CardHeader>
