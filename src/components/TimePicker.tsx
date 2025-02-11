@@ -1,6 +1,6 @@
 import React from "react";
 
-import { getFormatMinutesWithMeridiem } from "@/utils/time";
+import { formatMinutesWithAMPM } from "@/utils/time";
 
 interface TimePickerProps {
   minutes: number;
@@ -43,7 +43,7 @@ const TimePicker: React.FC<TimePickerProps> = ({
     >
       {times.map((timeOption) => (
         <option key={timeOption} value={timeOption}>
-          {getFormatMinutesWithMeridiem(timeOption)}
+          {formatMinutesWithAMPM(timeOption)}
         </option>
       ))}
     </select>

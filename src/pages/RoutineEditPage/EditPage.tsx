@@ -14,16 +14,6 @@ interface Props {
 export default function EditPage({ routine }: Props) {
   const navigate = useNavigate();
 
-  const parseRepeatDays = (repeatDays: Array<number>): Array<number> => {
-    const result = Array.from({ length: 7 }, () => 0);
-
-    repeatDays.forEach((value) => {
-      result[value] = 1;
-    });
-
-    return result;
-  };
-
   const {
     title,
     repeatDays,
@@ -40,7 +30,7 @@ export default function EditPage({ routine }: Props) {
     isDisabled,
   } = useRoutineForm({
     initialTitle: routine.title,
-    initialRepeatDays: parseRepeatDays(routine.repeat_days),
+    initialRepeatDays: routine.repeat_days,
     initialStartTimeMinutes: routine.start_time_minutes,
     initialTodoList: routine.routine_elements,
   });
@@ -64,25 +54,11 @@ export default function EditPage({ routine }: Props) {
     onError: () => toast.error("루틴 수정에 실패했습니다."),
   });
 
-  const parseRepeatDaysToServerFormat = (
-    repeatDays: Array<number>
-  ): Array<number> => {
-    const result: Array<number> = [];
-
-    repeatDays.forEach((value, i) => {
-      if (value) {
-        result.push(i);
-      }
-    });
-
-    return result;
-  };
-
   const handleSubmit = () => {
     createRoutineMutation.mutate({
       title: title,
       start_time_minutes: startTimeMinutes,
-      repeat_days: parseRepeatDaysToServerFormat(repeatDays),
+      repeat_days: repeatDays,
       routine_elements: todoList,
     });
   };

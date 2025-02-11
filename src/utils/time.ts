@@ -23,15 +23,20 @@ export function getTimeDifferenceFromNow(date: string): number {
   return differenceInMinutes(now, targetDate);
 }
 
-export function convertSecondsToMinutes(seconds: number): string {
+export function formatSecondsAsDuration(seconds: number): string {
   if (seconds < 60) {
     return `${seconds}초`;
   }
 
-  return convertMinutesToHours(Math.round(seconds / 60));
+  return formatDuration(Math.round(seconds / 60));
 }
 
-export function convertMinutesToHours(minutes: number): string {
+export function formatMinutesWithAMPM(minutes: number): string {
+  const date = addMinutes(startOfDay(new Date()), minutes);
+  return format(date, "a h시 mm분", { locale: ko });
+}
+
+export function formatDuration(minutes: number): string {
   const hours = Math.floor(minutes / 60);
   const remainingMinutes = minutes % 60;
 
@@ -46,28 +51,6 @@ export function convertMinutesToHours(minutes: number): string {
   }
 
   return result.trim();
-}
-
-export function getFormatMinutesWithMeridiem(minutes: number): string {
-  const date = addMinutes(startOfDay(new Date()), minutes);
-  return format(date, "a h시 mm분", { locale: ko });
-}
-
-export function getFormatMinutes(minutes: number): string {
-  const hours = Math.floor(minutes / 60);
-  const remainderMinutes = minutes % 60;
-
-  let result = "";
-
-  if (hours) {
-    result += `${hours}시간`;
-  }
-
-  if (remainderMinutes) {
-    result += ` ${remainderMinutes.toString().padStart(2, "0")}분`;
-  }
-
-  return result;
 }
 
 export function getDateWithoutTime(date: Date): Date {

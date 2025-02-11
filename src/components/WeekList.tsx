@@ -1,4 +1,4 @@
-import { getDayFromNumber } from "@/utils/time";
+import { getDayName } from "@/utils/time";
 
 interface Props {
   weekList: number[];
@@ -12,7 +12,7 @@ export default function WeekList({ weekList, className }: Props) {
       className={`flex ${className} tracking-wider font-normal gap-1 text-xs`}
     >
       <span className="text-muted-foreground">매주</span>
-      <span>{weekList.map((week) => getDayFromNumber(week)).join("")}</span>
+      <span>{weekList.map((week) => getDayName(week)).join("")}</span>
     </div>
   );
 }

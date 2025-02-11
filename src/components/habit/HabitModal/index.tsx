@@ -1,239 +1,285 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { TrashIcon } from "lucide-react";
 
+import Modal from "@/components/ui/modal";
+import {
+  getDayName,
+  formatDuration,
+  formatMinutesWithAMPM,
+} from "@/utils/time";
 import AutoResizeTextarea from "@/components/AutoResizeTextarea";
 import {
-  getDayFromNumber,
-  getFormatMinutes,
-  getFormatMinutesWithMeridiem,
-} from "@/utils/time";
-import TimePicker from "@/components/TimePicker";
-import Modal from "@/components/Modal";
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
+import CheckableWeekList from "@/components/CheckableWeekList";
+import TimePicker from "@/components/ui/time-picker";
+import { Button } from "@/components/ui/button";
+import usePrevious from "@/hooks/usePrevious";
+import IntervalDropdown from "@/components/IntervalDropdown";
 
 import { HabitModalSubmitProps } from "./types";
 
 interface HabitModalProps {
+  isOpened: boolean;
+  setIsOpened: (isOpened: boolean) => void;
   modalTitle: string;
-  modalId: string;
-  modalRef: React.RefObject<HTMLDialogElement>;
 
   title?: string;
   repeatDays?: Array<number>;
   startTimeMinutes?: number;
   endTimeMinutes?: number;
   repeatIntervalMinutes?: number;
-  extraButton?: React.ReactElement;
 
   isLoading?: boolean;
+  deletable?: boolean;
+  submitButtonLabel?: string;
 
   onSubmit: (param: HabitModalSubmitProps) => void;
-  onCancel: () => void;
+
+  onHabitDelete?: () => void;
 }
 
-const TIME_INTERVALS = [
-  15, 30, 60, 90, 120, 180, 240, 300, 360, 420, 480, 540, 600, 660, 720,
-];
+const formSchema = z.object({
+  title: z.string(),
+  repeatDays: z.array(z.number()),
+  startTimeMinutes: z.number(),
+  endTimeMinutes: z.number(),
+  repeatIntervalMinutes: z.number(),
+});
 
 export default function HabitModal({
-  title: originTitle,
-  repeatDays: originRepeatDays,
-  startTimeMinutes: originStartTimeMinutes,
-  endTimeMinutes: originEndTimeMinutes,
-  repeatIntervalMinutes: originRepeatIntervalMinutes,
-  modalRef,
+  isOpened,
+  setIsOpened,
+  deletable,
+  submitButtonLabel,
   modalTitle,
-  modalId,
+
+  title: originTitle = "",
+  repeatDays: originRepeatDays = [0, 1, 2, 3, 4],
+  startTimeMinutes: originStartTimeMinutes = 720,
+  endTimeMinutes: originEndTimeMinutes = 1080,
+  repeatIntervalMinutes: originRepeatIntervalMinutes = 60,
+
   isLoading,
+
   onSubmit,
-  onCancel,
-  extraButton,
+  onHabitDelete,
 }: HabitModalProps) {
-  const [title, setTitle] = useState<string>(originTitle || "");
-  const [repeatDays, setRepeatDays] = useState<Array<number>>(
-    originRepeatDays || Array.from({ length: 7 }, () => 0)
-  );
-  const [startTimeMinutes, setStartTimeMinutes] = useState<number>(
-    originStartTimeMinutes || 720
-  );
-  const [endTimeMinutes, setEndTimeMinutes] = useState<number>(
-    originEndTimeMinutes || 1080
-  );
-  const [repeatIntervalMinutes, setRepeatIntervalMinutes] = useState<number>(
-    originRepeatIntervalMinutes || 60
-  );
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: originTitle,
+      repeatDays: originRepeatDays,
+      startTimeMinutes: originStartTimeMinutes,
+      endTimeMinutes: originEndTimeMinutes,
+      repeatIntervalMinutes: originRepeatIntervalMinutes,
+    },
+  });
 
-  const handleWeekCheckboxChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    setRepeatDays((prev) => {
-      return prev.map((v, i) => (i == index ? Number(e.target.checked) : v));
-    });
-  };
+  const previousIsOpened = usePrevious(isOpened);
 
-  const renderRepeatDays = (repeatDays: Array<number>) => {
-    return Array.from({ length: 7 }, (v, i) => i).map((v) => {
-      const matchWeek = repeatDays[v];
-      return (
-        <label key={v} className="swap swap-indeterminate">
-          <input
-            type="checkbox"
-            checked={!!matchWeek}
-            onChange={(e) => handleWeekCheckboxChange(e, v)}
-          />
+  useEffect(() => {
+    if (isOpened !== previousIsOpened && isOpened) {
+      form.reset({
+        title: originTitle,
+        repeatDays: originRepeatDays,
+        startTimeMinutes: originStartTimeMinutes,
+        endTimeMinutes: originEndTimeMinutes,
+        repeatIntervalMinutes: originRepeatIntervalMinutes,
+      });
+    }
+  }, [
+    form,
+    isOpened,
+    originEndTimeMinutes,
+    originRepeatDays,
+    originRepeatIntervalMinutes,
+    originStartTimeMinutes,
+    originTitle,
+    previousIsOpened,
+  ]);
 
-          <div className="swap-on py-1 px-2 card-bordered shadow-sm rounded-badge border-primary text-primary">
-            <p>{getDayFromNumber(v)}</p>
-          </div>
-          <div className="swap-off py-1 px-2 card-bordered shadow-sm rounded-badge bg-slate-50 ">
-            <p>{getDayFromNumber(v)}</p>
-          </div>
-        </label>
-      );
-    });
-  };
+  const handleSubmit = (values: z.infer<typeof formSchema>) => {
+    if (isLoading) return;
 
-  const handleSubmit = () => {
     onSubmit({
-      title,
-      startTimeMinutes,
-      endTimeMinutes,
-      repeatIntervalMinutes,
-      repeatDays,
+      ...values,
     });
   };
 
-  const count =
-    Math.floor((endTimeMinutes - startTimeMinutes) / repeatIntervalMinutes) + 1;
-
-  const isDisabled = () => {
-    return (
-      startTimeMinutes >= endTimeMinutes ||
-      repeatDays.every((v) => v === 0) ||
-      !title
+  const getRepeatCount = () => {
+    const { startTimeMinutes, endTimeMinutes, repeatIntervalMinutes } =
+      form.getValues();
+    const times = Math.floor(
+      (endTimeMinutes - startTimeMinutes) / repeatIntervalMinutes
     );
+    return times < 0 ? 0 : times;
   };
+
+  const repeatCount = getRepeatCount();
 
   return (
-    <Modal
-      id={modalId}
-      ref={modalRef}
-      title={modalTitle}
-      buttons={
-        <>
-          <button
-            onClick={handleSubmit}
-            className="btn btn-primary flex-1"
-            disabled={isLoading || isDisabled()}
-          >
-            {isLoading ? "저장 중..." : "확인"}
-          </button>
-          <button
-            onClick={onCancel}
-            className="btn flex-1"
-            disabled={isLoading}
-          >
-            취소
-          </button>
+    <Modal isOpened={isOpened} setIsOpened={setIsOpened} title={modalTitle}>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className="space-y-4 sm:space-y-8"
+        >
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>이름</FormLabel>
 
-          {extraButton}
-        </>
-      }
-    >
-      <AutoResizeTextarea
-        value={title}
-        required
-        placeholder={"습관 이름을 입력하세요."}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-      {!title ? (
-        <p className="text-error text-sm ml-2">* 습관 이름을 입력해주세요.</p>
-      ) : (
-        <></>
-      )}
-
-      <div className="flex flex-col gap-2 mt-2">
-        <div>
-          <p className="font-semibold mb-2">반복 요일</p>
-          <div className="flex gap-2">{renderRepeatDays(repeatDays)}</div>
-          {repeatDays.every((v) => v === 0) ? (
-            <p className="text-error text-sm ml-2 mt-2">
-              * 반복 요일이 하루라도 있어야 해요.
-            </p>
-          ) : (
-            <></>
-          )}
-        </div>
-
-        <div>
-          <p className="my-2 font-semibold">습관 시작 시간</p>
-          <TimePicker
-            minutes={startTimeMinutes}
-            onChange={setStartTimeMinutes}
+                <FormControl>
+                  <AutoResizeTextarea
+                    autoFocus
+                    placeholder="습관 이름을 입력하세요."
+                    {...field}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
           />
-        </div>
 
-        <div>
-          <p className="my-2 font-semibold">습관 종료 시간</p>
-          <TimePicker
-            isMidnightSelectable
-            minutes={endTimeMinutes}
-            onChange={setEndTimeMinutes}
+          <FormField
+            control={form.control}
+            name="repeatDays"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>반복 요일</FormLabel>
+
+                <FormControl>
+                  <CheckableWeekList
+                    weekList={field.value}
+                    onWeekChange={field.onChange}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
           />
-        </div>
 
-        {startTimeMinutes >= endTimeMinutes ? (
-          <p className="text-error text-sm ml-2">
-            * 시작 시간보다 종료 시간이 이르거나, 같을 수 없어요.
-          </p>
-        ) : (
-          <></>
-        )}
+          <FormField
+            control={form.control}
+            name="startTimeMinutes"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="block">시작 시간</FormLabel>
 
-        <div>
-          <p className="my-2 font-semibold">습관 간격</p>
+                <FormControl>
+                  <TimePicker
+                    totalMinutes={field.value}
+                    onTotalMinutesChange={field.onChange}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
 
-          <select
-            value={repeatIntervalMinutes}
-            className="select w-full select-bordered"
-            onChange={(e) =>
-              setRepeatIntervalMinutes(parseInt(e.target.value) ?? 0)
-            }
-          >
-            {TIME_INTERVALS.map((value) => {
-              return (
-                <option key={value} value={value}>
-                  {getFormatMinutes(value)}마다
-                </option>
-              );
-            })}
-          </select>
+          <FormField
+            control={form.control}
+            name="endTimeMinutes"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="block">종료 시간</FormLabel>
 
-          {count > 0 ? (
-            <div className="text-sm mb-2 font-semibold mr-1 mt-2">
-              <p className="mb-2">
-                반복 요일마다 <span className="text-primary">총 {count}번</span>
-                의 습관을 진행할 예정이에요.
-              </p>
-              <ul className="list-inside ml-2">
-                {Array.from({ length: count }).map((v, i) => {
-                  return (
-                    <li className="list-item list-disc" key={i}>
-                      {getFormatMinutesWithMeridiem(
-                        startTimeMinutes + i * repeatIntervalMinutes
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
+                <FormControl>
+                  <TimePicker
+                    totalMinutes={field.value}
+                    onTotalMinutesChange={field.onChange}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="repeatIntervalMinutes"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="block">반복 간격</FormLabel>
+
+                <FormControl>
+                  <IntervalDropdown
+                    interval={field.value}
+                    onIntervalChange={field.onChange}
+                    maxInterval={
+                      form.getValues().endTimeMinutes -
+                      form.getValues().startTimeMinutes
+                    }
+                  />
+                </FormControl>
+
+                <FormDescription className="flex flex-col gap-2">
+                  <p>
+                    시작 시간과 종료 시간 이내에, 습관을 실행할 수 있도록 설정한
+                    반복 간격마다 알림이 울려요.
+                  </p>
+
+                  {repeatCount > 0 ? (
+                    <p>
+                      현재 설정한 값으론 알림이{" "}
+                      <span className="text-foreground">
+                        총 {repeatCount}번
+                      </span>{" "}
+                      울릴거에요.
+                    </p>
+                  ) : (
+                    <div className="text-destructive">
+                      <p>현재 설정한 시간을 다시 확인해보세요.</p>
+                      <p>현재 설정한 시간으로는 알림이 한번도 울리지 않아요.</p>
+                    </div>
+                  )}
+                </FormDescription>
+              </FormItem>
+            )}
+          />
+
+          {deletable && (
+            <div className="flex-col flex gap-2">
+              <p className="text-sm">설정</p>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-max !text-destructive border-destructive"
+                onClick={onHabitDelete}
+              >
+                <TrashIcon />
+                습관 삭제하기
+              </Button>
             </div>
-          ) : (
-            <p className="text-sm ml-2 mt-2">
-              이러면 습관이 한번도 진행되지 않아요.
-              <br /> 시간대를 넓혀보거나, 습관 간격을 줄여보는건 어떨까요?
-            </p>
           )}
-        </div>
-      </div>
+
+          <div className="py-3 sm:py-0 flex flex-col sm:flex-row gap-2 justify-end">
+            <Button
+              className="w-full sm:w-auto"
+              disabled={isLoading}
+              type="submit"
+            >
+              {submitButtonLabel}
+            </Button>
+
+            <Button
+              className="w-full sm:w-auto"
+              type="button"
+              variant={"outline"}
+              onClick={() => setIsOpened(false)}
+            >
+              취소하기
+            </Button>
+          </div>
+        </form>
+      </Form>
     </Modal>
   );
 }

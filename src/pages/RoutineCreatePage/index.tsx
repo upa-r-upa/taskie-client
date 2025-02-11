@@ -4,7 +4,6 @@ import { toast } from "sonner";
 
 import { queryClient, routineApi } from "@/api/client";
 import useRoutineForm from "@/hooks/useRoutineForm";
-import { parseRepeatDaysToServerFormat } from "@/utils/time";
 import RoutineForm from "@/components/routine/RoutineForm";
 
 export default function RoutineCreatePage() {
@@ -44,7 +43,7 @@ export default function RoutineCreatePage() {
     createRoutineMutation.mutate({
       title: title,
       start_time_minutes: startTimeMinutes,
-      repeat_days: parseRepeatDaysToServerFormat(repeatDays),
+      repeat_days: repeatDays,
       routine_elements: todoList,
     });
   };

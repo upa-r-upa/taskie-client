@@ -14,7 +14,7 @@ interface Props {
 export default function useRoutineForm({
   initialTitle = "",
   initialStartTimeMinutes = 540,
-  initialRepeatDays = [1, 1, 1, 1, 1, 0, 0],
+  initialRepeatDays = [0, 1, 2, 3, 4],
   initialTodoList = [],
 }: Props) {
   const [title, setTitle] = useState<string>(initialTitle);
@@ -59,7 +59,7 @@ export default function useRoutineForm({
   };
 
   const isDisabled = () => {
-    return repeatDays.every((v) => v === 0) || !title;
+    return repeatDays.length === 0 || !title;
   };
 
   return {

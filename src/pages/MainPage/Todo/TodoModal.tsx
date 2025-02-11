@@ -2,11 +2,9 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
-import { ChevronsUpDown, TrashIcon } from "lucide-react";
+import { TrashIcon } from "lucide-react";
 
-import { getDateWithoutTime } from "@/utils/time";
 import { Button } from "@/components/ui/button";
-import Modal from "@/components/ui/Modal";
 import {
   Form,
   FormControl,
@@ -15,9 +13,10 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import DateTimePicker from "@/components/ui/DateTimePicker";
+import DateTimePicker from "@/components/ui/date-time-picker";
 import AutoResizeTextarea from "@/components/AutoResizeTextarea";
 import usePrevious from "@/hooks/usePrevious";
+import Modal from "@/components/ui/modal";
 
 import { TodoModalSubmitProps } from "../types";
 
@@ -61,7 +60,7 @@ export default function TodoModal({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      targetDate: getDateWithoutTime(originTargetDate),
+      targetDate: originTargetDate,
       title: originTitle,
       content: originContent,
     },
@@ -72,7 +71,7 @@ export default function TodoModal({
   useEffect(() => {
     if (isOpened !== previousIsOpened && isOpened) {
       form.reset({
-        targetDate: getDateWithoutTime(originTargetDate),
+        targetDate: originTargetDate,
         title: originTitle,
         content: originContent,
       });

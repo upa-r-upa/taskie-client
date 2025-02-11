@@ -4,10 +4,7 @@ import { CheckIcon, PlayIcon } from "lucide-react";
 import { RoutineItem, RoutinePublic } from "@/api/generated";
 import Routes from "@/constants/routes";
 import { cn } from "@/lib/utils";
-import {
-  convertSecondsToMinutes,
-  getFormatMinutesWithMeridiem,
-} from "@/utils/time";
+import { formatSecondsAsDuration, formatMinutesWithAMPM } from "@/utils/time";
 
 import WeekList from "../WeekList";
 import { Button } from "../ui/button";
@@ -30,7 +27,7 @@ const RoutineTodoItem = ({ todo }: { todo: RoutineItem }) => {
       </p>
 
       <p className="text-xs text-muted-foreground basis-20">
-        {convertSecondsToMinutes(todo.completed_duration_seconds || 0)} 진행
+        {formatSecondsAsDuration(todo.completed_duration_seconds || 0)} 진행
       </p>
     </div>
   );
@@ -66,7 +63,7 @@ export default function Routine({ routine }: Props) {
         {isDone && (
           <Badge className="w-max">
             <CheckIcon size={15} className="mr-1" />총{" "}
-            {convertSecondsToMinutes(completedSeconds)} 진행했어요!
+            {formatSecondsAsDuration(completedSeconds)} 진행했어요!
           </Badge>
         )}
 
@@ -82,7 +79,7 @@ export default function Routine({ routine }: Props) {
                 "h-3 text-xs text-muted-foreground flex items-center gap-1"
               }
             >
-              <p>{getFormatMinutesWithMeridiem(start_time_minutes)}</p>
+              <p>{formatMinutesWithAMPM(start_time_minutes)}</p>
               <Separator orientation="vertical" />
               <div>총 {getTotalRoutineMinutes(routine_elements)}분</div>
             </div>

@@ -43,7 +43,7 @@ export default function DateTimePicker({ date, onDateChange }: Props) {
       <TimePickerBase
         ampm={date.getHours() >= 12 ? "오후" : "오전"}
         hours={date.getHours()}
-        minutes={date.getHours()}
+        minutes={date.getMinutes()}
         onAMPMChange={handleAMPMChange}
         onHoursChange={handleHoursChange}
         onMinutesChange={handleMinutesChange}

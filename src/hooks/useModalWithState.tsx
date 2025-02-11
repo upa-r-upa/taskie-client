@@ -1,14 +1,14 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 
 import useModal from "./useModal";
 
-export default function useModalWithState<T = boolean>(modalState?: T) {
+export default function useModalWithState<T>(initialState?: T) {
   const modal = useModal();
-  const modalStateRef = useRef<T | null>(modalState || null);
+  const [modalState, setModalState] = useState<T | null>(initialState || null);
 
   useEffect(() => {
     if (!modal.isModalOpened) {
-      modalStateRef.current = null;
+      setModalState(null);
     }
   }, [modal.isModalOpened]);
 
@@ -17,7 +17,7 @@ export default function useModalWithState<T = boolean>(modalState?: T) {
   };
 
   const openModal = (modalState: T) => {
-    modalStateRef.current = modalState;
+    setModalState(modalState);
     modal.openModal();
   };
 
@@ -32,7 +32,7 @@ export default function useModalWithState<T = boolean>(modalState?: T) {
   return {
     isOpened: modal.isModalOpened,
     setIsOpened: setIsOpened,
-    modalState: modalStateRef.current,
+    modalState,
     closeModal,
     openModal,
   };

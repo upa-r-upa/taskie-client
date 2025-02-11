@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import { habitsApi } from "@/api/client";
 import { HabitPublic } from "@/api/generated";
 import { HabitModalSubmitProps } from "@/components/habit/HabitModal/types";
-import { parseRepeatDaysToServerFormat } from "@/utils/time";
 
 import useModalWithState from "../useModalWithState";
 import useModal from "../useModal";
@@ -23,7 +22,11 @@ export default function useHabitMutations({ reloadHabitList }: Props) {
   const { closeModal: closeCreateModal } = createHabitModal;
   const achieveHabitMutation = useMutation({
     mutationFn: habitsApi.achieveHabit,
-    onSuccess: reloadHabitList,
+    onSuccess: () => {
+      reloadHabitList();
+
+      toast.success(`습관을 성공적으로 달성했어요.`);
+    },
     onError: () => toast.error("습관 달성 요청에 실패했습니다."),
   });
 
@@ -62,7 +65,7 @@ export default function useHabitMutations({ reloadHabitList }: Props) {
       title: params.title,
       start_time_minutes: params.startTimeMinutes,
       end_time_minutes: params.endTimeMinutes,
-      repeat_days: parseRepeatDaysToServerFormat(params.repeatDays),
+      repeat_days: params.repeatDays,
       repeat_time_minutes: params.repeatIntervalMinutes,
     });
   };
@@ -76,7 +79,7 @@ export default function useHabitMutations({ reloadHabitList }: Props) {
         title: params.title,
         start_time_minutes: params.startTimeMinutes,
         end_time_minutes: params.endTimeMinutes,
-        repeat_days: parseRepeatDaysToServerFormat(params.repeatDays),
+        repeat_days: params.repeatDays,
         repeat_time_minutes: params.repeatIntervalMinutes,
         activated: true,
       },
