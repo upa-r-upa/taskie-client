@@ -6,7 +6,7 @@ export interface HabitModalSubmitProps {
   repeatDays: Array<number>;
 }
 
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { z } from "zod";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

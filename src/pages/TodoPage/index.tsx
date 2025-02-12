@@ -6,7 +6,6 @@ import TodoList from "@/components/todo/TodoList";
 import useTodoMutations from "@/hooks/useTodoMutations";
 import { queryClient, todoApi } from "@/api/client";
 import { getDateWithoutTime } from "@/utils/time";
-import { TodoPublic } from "@/api/generated";
 import { API_REFETCH_INTERVAL } from "@/constants/api";
 import CompletedTodoList from "@/components/todo/CompletedTodoList";
 

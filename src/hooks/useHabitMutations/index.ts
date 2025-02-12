@@ -3,7 +3,7 @@ import { toast } from "sonner";
 
 import { habitsApi } from "@/api/client";
 import { HabitPublic } from "@/api/generated";
-import { HabitModalSubmitProps } from "@/components/habit/HabitModal/types";
+import { HabitModalSubmitProps } from "@/components/habit/HabitModal";
 
 import useModalWithState from "../useModalWithState";
 import useModal from "../useModal";

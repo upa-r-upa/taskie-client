@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AlarmClock, Clock10 } from "lucide-react";
+import { AlarmClock } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { AMPM } from "@/utils/time";
