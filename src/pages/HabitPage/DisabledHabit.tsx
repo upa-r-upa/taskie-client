@@ -1,9 +1,6 @@
 import { HabitPublic } from "@/api/generated";
 import WeekList from "@/components/WeekList";
-import {
-  convertMinutesToHours,
-  getFormatMinutesWithMeridiem,
-} from "@/utils/time";
+import { formatDuration, formatMinutesWithAMPM } from "@/utils/time";
 
 interface Props {
   habit: HabitPublic;
@@ -28,7 +25,7 @@ export default function DisabledHabit({ habit, onHabitClick }: Props) {
       >
         <div className="overflow-hidden">
           <span className="badge badge-neutral badge-outline badge-sm">
-            {convertMinutesToHours(repeat_time_minutes)} 주기
+            {formatDuration(repeat_time_minutes)} 주기
           </span>
           <div className="card-title text-lg overflow-hidden">
             <h2
@@ -45,8 +42,8 @@ export default function DisabledHabit({ habit, onHabitClick }: Props) {
           <WeekList weekList={repeat_days} className="mt-1" />
 
           <p className="mt-1">
-            {getFormatMinutesWithMeridiem(start_time_minutes)}~
-            {getFormatMinutesWithMeridiem(end_time_minutes)}
+            {formatMinutesWithAMPM(start_time_minutes)}~
+            {formatMinutesWithAMPM(end_time_minutes)}
           </p>
         </div>
       </div>

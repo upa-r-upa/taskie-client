@@ -2,6 +2,7 @@ import { TodoPublic } from "@/api/generated";
 import { getDateWithoutTime } from "@/utils/time";
 import TodoList from "@/components/todo/TodoList";
 import useTodoMutations from "@/hooks/useTodoMutations";
+import { Button } from "@/components/ui/button";
 
 import TodoModal from "./TodoModal";
 
@@ -19,68 +20,62 @@ export default function TodoSection({ date, todoList, reloadTodoList }: Props) {
     onAddTodoSubmit,
     onUpdateTodoSubmit,
     onUpdateTodoChecked,
+    onDeleteTodo,
     updateTodoMutation,
     deleteTodoMutation,
     createTodoMutation,
   } = useTodoMutations(reloadTodoList);
 
-  const renderTodoUpdateModal = (todo: TodoPublic | null) => {
-    if (!todo) return;
+  const { visibleState: selectedTodo } = updateModalState;
 
-    return (
-      <TodoModal
-        ref={updateModalState.modalRef}
-        modalTitle="할 일 수정하기"
-        modalId="todo-update"
-        title={todo.title}
-        content={todo.content}
-        targetDate={new Date(todo.target_date)}
-        onTodoSubmit={onUpdateTodoSubmit}
-        isLoading={updateTodoMutation.isPending || deleteTodoMutation.isPending}
-        onCancel={updateModalState.closeModal}
-        extraButton={
-          <button
-            disabled={deleteTodoMutation.isPending}
-            onClick={() => deleteTodoMutation.mutate(todo.id)}
-            className="btn btn-error"
-          >
-            삭제하기
-          </button>
-        }
-      />
-    );
-  };
+  const isUpdateModalLoading =
+    updateTodoMutation.isPending || deleteTodoMutation.isPending;
 
   return (
     <>
       <TodoList
         todoList={todoList}
-        onAddTodoClick={createModalState.openModal}
         onTodoClick={updateModalState.openModal}
         onTodoCheck={onUpdateTodoChecked}
       />
 
-      {todoList.length > 0 && (
-        <button
-          onClick={createModalState.openModal}
-          className="btn btn-primary btn-outline btn-block mt-4"
-        >
-          할 일 추가하기
-        </button>
-      )}
+      <Button
+        size="lg"
+        onClick={createModalState.openModal}
+        className="mt-4 w-full"
+      >
+        할 일 추가하기
+      </Button>
 
       <TodoModal
-        ref={createModalState.modalRef}
-        key={createModalState.isModalOpened ? "open" : "close"}
-        modalTitle="할 일 추가하기"
-        modalId="todo-create"
+        title="할 일 추가하기"
+        isOpened={createModalState.isModalOpened}
+        setIsOpened={createModalState.setIsOpened}
         targetDate={getDateWithoutTime(date)}
         onTodoSubmit={onAddTodoSubmit}
         isLoading={createTodoMutation.isPending}
-        onCancel={createModalState.closeModal}
+        submitButtonLabel="할 일 추가하기"
       />
 
-      {renderTodoUpdateModal(updateModalState.modalState)}
+      {selectedTodo && (
+        <TodoModal
+          deletable
+          isOpened={updateModalState.isOpened}
+          setIsOpened={updateModalState.setIsOpened}
+          submitButtonLabel="할 일 수정하기"
+          title="할 일 수정하기"
+          initialTodo={{ ...selectedTodo }}
+          isLoading={isUpdateModalLoading}
+          targetDate={
+            selectedTodo?.target_date
+              ? new Date(selectedTodo.target_date)
+              : new Date()
+          }
+          onTodoSubmit={onUpdateTodoSubmit}
+          onModalInvisible={updateModalState.invisibleModal}
+          onTodoDelete={onDeleteTodo}
+        />
+      )}
     </>
   );
 }

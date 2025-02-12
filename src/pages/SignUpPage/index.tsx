@@ -1,163 +1,230 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { toast } from "sonner";
 
 import { authApi } from "@/api/client";
-import { useMessageStore } from "@/state/useMessageStore";
 import Routes from "@/constants/routes";
-import InputField from "@/components/InputField";
 import { ErrorResponse } from "@/api/generated";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
-const messages: { [key: string]: { [key: string]: string } } = {
-  username: {
-    VALUE_TOO_SHORT: "아이디는 4자 이상이어야 합니다.",
-    VALUE_TOO_LONG: "아이디는 20자 이하이어야 합니다.",
-    VALUE_MUST_BE_ALPHANUM: "아이디는 영문 혹은 영문과 숫자를 조합해주세요.",
-    USERNAME_ALREADY_EXISTS:
-      "이미 사용중인 아이디입니다. 다른 아이디를 입력해주세요.",
-  },
-  password: {
-    VALUE_TOO_SHORT: "비밀번호는 6자 이상이어야 합니다.",
-    VALUE_TOO_LONG: "비밀번호는 20자 이하이어야 합니다.",
-    VALUE_MUST_BE_ALPHANUM: "비밀번호는 영문 혹은 영문과 숫자를 조합해주세요.",
-  },
-  password_confirm: {
-    PASSWORD_NOT_MATCH:
-      "비밀번호 확인란과 비밀번호가 일치하지 않습니다. 다시 입력해주세요.",
-  },
-  email: {
-    VALUE_TOO_LONG: "이메일은 100자 이하여야 합니다. 다시 입력해주세요.",
-    INVALID_EMAIL_FORMAT: "이메일 형식이 올바르지 않습니다. 다시 입력해주세요.",
-    EMAIL_ALREADY_EXISTS:
-      "이미 사용중인 이메일입니다. 다른 이메일을 입력해주세요.",
-  },
+const formSchema = z
+  .object({
+    username: z
+      .string()
+      .min(4, "아이디는 4자 이상이어야 합니다.")
+      .max(20, "아이디는 20자 이하이어야 합니다.")
+      .regex(
+        /^[a-zA-Z0-9]+$/,
+        "아이디는 영문 혹은 영문과 숫자를 조합해주세요."
+      ),
+    password: z
+      .string()
+      .min(6, "비밀번호는 6자 이상이어야 합니다.")
+      .max(20, "비밀번호는 20자 이하이어야 합니다.")
+      .regex(
+        /^[a-zA-Z0-9]+$/,
+        "비밀번호는 영문 혹은 영문과 숫자를 조합해주세요."
+      ),
+    passwordConfirm: z
+      .string()
+      .min(6, "비밀번호는 6자 이상이어야 합니다.")
+      .max(20, "비밀번호는 20자 이하이어야 합니다.")
+      .regex(
+        /^[a-zA-Z0-9]+$/,
+        "비밀번호는 영문 혹은 영문과 숫자를 조합해주세요."
+      ),
+    email: z
+      .string()
+      .max(100, "이메일은 100자 이하여야 합니다.")
+      .email("이메일 형식이 올바르지 않습니다."),
+  })
+  .superRefine(({ passwordConfirm, password }, ctx) => {
+    if (passwordConfirm !== password) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "비밀번호 확인란과 비밀번호가 일치하지 않습니다.",
+        path: ["passwordConfirm"],
+      });
+    }
+  });
+
+const ErrorMessages: { [key: string]: string } = {
+  USERNAME_ALREADY_EXISTS:
+    "이미 사용중인 아이디입니다. 다른 아이디를 입력해주세요.",
+  EMAIL_ALREADY_EXISTS:
+    "이미 사용중인 이메일입니다. 다른 이메일을 입력해주세요.",
 };
 
 const SignUpPage = () => {
   const navigate = useNavigate();
-  const addMessage = useMessageStore((state) => state.addMessage);
 
-  const [form, setForm] = useState({
-    username: "",
-    password: "",
-    passwordConfirm: "",
-    email: "",
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+      passwordConfirm: "",
+      email: "",
+    },
   });
 
   const { mutate, isPending } = useMutation({
     mutationFn: authApi.signup,
     onSuccess: () => {
       navigate(`/${Routes.Login}`);
-      addMessage({
-        message: "회원가입이 완료되었습니다. 로그인을 해주세요.",
-        type: "success",
-      });
+      toast.success("회원가입이 완료되었습니다. 로그인을 해주세요.");
     },
     onError: (error: AxiosError<ErrorResponse>) => {
-      if (error.response?.status === 422 && error.response?.data.location) {
-        const { location, error_type } = error.response.data;
-
-        if (location == "username" && messages.username[error_type] != null) {
-          addMessage({
-            message: messages.username[error_type],
-            type: "warning",
-          });
-        } else if (location == "password") {
-          addMessage({
-            message: messages.password[error_type],
-            type: "warning",
-          });
-        } else if (location == "password_confirm") {
-          addMessage({
-            message: messages.password_confirm[error_type],
-            type: "warning",
-          });
-        } else if (location == "email") {
-          addMessage({ message: messages.email[error_type], type: "warning" });
-        }
-      } else if (error.response?.status === 409) {
+      if (error.response?.status === 409) {
         const { error_type } = error.response.data;
+        const message = ErrorMessages[error_type];
 
-        if (error_type == "USERNAME_ALREADY_EXISTS") {
-          addMessage({
-            message: messages.username[error_type],
-            type: "warning",
-          });
-        } else if (error_type == "EMAIL_ALREADY_EXISTS") {
-          addMessage({
-            message: messages.email[error_type],
-            type: "warning",
-          });
+        if (message) {
+          toast.error(message);
         }
       }
     },
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+  const handleSubmit = (values: z.infer<typeof formSchema>) => {
+    mutate({
+      username: values.username,
+      password: values.password,
+      password_confirm: values.passwordConfirm,
+      email: values.email,
+    });
   };
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        mutate({
-          username: form.username,
-          password: form.password,
-          password_confirm: form.passwordConfirm,
-          email: form.email,
-        });
-      }}
-    >
-      <InputField
-        label="사용할 아이디를 입력하세요."
-        type="text"
-        value={form.username}
-        onChange={handleChange}
-        placeholder="ID"
-        extraText="* 최소 4자 이상, 최대 20자 이하, 영문 혹은 영문과 숫자를 조합해주세요."
-        name="username"
-        isRequired
-      />
-      <InputField
-        label="사용할 비밀번호를 입력하세요."
-        type="password"
-        value={form.password}
-        onChange={handleChange}
-        placeholder="Password"
-        extraText="* 최소 6자 이상, 최대 20자 이하, 영문 혹은 영문과 숫자를 조합해주세요."
-        name="password"
-        isRequired
-      />
-      <InputField
-        label="비밀번호를 한번 더 입력하세요."
-        type="password"
-        value={form.passwordConfirm}
-        onChange={handleChange}
-        placeholder="Confirm Password"
-        name="passwordConfirm"
-        isRequired
-      />
-      <div>
-        <InputField
-          label="이메일을 입력하세요."
-          type="email"
-          value={form.email}
-          onChange={handleChange}
-          placeholder="your@email.com"
-          name="email"
-          isRequired
-        />
-      </div>
-      <input
-        type="submit"
-        value="회원가입"
-        disabled={isPending}
-        className="btn btn-primary btn-block mt-5"
-      />
-    </form>
+    <Card className="max-w-xl mx-auto">
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-2xl">계정 생성하기</CardTitle>
+        <CardDescription>Taskie를 이용할 계정을 만들어주세요.</CardDescription>
+      </CardHeader>
+
+      <CardContent className="grid gap-4">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-8"
+          >
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>아이디</FormLabel>
+                  <FormDescription>
+                    최소 4자 이상, 최대 20자 이하, 영문 혹은 숫자를
+                    조합해주세요.
+                  </FormDescription>
+
+                  <FormControl>
+                    <Input
+                      className="text-sm"
+                      placeholder="사용할 아이디를 입력하세요."
+                      {...field}
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>비밀번호</FormLabel>
+                  <FormDescription>
+                    최소 6자 이상, 최대 20자 이하, 영문 혹은 숫자를
+                    조합해주세요.
+                  </FormDescription>
+
+                  <FormControl>
+                    <Input
+                      className="text-sm"
+                      type="password"
+                      placeholder="사용할 비밀번호를 입력하세요."
+                      {...field}
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="passwordConfirm"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>비밀번호 확인</FormLabel>
+
+                  <FormControl>
+                    <Input
+                      className="text-sm"
+                      type="password"
+                      placeholder="사용할 비밀번호를 한번 더 입력하세요."
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>이메일</FormLabel>
+
+                  <FormControl>
+                    <Input
+                      className="text-sm"
+                      placeholder="사용할 이메일을 입력하세요."
+                      {...field}
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button className="w-full" disabled={isPending} type="submit">
+              회원가입
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
 };
 

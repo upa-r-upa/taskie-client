@@ -35,7 +35,7 @@ export default function RoutineTodoList({
             <AutoResizeTextarea
               value={data.title}
               placeholder="할 일을 입력해주세요."
-              onChange={(val) => onTitleUpdate?.(i, val)}
+              onChange={(e) => onTitleUpdate?.(i, e.target.value)}
             />
 
             <div className="flex items-center gap-2">

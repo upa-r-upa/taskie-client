@@ -3,7 +3,7 @@ import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 
 import { RoutineItem, RoutinePublic } from "@/api/generated";
 import useStopwatch from "@/hooks/useStopwatch";
-import { getFormatMinutes } from "@/utils/time";
+import { formatDuration } from "@/utils/time";
 
 import { RoutinePlayViewSubmitProps } from "../MainPage/types";
 
@@ -129,7 +129,7 @@ export default function PlayView({ routine, onSubmit }: Props) {
             <p className="text-gray-400">
               목표 시간{" "}
               <span className="font-semibold">
-                {getFormatMinutes(routineTodo.duration_minutes)}
+                {formatDuration(routineTodo.duration_minutes)}
               </span>
             </p>
 
@@ -170,7 +170,7 @@ export default function PlayView({ routine, onSubmit }: Props) {
           <p>
             목표 시간{" "}
             <span className="font-semibold">
-              {getFormatMinutes(routineTodo.duration_minutes)}
+              {formatDuration(routineTodo.duration_minutes)}
             </span>
             {progress === 100 ? (
               <span className="font-semibold"> 완료!</span>

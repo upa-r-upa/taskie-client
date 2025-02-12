@@ -1,8 +1,8 @@
 import { HabitWithLog } from "@/api/generated";
 import WeekList from "@/components/WeekList";
 import {
-  convertMinutesToHours,
-  getFormatMinutesWithMeridiem,
+  formatDuration,
+  formatMinutesWithAMPM,
   getTimeDifferenceFromNow,
 } from "@/utils/time";
 
@@ -37,7 +37,7 @@ export default function ActivatedHabit({
       <div className="card-body flex flex-row items-center">
         <div className="flex-1 overflow-hidden" onClick={onHabitClick}>
           <span className="badge badge-primary badge-sm">
-            {convertMinutesToHours(repeat_time_minutes)} 주기
+            {formatDuration(repeat_time_minutes)} 주기
           </span>
 
           <div className="card-title text-lg">
@@ -61,13 +61,13 @@ export default function ActivatedHabit({
           ) : (
             <>
               <p className="my-1 font-semibold">
-                {getFormatMinutesWithMeridiem(start_time_minutes)}~
-                {getFormatMinutesWithMeridiem(end_time_minutes)}
+                {formatMinutesWithAMPM(start_time_minutes)}~
+                {formatMinutesWithAMPM(end_time_minutes)}
               </p>
 
               <p>
                 {log_list.length > 0 &&
-                  `${convertMinutesToHours(getTimeDifferenceFromNow(log_list[0].completed_at))} 전에 실천했어요.`}
+                  `${formatDuration(getTimeDifferenceFromNow(log_list[0].completed_at))} 전에 실천했어요.`}
               </p>
 
               <div>

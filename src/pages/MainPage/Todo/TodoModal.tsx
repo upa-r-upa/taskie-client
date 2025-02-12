@@ -1,138 +1,198 @@
-import { forwardRef, useState } from "react";
-import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMemo } from "react";
+import { TrashIcon } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
+import DateTimePicker from "@/components/ui/date-time-picker";
 import AutoResizeTextarea from "@/components/AutoResizeTextarea";
-import TimePicker from "@/components/TimePicker";
-import Modal from "@/components/Modal";
-import { getDateWithoutTime } from "@/utils/time";
+import Modal from "@/components/ui/modal";
 
 import { TodoModalSubmitProps } from "../types";
 
-interface TodoModalProps {
-  modalTitle: string;
-  modalId: string;
-
-  targetDate: Date;
-
-  title?: string;
+interface TodoBase {
+  title: string;
   content?: string;
-  isLoading?: boolean;
-  extraButton?: React.ReactElement;
-
-  onTodoSubmit: (todo: TodoModalSubmitProps) => void;
-  onCancel: () => void;
 }
 
-const TodoModal = forwardRef<HTMLDialogElement, TodoModalProps>(
-  (
-    {
-      modalTitle,
-      modalId,
-      isLoading,
-      title: originTitle = "",
-      content: originContent = "",
+interface TodoModalProps {
+  isOpened: boolean;
+  submitButtonLabel: string;
+  setIsOpened: (open: boolean) => void;
+
+  title: string;
+  targetDate: Date;
+
+  initialTodo?: TodoBase;
+
+  isLoading?: boolean;
+  deletable?: boolean;
+
+  onTodoSubmit: (todo: TodoModalSubmitProps) => void;
+  onModalInvisible?: () => void;
+  onTodoDelete?: () => void;
+}
+
+const formSchema = z.object({
+  targetDate: z.date(),
+  title: z.string(),
+  content: z.string(),
+});
+
+export default function TodoModal({
+  isOpened,
+  setIsOpened,
+  title,
+  submitButtonLabel,
+  isLoading,
+  deletable,
+  initialTodo,
+  targetDate: originTargetDate,
+  onModalInvisible,
+  onTodoSubmit,
+  onTodoDelete,
+}: TodoModalProps) {
+  const defaultTodo = useMemo(
+    () => ({
+      title: initialTodo?.title || "",
+      content: initialTodo?.content || "",
+    }),
+    [initialTodo]
+  );
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
       targetDate: originTargetDate,
-      onCancel,
-      onTodoSubmit,
-      extraButton,
+      ...defaultTodo,
     },
-    ref
-  ) => {
-    const [title, setTitle] = useState<string>(originTitle);
-    const [content, setContent] = useState<string>(originContent);
-    const [targetDate, setTargetDate] = useState<Date>(
-      getDateWithoutTime(originTargetDate)
-    );
+  });
 
-    const handleValueChange = (value: DateValueType) => {
-      if (!value?.startDate) {
-        return;
-      }
+  const handleSubmit = (values: z.infer<typeof formSchema>) => {
+    if (isLoading) return;
 
-      value.startDate.setMinutes(
-        targetDate.getHours(),
-        targetDate.getMinutes(),
-        0
-      );
-      setTargetDate(value.startDate);
-    };
+    onTodoSubmit({
+      title: values.title,
+      content: values.content,
+      targetDate: values.targetDate,
+    });
+  };
 
-    const handleTimeChange = (minutes: number) => {
-      targetDate.setHours(Math.floor(minutes / 60), minutes % 60);
-    };
-
-    const handleConfirmModal = () => {
-      onTodoSubmit({
-        title: title,
-        content: content,
-        targetDate: targetDate,
-      });
-    };
-
-    return (
+  return (
+    <>
       <Modal
-        id={modalId}
-        ref={ref}
-        title={modalTitle}
-        buttons={
-          <>
-            <button
-              onClick={handleConfirmModal}
-              className="btn btn-primary flex-1"
-              disabled={isLoading}
-            >
-              {isLoading ? "할 일 저장 중..." : "확인"}
-            </button>
-            <button
-              onClick={onCancel}
-              className="btn flex-1"
-              disabled={isLoading}
-            >
-              취소
-            </button>
-            {extraButton}
-          </>
+        isOpened={isOpened}
+        onModalInvisible={onModalInvisible}
+        onModalOpen={() =>
+          form.reset({
+            targetDate: originTargetDate,
+            ...defaultTodo,
+          })
         }
+        setIsOpened={setIsOpened}
+        title={title}
       >
-        <AutoResizeTextarea
-          value={title}
-          placeholder={"할 일을 입력하세요."}
-          onChange={(value) => setTitle(value)}
-        />
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4 sm:space-y-8"
+          >
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>제목</FormLabel>
 
-        <div className="flex flex-col gap-2">
-          <Datepicker
-            i18n="ko"
-            asSingle={true}
-            useRange={false}
-            displayFormat="YYYY년 MM월 DD일"
-            value={{
-              endDate: targetDate,
-              startDate: targetDate,
-            }}
-            placeholder="날짜를 지정해주세요."
-            popoverDirection="down"
-            onChange={handleValueChange}
-            inputClassName="input input-bordered w-full text-sm input-md"
-          />
-          <TimePicker
-            minutes={targetDate.getHours() * 60 + targetDate.getMinutes()}
-            onChange={handleTimeChange}
-            className="w-32"
-          />
-        </div>
+                  <FormControl>
+                    <AutoResizeTextarea
+                      autoFocus
+                      placeholder="오늘의 할 일을 입력해보세요."
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
 
-        <div className="mt-4">
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="할 일 내용을 보충 설명해보세요."
-            className="textarea textarea-bordered w-full h-64 text-md"
-          />
-        </div>
+            <FormField
+              control={form.control}
+              name="content"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>설명</FormLabel>
+
+                  <FormControl>
+                    <Textarea
+                      className="min-h-32"
+                      placeholder="할 일의 설명을 입력해보세요."
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="targetDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="block">날짜</FormLabel>
+
+                  <FormControl>
+                    <DateTimePicker
+                      date={field.value}
+                      onDateChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {deletable && (
+              <div className="flex-col flex gap-2">
+                <p className="text-sm">설정</p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-max !text-destructive border-destructive"
+                  onClick={onTodoDelete}
+                >
+                  <TrashIcon />할 일 삭제하기
+                </Button>
+              </div>
+            )}
+
+            <div className="py-3 sm:py-0 flex flex-col sm:flex-row gap-2 justify-end">
+              <Button
+                className="w-full sm:w-auto"
+                disabled={isLoading}
+                type="submit"
+              >
+                {submitButtonLabel}
+              </Button>
+              <Button
+                className="w-full sm:w-auto"
+                type="button"
+                variant={"outline"}
+                onClick={() => setIsOpened(false)}
+              >
+                취소하기
+              </Button>
+            </div>
+          </form>
+        </Form>
       </Modal>
-    );
-  }
-);
-
-export default TodoModal;
+    </>
+  );
+}

@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 export default function useModal(defaultModalOpened: boolean = false) {
-  const modalRef = useRef<HTMLDialogElement>(null);
   const [isModalOpened, setIsModalOpened] =
     useState<boolean>(defaultModalOpened);
 
@@ -13,13 +12,9 @@ export default function useModal(defaultModalOpened: boolean = false) {
     setIsModalOpened(true);
   };
 
-  useEffect(() => {
-    if (isModalOpened) {
-      modalRef.current?.showModal();
-    } else {
-      modalRef.current?.close();
-    }
-  }, [isModalOpened]);
+  const setIsOpened = (opened: boolean) => {
+    setIsModalOpened(opened);
+  };
 
-  return { modalRef, isModalOpened, closeModal, openModal };
+  return { isModalOpened, closeModal, openModal, setIsOpened };
 }

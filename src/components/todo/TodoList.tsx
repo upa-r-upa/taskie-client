@@ -1,14 +1,14 @@
+import { Fragment } from "react/jsx-runtime";
+
 import { TodoPublic } from "@/api/generated";
 import EmptyCard from "@/components/EmptyCard";
 import { formatConditionalDate, isSameDate } from "@/utils/time";
 
-import CompletedTodoItem from "./CompletedTodoItem";
-import IncompleteTodoItem from "./IncompleteTodoItem";
+import TodoItem from "./TodoItem";
 
 interface Props {
   todoList: Array<TodoPublic>;
 
-  onAddTodoClick: () => void;
   onTodoClick: (todo: TodoPublic) => void;
   onTodoCheck: (todo: TodoPublic, checked: boolean) => void;
 
@@ -17,27 +17,19 @@ interface Props {
 
 export default function TodoList({
   todoList,
-  onAddTodoClick,
   onTodoClick,
   onTodoCheck,
   isGrouped,
 }: Props) {
   if (todoList.length === 0) {
     return (
-      <EmptyCard label="할 일">
-        <button
-          onClick={onAddTodoClick}
-          className="btn btn-primary btn-outline"
-        >
-          할 일 추가하기
-        </button>
-      </EmptyCard>
+      <EmptyCard label="할 일">해야하는 일을 하나씩 추가해보세요.</EmptyCard>
     );
   }
 
   return (
     <>
-      <ul className="space-y-2">
+      <div className="flex flex-col gap-2 pt-0">
         {todoList.map((item, i) => {
           const beforeTodo = i > 0 ? todoList[i - 1] : null;
           const isTitleVisible =
@@ -46,32 +38,22 @@ export default function TodoList({
             !beforeTodo;
 
           return (
-            <>
+            <Fragment key={item.id}>
               {isGrouped && isTitleVisible && (
                 <p className="font-semibold mb-2">
                   {formatConditionalDate(item.target_date)}
                 </p>
               )}
 
-              {item.completed_at ? (
-                <CompletedTodoItem
-                  key={item.id}
-                  todo={item}
-                  onTodoClick={onTodoClick}
-                  onTodoCheck={onTodoCheck}
-                />
-              ) : (
-                <IncompleteTodoItem
-                  key={item.id}
-                  todo={item}
-                  onTodoClick={onTodoClick}
-                  onTodoCheck={onTodoCheck}
-                />
-              )}
-            </>
+              <TodoItem
+                todo={item}
+                onTodoClick={onTodoClick}
+                onTodoCheck={onTodoCheck}
+              />
+            </Fragment>
           );
         })}
-      </ul>
+      </div>
     </>
   );
 }

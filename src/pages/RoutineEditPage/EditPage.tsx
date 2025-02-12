@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
-import { useMessageStore } from "@/state/useMessageStore";
 import { queryClient, routineApi } from "@/api/client";
 import { RoutinePublic, RoutineUpdateInput } from "@/api/generated";
 import useRoutineForm from "@/hooks/useRoutineForm";
@@ -13,16 +13,6 @@ interface Props {
 
 export default function EditPage({ routine }: Props) {
   const navigate = useNavigate();
-
-  const parseRepeatDays = (repeatDays: Array<number>): Array<number> => {
-    const result = Array.from({ length: 7 }, () => 0);
-
-    repeatDays.forEach((value) => {
-      result[value] = 1;
-    });
-
-    return result;
-  };
 
   const {
     title,
@@ -40,7 +30,7 @@ export default function EditPage({ routine }: Props) {
     isDisabled,
   } = useRoutineForm({
     initialTitle: routine.title,
-    initialRepeatDays: parseRepeatDays(routine.repeat_days),
+    initialRepeatDays: routine.repeat_days,
     initialStartTimeMinutes: routine.start_time_minutes,
     initialTodoList: routine.routine_elements,
   });
@@ -54,7 +44,6 @@ export default function EditPage({ routine }: Props) {
     });
   };
 
-  const addMessage = useMessageStore((state) => state.addMessage);
   const createRoutineMutation = useMutation({
     mutationFn: (data: RoutineUpdateInput) =>
       routineApi.updateRoutine(routine.id, data),
@@ -62,33 +51,14 @@ export default function EditPage({ routine }: Props) {
       refetchData();
       navigate(-1);
     },
-    onError: () => {
-      addMessage({
-        message: "루틴 수정에 실패했습니다.",
-        type: "error",
-      });
-    },
+    onError: () => toast.error("루틴 수정에 실패했습니다."),
   });
-
-  const parseRepeatDaysToServerFormat = (
-    repeatDays: Array<number>
-  ): Array<number> => {
-    const result: Array<number> = [];
-
-    repeatDays.forEach((value, i) => {
-      if (value) {
-        result.push(i);
-      }
-    });
-
-    return result;
-  };
 
   const handleSubmit = () => {
     createRoutineMutation.mutate({
       title: title,
       start_time_minutes: startTimeMinutes,
-      repeat_days: parseRepeatDaysToServerFormat(repeatDays),
+      repeat_days: repeatDays,
       routine_elements: todoList,
     });
   };
@@ -96,19 +66,10 @@ export default function EditPage({ routine }: Props) {
   const deleteRoutineMutation = useMutation({
     mutationFn: routineApi.deleteRoutine,
     onSuccess: () => {
-      addMessage({
-        message: "루틴을 삭제했습니다.",
-      });
-      refetchData();
-
+      toast.success("루틴을 삭제했습니다."), refetchData();
       navigate(-1);
     },
-    onError: () => {
-      addMessage({
-        message: "루틴 삭제에 실패했습니다.",
-        type: "error",
-      });
-    },
+    onError: () => toast.error("루틴 삭제에 실패했습니다."),
   });
 
   const handleRoutineDeleteClick = () => {

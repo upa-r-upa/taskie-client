@@ -1,10 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import { habitsApi } from "@/api/client";
-import { useMessageStore } from "@/state/useMessageStore";
 import { HabitPublic } from "@/api/generated";
-import { HabitModalSubmitProps } from "@/components/habit/HabitModal/types";
-import { parseRepeatDaysToServerFormat } from "@/utils/time";
+import { HabitModalSubmitProps } from "@/components/habit/HabitModal";
 
 import useModalWithState from "../useModalWithState";
 import useModal from "../useModal";
@@ -16,22 +15,19 @@ interface Props {
 }
 
 export default function useHabitMutations({ reloadHabitList }: Props) {
-  const addMessage = useMessageStore((state) => state.addMessage);
-
   const updateHabitModal = useModalWithState<HabitPublic>();
-  const { modalState: selectedHabit, closeModal: closeUpdateModal } =
+  const { visibleState: selectedHabit, closeModal: closeUpdateModal } =
     updateHabitModal;
   const createHabitModal = useModal();
   const { closeModal: closeCreateModal } = createHabitModal;
   const achieveHabitMutation = useMutation({
     mutationFn: habitsApi.achieveHabit,
-    onSuccess: reloadHabitList,
-    onError: () => {
-      addMessage({
-        message: "습관 달성 요청에 실패했습니다.",
-        type: "error",
-      });
+    onSuccess: () => {
+      reloadHabitList();
+
+      toast.success(`습관을 성공적으로 달성했어요.`);
     },
+    onError: () => toast.error("습관 달성 요청에 실패했습니다."),
   });
 
   const createHabitMutation = useMutation({
@@ -40,12 +36,7 @@ export default function useHabitMutations({ reloadHabitList }: Props) {
       closeCreateModal();
       reloadHabitList();
     },
-    onError: () => {
-      addMessage({
-        message: "습관 추가에 실패했습니다.",
-        type: "error",
-      });
-    },
+    onError: () => toast.error("습관 추가에 실패했습니다."),
   });
 
   const updateHabitMutation = useMutation({
@@ -55,12 +46,7 @@ export default function useHabitMutations({ reloadHabitList }: Props) {
       closeUpdateModal();
       reloadHabitList();
     },
-    onError: () => {
-      addMessage({
-        message: "습관 수정에 실패했습니다.",
-        type: "error",
-      });
-    },
+    onError: () => toast.error("습관 수정에 실패했습니다."),
   });
 
   const deleteHabitMutation = useMutation({
@@ -68,16 +54,10 @@ export default function useHabitMutations({ reloadHabitList }: Props) {
     onSuccess: () => {
       closeUpdateModal();
       reloadHabitList();
-      addMessage({
-        message: "습관을 삭제했습니다.",
-      });
+
+      toast.success("습관을 삭제했습니다.");
     },
-    onError: () => {
-      addMessage({
-        message: "습관 삭제에 실패했습니다.",
-        type: "error",
-      });
-    },
+    onError: () => toast.error("습관 삭제에 실패했습니다."),
   });
 
   const createHabit = (params: HabitModalSubmitProps) => {
@@ -85,7 +65,7 @@ export default function useHabitMutations({ reloadHabitList }: Props) {
       title: params.title,
       start_time_minutes: params.startTimeMinutes,
       end_time_minutes: params.endTimeMinutes,
-      repeat_days: parseRepeatDaysToServerFormat(params.repeatDays),
+      repeat_days: params.repeatDays,
       repeat_time_minutes: params.repeatIntervalMinutes,
     });
   };
@@ -99,7 +79,7 @@ export default function useHabitMutations({ reloadHabitList }: Props) {
         title: params.title,
         start_time_minutes: params.startTimeMinutes,
         end_time_minutes: params.endTimeMinutes,
-        repeat_days: parseRepeatDaysToServerFormat(params.repeatDays),
+        repeat_days: params.repeatDays,
         repeat_time_minutes: params.repeatIntervalMinutes,
         activated: true,
       },
