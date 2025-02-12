@@ -2,10 +2,8 @@ import { PropsWithChildren, useEffect } from "react";
 
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
@@ -18,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import usePrevious from "@/hooks/usePrevious";
+import { useMounted } from "@/hooks/useMounted";
 
 import { ScrollArea } from "./scroll-area";
 
@@ -44,6 +43,7 @@ export default function Modal({
   children,
 }: Props & PropsWithChildren) {
   const previousIsOpened = usePrevious(isOpened);
+  const isMounted = useMounted();
 
   useEffect(() => {
     if (isOpened !== previousIsOpened && isOpened) {
@@ -51,24 +51,26 @@ export default function Modal({
     }
   }, [isOpened, previousIsOpened, onModalOpen]);
 
-  // const isDesktop = useMediaQuery("(min-width: 640px)");
+  const isDesktop = useMediaQuery("(min-width: 640px)");
 
-  // if (isDesktop) {
-  //   return (
-  //     <Dialog open={isOpened} onOpenChange={setIsOpened}>
-  //       <DialogContent>
-  //         <DialogHeader>
-  //           <DialogTitle>{title}</DialogTitle>
-  //           {description && (
-  //             <DialogDescription>{description}</DialogDescription>
-  //           )}
-  //         </DialogHeader>
+  if (!isMounted) return null;
 
-  //         <div className="grid gap-4 py-4">{children}</div>
-  //       </DialogContent>
-  //     </Dialog>
-  //   );
-  // }
+  if (isDesktop) {
+    return (
+      <Dialog open={isOpened} onOpenChange={setIsOpened}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{title}</DialogTitle>
+            {description && (
+              <DialogDescription>{description}</DialogDescription>
+            )}
+          </DialogHeader>
+
+          <div className="grid gap-4 py-4">{children}</div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   const handleAnimationEnd = (isOpen: boolean) => {
     if (!isOpen) {
