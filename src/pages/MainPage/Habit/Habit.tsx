@@ -28,8 +28,9 @@ export default function Habit({
   onHabitClick,
   onHabitAchieve,
 }: Props) {
-  const count = Math.floor(
-    (end_time_minutes - start_time_minutes) / repeat_time_minutes
+  const count = Math.max(
+    Math.floor((end_time_minutes - start_time_minutes) / repeat_time_minutes),
+    0
   );
   const isDone = count <= log_list.length;
 

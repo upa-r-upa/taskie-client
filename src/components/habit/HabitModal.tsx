@@ -6,11 +6,12 @@ export interface HabitModalSubmitProps {
   repeatDays: Array<number>;
 }
 
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TrashIcon } from "lucide-react";
+import { toast } from "sonner";
 
 import Modal, { ModalOpenProps } from "@/components/ui/modal";
 import AutoResizeTextarea from "@/components/AutoResizeTextarea";
@@ -41,8 +42,8 @@ interface HabitModalProps {
 }
 
 const formSchema = z.object({
-  title: z.string(),
-  repeatDays: z.array(z.number()),
+  title: z.string().min(1, "습관 이름을 입력하세요."),
+  repeatDays: z.array(z.number()).min(1, "반복 요일이 하루라도 있어야 해요."),
   startTimeMinutes: z.number(),
   endTimeMinutes: z.number(),
   repeatIntervalMinutes: z.number(),
@@ -75,16 +76,49 @@ export default function HabitModal({
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    mode: "onChange",
     defaultValues: defaultHabit,
   });
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
     if (isLoading) return;
 
+    const count = Math.floor(
+      (values.endTimeMinutes - values.startTimeMinutes) /
+        values.repeatIntervalMinutes
+    );
+
+    if (count <= 0) {
+      return toast.error(
+        "시작 시간과 종료 시간, 반복 간격을 확인해주세요. 현재는 알림이 울리지 않아요."
+      );
+    }
+
     onSubmit({
       ...values,
     });
   };
+
+  const watchedStartTimeMinutes = useWatch({
+    name: "startTimeMinutes",
+    control: form.control,
+  });
+  const watchedEndTimeMinutes = useWatch({
+    name: "endTimeMinutes",
+    control: form.control,
+  });
+  const watchedRepeatInterval = useWatch({
+    name: "repeatIntervalMinutes",
+    control: form.control,
+  });
+
+  const isTimeInvalid = watchedStartTimeMinutes >= watchedEndTimeMinutes;
+  const habitCount = Math.max(
+    Math.floor(
+      (watchedEndTimeMinutes - watchedStartTimeMinutes) / watchedRepeatInterval
+    ),
+    0
+  );
 
   return (
     <Modal
@@ -113,6 +147,7 @@ export default function HabitModal({
                     {...field}
                   />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -131,9 +166,7 @@ export default function HabitModal({
                   />
                 </FormControl>
 
-                {field.value.length === 0 && (
-                  <FormMessage>반복 요일이 하루라도 있어야 해요.</FormMessage>
-                )}
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -158,44 +191,32 @@ export default function HabitModal({
           <FormField
             control={form.control}
             name="endTimeMinutes"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="block">종료 시간</FormLabel>
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel className="block">종료 시간</FormLabel>
 
-                <FormControl>
-                  <TimePicker
-                    totalMinutes={field.value}
-                    onTotalMinutesChange={field.onChange}
-                  />
-                </FormControl>
+                  <FormControl>
+                    <TimePicker
+                      totalMinutes={field.value}
+                      onTotalMinutesChange={field.onChange}
+                    />
+                  </FormControl>
 
-                {field && (
-                  <FormMessage>
-                    시작 시간보다 종료 시간이 이르거나, 같을 수 없어요.
-                  </FormMessage>
-                )}
-              </FormItem>
-            )}
+                  {isTimeInvalid && (
+                    <FormMessage>
+                      종료 시간보다 시작 시간이 빨라야 해요.
+                    </FormMessage>
+                  )}
+                </FormItem>
+              );
+            }}
           />
 
           <FormField
             control={form.control}
             name="repeatIntervalMinutes"
             render={({ field }) => {
-              const getRepeatCount = () => {
-                const {
-                  startTimeMinutes,
-                  endTimeMinutes,
-                  repeatIntervalMinutes,
-                } = form.getValues();
-                const times = Math.floor(
-                  (endTimeMinutes - startTimeMinutes) / repeatIntervalMinutes
-                );
-                return times < 0 ? 0 : times;
-              };
-
-              const repeatCount = getRepeatCount();
-
               return (
                 <FormItem>
                   <FormLabel className="block">반복 간격</FormLabel>
@@ -204,35 +225,26 @@ export default function HabitModal({
                     <IntervalDropdown
                       interval={field.value}
                       onIntervalChange={field.onChange}
-                      maxInterval={
-                        form.getValues().endTimeMinutes -
-                        form.getValues().startTimeMinutes
-                      }
                     />
                   </FormControl>
 
                   <div className="text-sm text-muted-foreground">
                     <p>
-                      시작 시간과 종료 시간 이내에, 습관을 실행할 수 있도록
-                      설정한 반복 간격마다 알림이 울려요.
+                      시작 시간과 종료 시간 이내에는 습관을 실행할 수 있도록
+                      알림이 울려요.
                     </p>
+                    <p>시작 시간부터 알림이 가고, 간격마다 다시 알려드려요.</p>
 
-                    {repeatCount > 0 && (
-                      <p>
-                        현재 설정한 값으론 알림이{" "}
-                        <span className="text-foreground">
-                          총 {repeatCount}번
-                        </span>{" "}
-                        울릴거에요.
-                      </p>
-                    )}
+                    <p className="mt-1">
+                      현재 설정대로면,{" "}
+                      <span className="text-foreground">총 {habitCount}번</span>{" "}
+                      울릴거에요.
+                    </p>
                   </div>
 
-                  {repeatCount <= 0 && (
+                  {habitCount === 0 && (
                     <FormMessage>
-                      현재 설정한 시간을 다시 확인해보세요.
-                      <br />
-                      현재 설정한 시간으로는 알림이 한번도 울리지 않아요.
+                      이렇게 설정하면, 한번도 울리지 않아요. 다시 설정해보세요.
                     </FormMessage>
                   )}
                 </FormItem>
@@ -258,7 +270,7 @@ export default function HabitModal({
           <div className="py-3 sm:py-0 flex flex-col sm:flex-row gap-2 justify-end">
             <Button
               className="w-full sm:w-auto"
-              disabled={isLoading}
+              disabled={isLoading || isTimeInvalid || habitCount === 0}
               type="submit"
             >
               {submitButtonLabel}

@@ -23,10 +23,6 @@ export default function IntervalDropdown({
   onIntervalChange,
   maxInterval = INTERVAL_OPTIONS[INTERVAL_OPTIONS.length - 1],
 }: Props) {
-  const availableOptions = INTERVAL_OPTIONS.filter(
-    (interval) => interval <= maxInterval
-  );
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -39,10 +35,11 @@ export default function IntervalDropdown({
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="w-auto">
-        {availableOptions.length ? (
-          availableOptions.map((value) => (
+        {INTERVAL_OPTIONS.length ? (
+          INTERVAL_OPTIONS.map((value) => (
             <DropdownMenuItem
               key={value}
+              disabled={maxInterval < value}
               onClick={() => onIntervalChange(value)}
             >
               {formatDuration(value)}
