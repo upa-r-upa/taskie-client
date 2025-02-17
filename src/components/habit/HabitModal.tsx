@@ -11,7 +11,6 @@ import { z } from "zod";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TrashIcon } from "lucide-react";
-import { toast } from "sonner";
 
 import Modal, { ModalOpenProps } from "@/components/ui/modal";
 import AutoResizeTextarea from "@/components/AutoResizeTextarea";

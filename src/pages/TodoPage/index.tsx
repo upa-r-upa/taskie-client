@@ -46,7 +46,7 @@ export default function TodoPage() {
 
   return (
     <>
-      <div className="mx-auto w-full max-w-2xl">
+      <div className="mx-auto grid grid-cols-1 max-w-xl">
         <h2 className="text-3xl font-bold tracking-tight mb-2">Todo</h2>
 
         <Tabs defaultValue={TabType.incomplete}>

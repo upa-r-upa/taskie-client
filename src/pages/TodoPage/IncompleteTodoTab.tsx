@@ -4,7 +4,6 @@ import { todoApi } from "@/api/client";
 import { API_REFETCH_INTERVAL } from "@/constants/api";
 import { TodoPublic } from "@/api/generated";
 import TodoList from "@/components/todo/TodoList";
-import { Skeleton } from "@/components/ui/skeleton";
 import useIntersectionObserver from "@/hooks/useIntersectionObserver";
 
 import TodoSkeleton from "./TodoSkeleton";

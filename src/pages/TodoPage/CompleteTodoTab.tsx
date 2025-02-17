@@ -2,7 +2,6 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 
 import { todoApi } from "@/api/client";
 import TodoList from "@/components/todo/TodoList";
-import { Skeleton } from "@/components/ui/skeleton";
 import { API_REFETCH_INTERVAL } from "@/constants/api";
 import { TodoPublic } from "@/api/generated";
 import useIntersectionObserver from "@/hooks/useIntersectionObserver";
