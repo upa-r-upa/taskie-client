@@ -1,4 +1,4 @@
-import { formatConditionalDate, getFormatTime } from "@/utils/time";
+import { getFormatTime, isMidnight } from "@/utils/time";
 import { cn } from "@/lib/utils";
 import { TodoPublic } from "@/api/generated";
 
@@ -15,7 +15,7 @@ export default function TodoItem({ todo, onTodoCheck, onTodoClick }: Props) {
   const { title, content, target_date, completed_at } = todo;
 
   return (
-    <div className="flex items-center space-x-4 rounded-md border transition-colors bg-card hover:bg-accent cursor-pointer">
+    <div className="flex items-center space-x-4 rounded-md border transition-colors bg-card hover:bg-accent cursor-pointer p">
       <div
         className="flex-1 space-y-1 p-3 pr-0 overflow-hidden"
         onClick={() => onTodoClick(todo)}
@@ -23,7 +23,7 @@ export default function TodoItem({ todo, onTodoCheck, onTodoClick }: Props) {
         <div className="flex items-center gap-2">
           <p
             className={cn(
-              "flex-1 text-sm font-medium leading-none overflow-hidden text-ellipsis whitespace-nowrap",
+              "flex-1 text-sm leading-none overflow-hidden text-ellipsis whitespace-nowrap",
               completed_at && "text-muted-foreground/70 line-through"
             )}
           >
@@ -31,7 +31,7 @@ export default function TodoItem({ todo, onTodoCheck, onTodoClick }: Props) {
           </p>
 
           <span className="text-xs text-muted-foreground">
-            {formatConditionalDate(target_date)} {getFormatTime(target_date)}
+            {!isMidnight(target_date) && getFormatTime(target_date)}
           </span>
         </div>
 

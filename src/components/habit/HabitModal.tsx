@@ -81,19 +81,6 @@ export default function HabitModal({
   });
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
-    if (isLoading) return;
-
-    const count = Math.floor(
-      (values.endTimeMinutes - values.startTimeMinutes) /
-        values.repeatIntervalMinutes
-    );
-
-    if (count <= 0) {
-      return toast.error(
-        "시작 시간과 종료 시간, 반복 간격을 확인해주세요. 현재는 알림이 울리지 않아요."
-      );
-    }
-
     onSubmit({
       ...values,
     });

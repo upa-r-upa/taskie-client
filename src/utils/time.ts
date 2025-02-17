@@ -6,6 +6,7 @@ import {
   addMinutes,
   getDay,
   parseISO,
+  isEqual,
 } from "date-fns";
 import { ko } from "date-fns/locale";
 
@@ -75,13 +76,17 @@ export function formatDateWithTime(date: Date): string {
   return `${formatDate(date)} ${getFormatTime(date)}`;
 }
 
+export function isMidnight(date: string): boolean {
+  return isEqual(parseISO(date), startOfDay(date));
+}
+
 export function formatConditionalDate(date: Date | string): string {
   const inputDate = typeof date === "string" ? parseISO(date) : date;
   const currentYear = new Date().getFullYear();
 
   return inputDate.getFullYear() === currentYear
-    ? format(inputDate, "MM월 dd일")
-    : format(inputDate, "yyyy년 MM월 dd일");
+    ? format(inputDate, "MM월 dd일 EEEE", { locale: ko })
+    : format(inputDate, "yyyy년 MM월 dd일 EEEE", { locale: ko });
 }
 
 export function getWeek(date: Date | string): number {

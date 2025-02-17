@@ -40,7 +40,7 @@ export default function TodoList({
           return (
             <Fragment key={item.id}>
               {isGrouped && isTitleVisible && (
-                <p className="font-semibold mb-2">
+                <p className="text-xs ml-1 mt-2">
                   {formatConditionalDate(item.target_date)}
                 </p>
               )}
