@@ -7,6 +7,8 @@ import {
   getDay,
   parseISO,
   isEqual,
+  isToday,
+  differenceInCalendarDays,
 } from "date-fns";
 import { ko } from "date-fns/locale";
 
@@ -22,6 +24,34 @@ export function getTimeDifferenceFromNow(date: string): number {
   const targetDate = parseISO(date);
   const now = new Date();
   return differenceInMinutes(now, targetDate);
+}
+
+export function getRelativeDateStatus(date: string): "prev" | "today" | "next" {
+  const today = new Date();
+  const diffDays = differenceInCalendarDays(new Date(date), today);
+
+  if (diffDays === 0) {
+    return "today";
+  } else if (diffDays < 0) {
+    return "prev";
+  } else {
+    return "next";
+  }
+}
+
+export function formatRelativeDate(date: string) {
+  const today = new Date();
+
+  if (isToday(date)) {
+    return "오늘";
+  }
+
+  const diff = differenceInCalendarDays(date, today);
+  if (diff > 0) {
+    return `${diff}일`;
+  } else {
+    return `+ ${Math.abs(diff)}일`;
+  }
 }
 
 export function formatSecondsAsDuration(seconds: number): string {
