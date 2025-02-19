@@ -1,10 +1,13 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { Fragment } from "react/jsx-runtime";
 
 import { todoApi } from "@/api/client";
-import TodoList from "@/components/todo/TodoList";
 import { API_REFETCH_INTERVAL } from "@/constants/api";
 import { TodoPublic } from "@/api/generated";
 import useIntersectionObserver from "@/hooks/useIntersectionObserver";
+import EmptyCard from "@/components/EmptyCard";
+import { formatConditionalDate, isSameDate } from "@/utils/time";
+import TodoItem from "@/components/todo/TodoItem";
 
 import TodoSkeleton from "./TodoSkeleton";
 
@@ -38,14 +41,41 @@ export default function CompleteTodoTab({ onTodoClick, onTodoCheck }: Props) {
     return <TodoSkeleton />;
   }
 
+  const todoList = data?.pages.flatMap((page) => page.data) || [];
+
+  if (todoList.length === 0) {
+    return <EmptyCard label="할 일">완료한 할 일이 아직 없어요.</EmptyCard>;
+  }
+
   return (
     <>
-      <TodoList
-        isGrouped
-        todoList={data?.pages.flatMap((page) => page.data) || []}
-        onTodoClick={onTodoClick}
-        onTodoCheck={onTodoCheck}
-      />
+      <div className="flex flex-col gap-2 pt-0">
+        {todoList.map((item, i) => {
+          if (!item.completed_at) return;
+
+          const beforeTodo = i > 0 ? todoList[i - 1] : null;
+          const isTitleVisible =
+            (beforeTodo?.completed_at &&
+              !isSameDate(beforeTodo.completed_at, item.completed_at)) ||
+            !beforeTodo;
+
+          return (
+            <Fragment key={item.id}>
+              {isTitleVisible && (
+                <p className="text-xs ml-1 mt-2">
+                  {formatConditionalDate(item.completed_at)}
+                </p>
+              )}
+
+              <TodoItem
+                todo={item}
+                onTodoClick={onTodoClick}
+                onTodoCheck={onTodoCheck}
+              />
+            </Fragment>
+          );
+        })}
+      </div>
 
       <div ref={triggerRef} className="h-1" />
     </>

@@ -41,7 +41,6 @@ export default function IncompleteTodoTab({ onTodoClick, onTodoCheck }: Props) {
   return (
     <>
       <TodoList
-        isGrouped
         todoList={data?.pages.flatMap((page) => page.data) || []}
         onTodoClick={onTodoClick}
         onTodoCheck={onTodoCheck}

@@ -1,6 +1,6 @@
-import { getFormatTime, isMidnight } from "@/utils/time";
 import { cn } from "@/lib/utils";
 import { TodoPublic } from "@/api/generated";
+import { formatRelativeDate, getRelativeDateStatus } from "@/utils/time";
 
 import { Checkbox } from "../ui/checkbox";
 
@@ -13,6 +13,14 @@ interface Props {
 
 export default function TodoItem({ todo, onTodoCheck, onTodoClick }: Props) {
   const { title, content, target_date, completed_at } = todo;
+
+  const getTextColor = () => {
+    const status = getRelativeDateStatus(target_date);
+
+    if (status === "prev") return "text-destructive";
+    else if (status === "today") return "text-primary";
+    else return "text-blue-400";
+  };
 
   return (
     <div className="flex items-center space-x-4 rounded-md border transition-colors bg-card hover:bg-accent cursor-pointer p">
@@ -30,9 +38,11 @@ export default function TodoItem({ todo, onTodoCheck, onTodoClick }: Props) {
             {title || "제목이 없습니다."}
           </p>
 
-          <span className="text-xs text-muted-foreground">
-            {!isMidnight(target_date) && getFormatTime(target_date)}
-          </span>
+          {!completed_at && (
+            <span className={cn("text-xs text-blue-400 ", getTextColor())}>
+              {formatRelativeDate(target_date)}
+            </span>
+          )}
         </div>
 
         {content && (
