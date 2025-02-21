@@ -21,14 +21,9 @@ export default function RoutineList({ date, routineList }: Props) {
     return list.map((routine) => {
       const isActivated = routine.repeat_days.includes(getWeek(date));
 
-      if (isActivated)
-        return (
-          <Routine key={routine.id} disabled routine={routine}>
-            <p className="mt-2">오늘은 루틴을 진행하지 않아요.</p>
-          </Routine>
-        );
-
-      return <Routine key={routine.id} routine={routine} />;
+      return (
+        <Routine key={routine.id} routine={routine} disabled={!isActivated} />
+      );
     });
   };
 
