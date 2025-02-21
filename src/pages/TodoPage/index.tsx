@@ -57,6 +57,7 @@ export function TodoAddButton({
 
 export default function TodoPage() {
   const [date] = useState(() => new Date());
+  const [tab, setTab] = useState<string>(TabType.incomplete);
 
   const reloadTodoList = () => {
     queryClient.invalidateQueries({
@@ -97,12 +98,17 @@ export default function TodoPage() {
       <div className="mx-auto grid grid-cols-1 max-w-xl">
         <h2 className="text-3xl font-bold tracking-tight">할 일</h2>
 
-        <Tabs defaultValue={TabType.incomplete}>
-          <div className="flex flex-col gap-2 sm:flex-row sm:gap-6 my-3">
+        <Tabs
+          defaultValue={TabType.incomplete}
+          value={tab}
+          onValueChange={setTab}
+        >
+          <div className="flex flex-col gap-2 sm:flex-row sm:gap-6 my-3 sticky top-[3.6rem] bg-background py-3">
             <TabsList className="flex items-center w-max">
               <TabsTrigger value={TabType.incomplete}>진행 예정</TabsTrigger>
               <TabsTrigger value={TabType.complete}>완료</TabsTrigger>
             </TabsList>
+
             <TodoAddButton onTodoAdd={handleTodoAdd} classNames="flex-1" />
           </div>
 
