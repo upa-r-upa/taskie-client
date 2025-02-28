@@ -114,10 +114,12 @@ export default function Routine({ routine, disabled }: Props) {
             )}
           </div>
 
-          <Button size="sm" variant="outline" className="mt-3 ml-auto flex">
-            <PlayIcon />
-            다시 재개하기
-          </Button>
+          <Link to={`/${Routes.RoutinePlay}${id}`}>
+            <Button size="sm" variant="outline" className="mt-3 ml-auto flex">
+              <PlayIcon />
+              다시 시작하기
+            </Button>
+          </Link>
         </div>
       )}
     </Link>
