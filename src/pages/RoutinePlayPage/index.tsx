@@ -1,33 +1,27 @@
-import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 import { routineApi } from "@/api/client";
-import Loading from "@/components/Loading";
 import { RoutineLogBase } from "@/api/generated";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import {
   RoutineAchieveInputParameter,
   RoutinePlayViewSubmitProps,
 } from "../MainPage/types";
 
-import ThumbnailView from "./ThumbnailView";
 import PlayView from "./PlayView";
-
-type PlayViewStepType = 0 | 1;
 
 export default function RoutinePlayPage() {
   const navigate = useNavigate();
   const { routineId } = useParams();
 
-  const [playViewStep, setPlayViewStep] = useState<PlayViewStepType>(0);
-
   const { isLoading, data } = useQuery({
     queryKey: ["routine", routineId],
     queryFn: () => routineApi.getRoutine(parseInt(routineId!)),
     enabled: !!(routineId && !isNaN(parseInt(routineId))),
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: false,
     retry: false,
   });
 
@@ -63,24 +57,21 @@ export default function RoutinePlayPage() {
   }
 
   if (isLoading) {
-    return <Loading />;
+    return (
+      <div className="container mx-auto p-4">
+        <Skeleton className="h-12 w-48 mb-4" />
+
+        <div className="flex flex-col md:flex-row gap-8">
+          <div className="flex-grow">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              <Skeleton className="h-48 w-full" />
+              <Skeleton className="h-48 w-full" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
-  const renderStepView = () => {
-    switch (playViewStep) {
-      case 0:
-        return (
-          <ThumbnailView
-            routine={data!.data}
-            goToNextStep={() => setPlayViewStep(1)}
-          />
-        );
-      case 1:
-        return <PlayView routine={data!.data} onSubmit={handleSubmit} />;
-      default:
-        return null;
-    }
-  };
-
-  return <>{renderStepView()}</>;
+  return <PlayView routine={data?.data!} onSubmit={handleSubmit} />;
 }

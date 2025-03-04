@@ -19,8 +19,9 @@ export default function TokenRefresher() {
 
   const {
     token,
+    setUser,
     setIsAccessTokenRefreshing,
-    setTokenWithUser,
+    setToken,
     clearAuthState,
   } = useAuthStore((state) => state);
 
@@ -32,9 +33,14 @@ export default function TokenRefresher() {
   useEffect(() => {
     refreshTokenMutation
       .mutateAsync()
-      .then((response) =>
-        setTokenWithUser(response.data!.access_token, response.data!.user)
-      )
+      .then((response) => {
+        setToken(response.data!.access_token);
+        setUser(response.data!.user);
+
+        client.defaults.headers.common["Authorization"] = authorizationToken(
+          response.data!.access_token
+        );
+      })
       .catch(() => {
         clearAuthState();
       })
@@ -76,7 +82,9 @@ export default function TokenRefresher() {
       try {
         const response = await refreshTokenMutation.mutateAsync();
 
-        setTokenWithUser(response.data!.access_token, response.data!.user);
+        setToken(response.data!.access_token);
+        setUser(response.data!.user);
+
         client.defaults.headers.common["Authorization"] = authorizationToken(
           token!
         );
@@ -117,7 +125,6 @@ export default function TokenRefresher() {
         ) {
           await accessTokenRefresh(originalRequest);
         } else if (error.response?.status === 403) {
-          navigate(Routes.Login, { replace: true });
           toast.error("현재 요청한 작업을 처리 할 권한이 없습니다.");
         } else if (error.response?.status === 500) {
           toast.error(

@@ -11,7 +11,7 @@ export default function RequireAuth() {
   );
   const location = useLocation();
 
-  if (isAccessTokenRefreshing) {
+  if (isAccessTokenRefreshing && !getIsLoggedIn()) {
     return (
       <div className="container mx-auto p-4">
         <Skeleton className="h-12 w-48 mb-4" />
@@ -33,7 +33,7 @@ export default function RequireAuth() {
     );
   }
 
-  if (!getIsLoggedIn()) {
+  if (!isAccessTokenRefreshing && !getIsLoggedIn()) {
     return (
       <Navigate to={`/${Routes.Login}`} state={{ from: location }} replace />
     );

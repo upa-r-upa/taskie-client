@@ -33,7 +33,7 @@ const RoutineTodoItem = ({ todo }: { todo: RoutineItem }) => {
   );
 };
 
-export default function Routine({ routine }: Props) {
+export default function Routine({ routine, disabled }: Props) {
   const { id, title, start_time_minutes, routine_elements, repeat_days } =
     routine;
 
@@ -49,25 +49,34 @@ export default function Routine({ routine }: Props) {
   };
 
   const completedSeconds = getRoutineCompletedDurationSeconds(routine_elements);
-  const isDone = completedSeconds > 0;
+  const isDone = routine_elements.some(
+    ({ is_skipped, completed_at }) => is_skipped || completed_at
+  );
 
   return (
     <Link
       to={`/${Routes.RoutineEdit}${routine.id}`}
       className={cn(
         "rounded-lg border p-3 text-left transition-all hover:bg-accent cursor-pointer",
-        isDone && "order-2"
+        disabled ? "order-3" : isDone && "order-2"
       )}
     >
       <div className="flex flex-col gap-1">
+        {!disabled && !isDone && <Badge className="w-max">오늘</Badge>}
+
         {isDone && (
-          <Badge className="w-max">
+          <Badge className="w-max" variant="outline">
             <CheckIcon size={15} className="mr-1" />총{" "}
             {formatSecondsAsDuration(completedSeconds)} 진행했어요!
           </Badge>
         )}
 
-        <div className="font-medium overflow-hidden text-ellipsis line-clamp-2">
+        <div
+          className={cn(
+            "font-medium overflow-hidden text-ellipsis line-clamp-2",
+            isDone && "text-muted-foreground line-through"
+          )}
+        >
           {title || "이름이 없습니다."}
         </div>
 
@@ -85,40 +94,35 @@ export default function Routine({ routine }: Props) {
             </div>
           </div>
 
-          <div className="flex gap-2">
+          {!isDone && (
             <Link to={`/${Routes.RoutinePlay}${id}`}>
-              {isDone ? (
-                <Button size="sm" variant="outline">
-                  <PlayIcon />
-                  다시 재개하기
-                </Button>
-              ) : (
-                <Button size="sm">
-                  <PlayIcon />
-                  시작하기
-                </Button>
-              )}
+              <Button size="sm" variant={disabled ? "outline" : "default"}>
+                <PlayIcon />
+                시작하기
+              </Button>
             </Link>
-          </div>
+          )}
         </div>
       </div>
 
       {isDone && (
-        <>
-          <Separator className="my-2" />
-
-          <div>
-            <p className="text-sm font-medium mb-2">완료한 할 일 목록</p>
-            <div className="flex flex-col gap-1">
-              {routine_elements.map(
-                (todo) =>
-                  !todo.is_skipped && (
-                    <RoutineTodoItem key={todo.id} todo={todo} />
-                  )
-              )}
-            </div>
+        <div className="mt-3">
+          <div className="flex flex-col gap-1">
+            {routine_elements.map(
+              (todo) =>
+                !todo.is_skipped && (
+                  <RoutineTodoItem key={todo.id} todo={todo} />
+                )
+            )}
           </div>
-        </>
+
+          <Link to={`/${Routes.RoutinePlay}${id}`}>
+            <Button size="sm" variant="outline" className="mt-3 ml-auto flex">
+              <PlayIcon />
+              다시 시작하기
+            </Button>
+          </Link>
+        </div>
       )}
     </Link>
   );

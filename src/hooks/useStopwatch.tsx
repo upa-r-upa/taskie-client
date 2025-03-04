@@ -2,51 +2,61 @@ import { useState, useRef, useEffect, useCallback } from "react";
 
 export default function useStopwatch(initialSeconds: number = 0) {
   const [seconds, setSeconds] = useState(initialSeconds);
-  const [isRunning, setIsRunning] = useState(true);
-  const intervalRef = useRef<number | null>(null);
+  const [isRunning, setIsRunning] = useState(false);
+
+  const startTimeRef = useRef(0);
+  const accumulatedRef = useRef(initialSeconds);
+  const intervalRef = useRef<number>();
+
+  const clearTimer = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = undefined;
+    }
+  };
 
   const start = useCallback(() => {
-    if (!isRunning) {
-      setIsRunning(true);
-    }
+    if (isRunning) return;
+    startTimeRef.current = Date.now();
+    setIsRunning(true);
   }, [isRunning]);
 
   const pause = useCallback(() => {
-    if (isRunning && intervalRef.current !== null) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-      setIsRunning(false);
-    }
+    if (!isRunning) return;
+    const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
+    accumulatedRef.current += elapsed;
+    setSeconds(accumulatedRef.current);
+    setIsRunning(false);
+    clearTimer();
   }, [isRunning]);
 
-  const reset = useCallback(
-    (newSeconds: number = 0) => {
-      pause();
+  const reset = useCallback(() => {
+    clearTimer();
+    setIsRunning(false);
+    accumulatedRef.current = initialSeconds;
+    setSeconds(initialSeconds);
+  }, [initialSeconds]);
+
+  const setTime = useCallback(
+    (newSeconds: number) => {
+      accumulatedRef.current = newSeconds;
       setSeconds(newSeconds);
+      if (isRunning) {
+        startTimeRef.current = Date.now();
+      }
     },
-    [pause]
+    [isRunning]
   );
 
   useEffect(() => {
     if (isRunning) {
       intervalRef.current = window.setInterval(() => {
-        setSeconds((prev) => prev + 1);
-      }, 1000);
+        const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
+        setSeconds(accumulatedRef.current + elapsed);
+      }, 100);
     }
-
-    return () => {
-      if (intervalRef.current !== null) {
-        clearInterval(intervalRef.current);
-      }
-    };
+    return clearTimer;
   }, [isRunning]);
 
-  return {
-    seconds,
-    isRunning,
-    start,
-    pause,
-    reset,
-    setSeconds,
-  };
+  return { seconds, isRunning, start, pause, reset, setTime };
 }

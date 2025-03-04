@@ -84,3 +84,11 @@ pnpm run generate-api-local
 ```bash
 pnpm run dev
 ```
+
+# Attributions
+
+- Sound Attribution
+  Original Sound: cfork - [26875](https://freesound.org/people/cfork/sounds/26875/)
+  Creator: cfork
+  License: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)
+  Modifications: The original sound has been edited (trimmed) for use in this project.

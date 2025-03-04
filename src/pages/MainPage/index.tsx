@@ -33,7 +33,7 @@ function MainPage() {
     <>
       <div className="block sm:flex items-center justify-between space-y-2">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Daily task</h2>
+          <h2 className="text-3xl tracking-tight">Daily task</h2>
           <p className="text-muted-foreground text-sm mt-1 mb-3">
             {formatConditionalDate(date)}의 태스크를 확인해보세요.
           </p>
