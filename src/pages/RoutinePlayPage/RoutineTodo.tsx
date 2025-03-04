@@ -1,6 +1,7 @@
 import { CirclePause, CirclePlay, SkipForward, TimerReset } from "lucide-react";
+import useSound from "use-sound";
+import { useEffect } from "react";
 
-import { formatDuration } from "@/utils/time";
 import {
   Card,
   CardContent,
@@ -14,6 +15,8 @@ import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { RoutineItem } from "@/api/generated";
 import { Button } from "@/components/ui/button";
+import usePrevious from "@/hooks/usePrevious";
+import chimeSound from "@/assets/chime_sound.mp3";
 
 interface Props {
   seconds: number;
@@ -44,11 +47,21 @@ export default function RoutineTodo({
   onMoveToPrevTodo,
   onDone,
 }: Props) {
+  const [play] = useSound(chimeSound);
+
   const goalTimeSeconds = routineTodo.duration_minutes * 60;
   const progress = Math.min(Math.floor((seconds / goalTimeSeconds) * 100), 100);
   const done = progress === 100;
 
   const isSkip = routineTodo.is_skipped;
+
+  const prevProgress = usePrevious(progress);
+
+  useEffect(() => {
+    if (progress !== prevProgress && progress === 100) {
+      play();
+    }
+  }, [progress, prevProgress, play]);
 
   const leftFillNum = (num: number) => {
     return num.toString().padStart(2, "0");
