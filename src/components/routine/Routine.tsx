@@ -49,14 +49,16 @@ export default function Routine({ routine, disabled }: Props) {
   };
 
   const completedSeconds = getRoutineCompletedDurationSeconds(routine_elements);
-  const isDone = completedSeconds > 0;
+  const isDone = routine_elements.some(
+    ({ is_skipped, completed_at }) => is_skipped || completed_at
+  );
 
   return (
     <Link
       to={`/${Routes.RoutineEdit}${routine.id}`}
       className={cn(
         "rounded-lg border p-3 text-left transition-all hover:bg-accent cursor-pointer",
-        disabled ? "order-2" : isDone && "order-3"
+        disabled ? "order-3" : isDone && "order-2"
       )}
     >
       <div className="flex flex-col gap-1">
