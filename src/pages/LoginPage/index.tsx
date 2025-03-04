@@ -46,7 +46,7 @@ const LoginPage = () => {
   });
   const [rememberMe, setRememberMe] = useState(false);
 
-  const { setTokenWithUser } = useAuthStore((state) => state);
+  const { setToken, setUser } = useAuthStore((state) => state);
 
   const navigate = useNavigate();
 
@@ -61,7 +61,8 @@ const LoginPage = () => {
 
     if (!data) return;
 
-    setTokenWithUser(data.access_token, data.user);
+    setToken(data.access_token);
+    setUser(data.user);
     navigate(`/${Routes.Main}`, {
       replace: true,
     });

@@ -1,5 +1,5 @@
 import { AxiosError, InternalAxiosRequestConfig } from "axios";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -17,11 +17,13 @@ interface InternalAxiosRequestConfigWithRetry
 export default function TokenRefresher() {
   const navigate = useNavigate();
 
-  const [token, setToken] = useState<string | null>(null);
-
-  const { setUser, setIsAccessTokenRefreshing, clearAuthState } = useAuthStore(
-    (state) => state
-  );
+  const {
+    token,
+    setUser,
+    setIsAccessTokenRefreshing,
+    setToken,
+    clearAuthState,
+  } = useAuthStore((state) => state);
 
   const refreshTokenMutation = useMutation({
     mutationKey: ["refreshToken"],
