@@ -1,5 +1,5 @@
 import { getWeek } from "@/utils/time";
-import { HabitPublic, HabitWithLog, RoutinePublic } from "@/api/generated";
+import { HabitWithLog, RoutinePublic } from "@/api/generated";
 
 const isCompletedRoutine = (routine: RoutinePublic): boolean => {
   return routine.routine_elements.some(
