@@ -2,6 +2,7 @@ import { getWeek } from "@/utils/time";
 import EmptyCard from "@/components/EmptyCard";
 import { RoutinePublic } from "@/api/generated";
 import Routine from "@/components/routine/Routine";
+import { sortRoutines } from "@/utils/sort";
 
 interface Props {
   date: Date;
@@ -9,6 +10,8 @@ interface Props {
 }
 
 export default function RoutineList({ date, routineList }: Props) {
+  const sortedList = sortRoutines(routineList, date);
+
   const renderRoutineList = (list: Array<RoutinePublic>) => {
     if (list.length === 0) {
       return (
@@ -28,6 +31,6 @@ export default function RoutineList({ date, routineList }: Props) {
   };
 
   return (
-    <ul className="flex flex-col gap-2">{renderRoutineList(routineList)}</ul>
+    <ul className="flex flex-col gap-2">{renderRoutineList(sortedList)}</ul>
   );
 }

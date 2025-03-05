@@ -57,8 +57,7 @@ export default function Routine({ routine, disabled }: Props) {
     <Link
       to={`/${Routes.RoutineEdit}${routine.id}`}
       className={cn(
-        "rounded-lg border p-3 text-left transition-all hover:bg-accent cursor-pointer",
-        disabled ? "order-3" : isDone && "order-2"
+        "rounded-lg border p-3 text-left transition-all hover:bg-accent cursor-pointer"
       )}
     >
       <div className="flex flex-col gap-1">

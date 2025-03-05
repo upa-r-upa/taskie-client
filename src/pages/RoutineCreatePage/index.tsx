@@ -9,21 +9,7 @@ import RoutineForm from "@/components/routine/RoutineForm";
 export default function RoutineCreatePage() {
   const navigate = useNavigate();
 
-  const {
-    title,
-    repeatDays,
-    startTimeMinutes,
-    todoList,
-
-    setTitle,
-    setStartTimeMinutes,
-    setRepeatDays,
-
-    onTodoCreateClick,
-    onTodoDeleteClick,
-    onTodoUpdate,
-    isDisabled,
-  } = useRoutineForm({});
+  const { form, onTodoDelete, onTodoCreate, onTodoUpdate } = useRoutineForm({});
 
   const createRoutineMutation = useMutation({
     mutationFn: routineApi.createRoutine,
@@ -40,43 +26,35 @@ export default function RoutineCreatePage() {
   });
 
   const handleSubmit = () => {
+    const values = form.getValues();
+
     createRoutineMutation.mutate({
-      title: title,
-      start_time_minutes: startTimeMinutes,
-      repeat_days: repeatDays,
-      routine_elements: todoList,
+      title: values.title,
+      start_time_minutes: values.startTimeMinutes,
+      repeat_days: values.repeatDays,
+      routine_elements: values.todoList.map((v) => ({
+        id: v.id,
+        title: v.title,
+        duration_minutes: v.durationMinutes,
+      })),
     });
   };
 
   return (
-    <>
-      <RoutineForm
-        formTitle="루틴 추가하기"
-        title={title}
-        startTimeMinutes={startTimeMinutes}
-        repeatDays={repeatDays}
-        todoList={todoList}
-        onTitleChange={setTitle}
-        onStartTimeMinutesChange={setStartTimeMinutes}
-        onTodoCreateClick={onTodoCreateClick}
-        onTodoDeleteClick={onTodoDeleteClick}
-        onRepeatDaysChange={setRepeatDays}
-        onTodoUpdate={onTodoUpdate}
-        buttons={
-          <>
-            <button onClick={() => navigate(-1)} className="btn flex-1">
-              취소
-            </button>
-            <button
-              onClick={handleSubmit}
-              disabled={isDisabled()}
-              className="btn btn-primary flex-[2]"
-            >
-              루틴 추가하기
-            </button>
-          </>
-        }
-      />
-    </>
+    <div className="mx-auto w-full max-w-xl">
+      <h2 className="text-3xl mb-2 tracking-tight">루틴 추가하기</h2>
+
+      <div>
+        <RoutineForm
+          form={form}
+          onSubmit={handleSubmit}
+          isLoading={createRoutineMutation.isPending}
+          submitButtonLabel="루틴 추가하기"
+          onTodoCreate={onTodoCreate}
+          onTodoDelete={onTodoDelete}
+          onTodoUpdate={onTodoUpdate}
+        />
+      </div>
+    </div>
   );
 }

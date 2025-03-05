@@ -42,6 +42,9 @@ export default function EditPage({ routine }: Props) {
     queryClient.invalidateQueries({
       queryKey: ["routines"],
     });
+    queryClient.invalidateQueries({
+      queryKey: ["routine"],
+    });
   };
 
   const createRoutineMutation = useMutation({
