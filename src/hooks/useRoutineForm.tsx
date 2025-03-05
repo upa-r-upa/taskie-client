@@ -37,17 +37,19 @@ export default function useRoutineForm({
   initialRepeatDays = [0, 1, 2, 3, 4],
   initialTodoList = [],
 }: Props) {
-  const defaultRoutine = {
-    title: initialTitle,
-    startTimeMinutes: initialStartTimeMinutes,
-    repeatDays: initialRepeatDays,
-    todoList: initialTodoList,
-  };
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
-    defaultValues: defaultRoutine,
+    defaultValues: {
+      title: initialTitle,
+      startTimeMinutes: initialStartTimeMinutes,
+      repeatDays: initialRepeatDays,
+      todoList: initialTodoList.map((data) => ({
+        id: data.id,
+        durationMinutes: data.duration_minutes,
+        title: data.title,
+      })),
+    },
   });
 
   const onTodoUpdate = (

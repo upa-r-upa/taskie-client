@@ -18,6 +18,7 @@ import CheckableWeekList from "../CheckableWeekList";
 import { Button } from "../ui/button";
 
 import RoutineTodoList from "./RoutineTodoList";
+import ConfirmRoutineDelete from "./ConfirmRoutineDelete";
 
 interface Props {
   form: RoutineFormSchema;
@@ -53,7 +54,9 @@ export default function RoutineForm({
 
   const handleCancelButtonClick = () => {
     navigate(-1);
-  }
+  };
+
+  console.log(form.getValues().todoList);
 
   return (
     <Form {...form}>
@@ -153,18 +156,11 @@ export default function RoutineForm({
           )}
         />
 
-        {deletable && (
+        {deletable && onRoutineDelete && (
           <div className="flex-col flex gap-2">
             <p className="text-sm">설정</p>
-            <Button
-              type="button"
-              variant="outline"
-              className="w-max !text-destructive border-destructive"
-              onClick={onRoutineDelete}
-            >
-              <TrashIcon />
-              루틴 삭제하기
-            </Button>
+
+            <ConfirmRoutineDelete onDeleteConfirm={onRoutineDelete} />
           </div>
         )}
 
@@ -172,7 +168,11 @@ export default function RoutineForm({
           <Button disabled={isLoading} type="submit">
             {submitButtonLabel}
           </Button>
-          <Button type="button" variant={"outline"} onClick={handleCancelButtonClick}>
+          <Button
+            type="button"
+            variant={"outline"}
+            onClick={handleCancelButtonClick}
+          >
             취소하기
           </Button>
         </div>

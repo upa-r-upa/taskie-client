@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { routineApi } from "@/api/client";
 import { RoutineLogBase } from "@/api/generated";
 import { Skeleton } from "@/components/ui/skeleton";
+import NotFoundRoutine from "@/components/routine/NotFoundRoutine";
 
 import {
   RoutineAchieveInputParameter,
@@ -53,7 +54,7 @@ export default function RoutinePlayPage() {
   };
 
   if (!routineId || isNaN(parseInt(routineId)) || (!isLoading && !data?.data)) {
-    return <p>존재하지 않는 루틴이에요.</p>;
+    return <NotFoundRoutine />;
   }
 
   if (isLoading) {
