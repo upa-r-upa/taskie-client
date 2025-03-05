@@ -101,6 +101,7 @@ function MainPage() {
                 </div>
               ) : (
                 <HabitSection
+                  date={date}
                   habitList={data?.data?.habit_list || []}
                   reloadHabitList={refetch}
                 />

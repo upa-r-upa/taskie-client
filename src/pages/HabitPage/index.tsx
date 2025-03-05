@@ -42,6 +42,7 @@ export default function HabitPage() {
         </div>
       ) : (
         <HabitList
+          date={date}
           reloadHabitList={invalidateQueries}
           habitList={data?.data || []}
         />

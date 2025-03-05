@@ -6,13 +6,17 @@ import HabitInformation from "@/components/habit/HabitInformation";
 import useHabitMutations from "@/hooks/useHabitMutations";
 import { Button } from "@/components/ui/button";
 import Habit from "@/components/Habit";
+import { sortHabits } from "@/utils/sort";
+import { getWeek } from "@/utils/time";
 
 interface Props {
+  date: Date;
   habitList: Array<HabitWithLog>;
+
   reloadHabitList: () => void;
 }
 
-export default function HabitList({ habitList, reloadHabitList }: Props) {
+export default function HabitList({ date, habitList, reloadHabitList }: Props) {
   const {
     createHabitModal,
     updateHabitModal,
@@ -21,6 +25,8 @@ export default function HabitList({ habitList, reloadHabitList }: Props) {
     updateHabit,
     deleteHabit,
   } = useHabitMutations({ reloadHabitList });
+
+  const sortedHabits = sortHabits(habitList, date);
 
   const { visibleState: selectedHabit } = updateHabitModal;
 
@@ -36,17 +42,22 @@ export default function HabitList({ habitList, reloadHabitList }: Props) {
       </Button>
 
       <ul className="flex flex-col gap-2">
-        {habitList.length === 0 ? (
+        {sortedHabits.length === 0 ? (
           <HabitInformation />
         ) : (
-          habitList.map((habit) => (
-            <Habit
-              key={habit.id}
-              habit={habit}
-              onHabitClick={() => updateHabitModal.openModal(habit)}
-              onHabitAchieve={() => achieveHabitMutation.mutate(habit.id)}
-            />
-          ))
+          sortedHabits.map((habit) => {
+            const isActivated = habit.repeat_days.includes(getWeek(date));
+
+            return (
+              <Habit
+                key={habit.id}
+                isActive={isActivated}
+                habit={habit}
+                onHabitClick={() => updateHabitModal.openModal(habit)}
+                onHabitAchieve={() => achieveHabitMutation.mutate(habit.id)}
+              />
+            );
+          })
         )}
       </ul>
 

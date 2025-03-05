@@ -3,17 +3,22 @@ import HabitModal from "@/components/habit/HabitModal";
 import HabitInformation from "@/components/habit/HabitInformation";
 import useHabitMutations from "@/hooks/useHabitMutations";
 import { Button } from "@/components/ui/button";
+import { getWeek } from "@/utils/time";
 
 import Habit from "../../../components/Habit";
 
 interface Props {
+  date: Date;
   habitList: Array<HabitWithLog>;
-  reloadHabitList: () => void;
 
-  fullData?: boolean;
+  reloadHabitList: () => void;
 }
 
-export default function HabitSection({ habitList, reloadHabitList }: Props) {
+export default function HabitSection({
+  date,
+  habitList,
+  reloadHabitList,
+}: Props) {
   const {
     createHabitModal,
     updateHabitModal,
@@ -31,14 +36,19 @@ export default function HabitSection({ habitList, reloadHabitList }: Props) {
         {habitList.length === 0 ? (
           <HabitInformation />
         ) : (
-          habitList.map((habit) => (
-            <Habit
-              key={habit.id}
-              habit={habit}
-              onHabitClick={() => updateHabitModal.openModal(habit)}
-              onHabitAchieve={() => achieveHabitMutation.mutate(habit.id)}
-            />
-          ))
+          habitList.map((habit) => {
+            const isActivated = habit.repeat_days.includes(getWeek(date));
+
+            return (
+              <Habit
+                key={habit.id}
+                habit={habit}
+                isActive={isActivated}
+                onHabitClick={() => updateHabitModal.openModal(habit)}
+                onHabitAchieve={() => achieveHabitMutation.mutate(habit.id)}
+              />
+            );
+          })
         )}
       </ul>
 

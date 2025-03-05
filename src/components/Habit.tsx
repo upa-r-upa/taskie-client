@@ -13,6 +13,8 @@ interface Props {
 
   onHabitClick?: () => void;
   onHabitAchieve?: () => void;
+
+  isActive?: boolean;
 }
 
 export default function Habit({
@@ -25,6 +27,7 @@ export default function Habit({
 
     log_list,
   },
+  isActive,
   onHabitClick,
   onHabitAchieve,
 }: Props) {
@@ -44,22 +47,26 @@ export default function Habit({
   return (
     <div
       className={cn(
-        "rounded-lg border p-3 text-left transition-all hover:bg-accent cursor-pointer",
-        isDone && "order-2"
+        "rounded-lg border p-3 text-left transition-all hover:bg-accent cursor-pointer"
       )}
       onClick={onHabitClick}
     >
       <div className="flex flex-col gap-1">
-        {isDone ? (
-          <Badge variant="default" className="text-left w-max">
-            <Flag size={15} className="mr-1" />
-            목표 {count}번 중 {log_list.length}번 완료했어요!
-          </Badge>
-        ) : (
-          <Badge variant="outline" className="text-left w-max">
-            {count}번 중 {log_list.length}번 달성
-          </Badge>
-        )}
+        <div className="flex items-center gap-1">
+          {isActive && <Badge className="text-left w-max">오늘</Badge>}
+
+          {isDone ? (
+            <Badge variant="default" className="text-left w-max">
+              <Flag size={15} className="mr-1" />
+              목표 {count}번 중 {log_list.length}번 완료했어요!
+            </Badge>
+          ) : (
+            <Badge variant="outline" className="text-left w-max">
+              {count}번 중 {log_list.length}번 달성
+            </Badge>
+          )}
+        </div>
+
         <p
           className={cn(
             "font-medium overflow-hidden text-ellipsis line-clamp-2",
