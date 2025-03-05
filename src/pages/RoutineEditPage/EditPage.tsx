@@ -14,21 +14,7 @@ interface Props {
 export default function EditPage({ routine }: Props) {
   const navigate = useNavigate();
 
-  const {
-    title,
-    repeatDays,
-    startTimeMinutes,
-    todoList,
-
-    setTitle,
-    setStartTimeMinutes,
-    setRepeatDays,
-
-    onTodoCreateClick,
-    onTodoDeleteClick,
-    onTodoUpdate,
-    isDisabled,
-  } = useRoutineForm({
+  const { form, onTodoCreate, onTodoDelete, onTodoUpdate } = useRoutineForm({
     initialTitle: routine.title,
     initialRepeatDays: routine.repeat_days,
     initialStartTimeMinutes: routine.start_time_minutes,
@@ -42,9 +28,12 @@ export default function EditPage({ routine }: Props) {
     queryClient.invalidateQueries({
       queryKey: ["routines"],
     });
+    queryClient.invalidateQueries({
+      queryKey: ["routine"],
+    });
   };
 
-  const createRoutineMutation = useMutation({
+  const updateRoutineMutation = useMutation({
     mutationFn: (data: RoutineUpdateInput) =>
       routineApi.updateRoutine(routine.id, data),
     onSuccess: () => {
@@ -55,11 +44,17 @@ export default function EditPage({ routine }: Props) {
   });
 
   const handleSubmit = () => {
-    createRoutineMutation.mutate({
-      title: title,
-      start_time_minutes: startTimeMinutes,
-      repeat_days: repeatDays,
-      routine_elements: todoList,
+    const values = form.getValues();
+
+    updateRoutineMutation.mutate({
+      title: values.title,
+      start_time_minutes: values.startTimeMinutes,
+      repeat_days: values.repeatDays,
+      routine_elements: values.todoList.map((v) => ({
+        id: v.id,
+        title: v.title,
+        duration_minutes: v.durationMinutes,
+      })),
     });
   };
 
@@ -77,46 +72,22 @@ export default function EditPage({ routine }: Props) {
   };
 
   return (
-    <>
-      <RoutineForm
-        formTitle="루틴 수정하기"
-        title={title}
-        startTimeMinutes={startTimeMinutes}
-        repeatDays={repeatDays}
-        todoList={todoList}
-        onTitleChange={setTitle}
-        onStartTimeMinutesChange={setStartTimeMinutes}
-        onTodoCreateClick={onTodoCreateClick}
-        onTodoDeleteClick={onTodoDeleteClick}
-        onRepeatDaysChange={setRepeatDays}
-        onTodoUpdate={onTodoUpdate}
-        buttons={
-          <>
-            <button
-              onClick={() => {
-                navigate(-1);
-              }}
-              className="btn w-20"
-            >
-              취소
-            </button>
-            <button
-              disabled={deleteRoutineMutation.isPending}
-              onClick={handleRoutineDeleteClick}
-              className="btn btn-error"
-            >
-              삭제하기
-            </button>
-            <button
-              onClick={handleSubmit}
-              disabled={isDisabled() || deleteRoutineMutation.isPending}
-              className="btn btn-primary flex-1"
-            >
-              루틴 수정하기
-            </button>
-          </>
-        }
-      />
-    </>
+    <div className="mx-auto w-full max-w-xl">
+      <h2 className="text-3xl mb-2 tracking-tight">루틴 수정하기</h2>
+
+      <div>
+        <RoutineForm
+          deletable
+          form={form}
+          onSubmit={handleSubmit}
+          isLoading={updateRoutineMutation.isPending}
+          submitButtonLabel="루틴 수정하기"
+          onRoutineDelete={handleRoutineDeleteClick}
+          onTodoCreate={onTodoCreate}
+          onTodoDelete={onTodoDelete}
+          onTodoUpdate={onTodoUpdate}
+        />
+      </div>
+    </div>
   );
 }

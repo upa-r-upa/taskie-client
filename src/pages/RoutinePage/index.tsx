@@ -24,8 +24,8 @@ export default function RoutinePage() {
     <div className="mx-auto w-full max-w-xl">
       <h2 className="text-3xl mb-2 tracking-tight">루틴</h2>
 
-      <Link to={`/${Routes.RoutineCreate}`}>
-        <Button className="w-max mt-2 mb-4 flex items-center" variant="outline">
+      <Link to={`/${Routes.RoutineCreate}`} className="w-max block mt-2 mb-4">
+        <Button className="flex items-center" variant="outline">
           <PlusIcon />
           루틴 추가하러 가기
         </Button>

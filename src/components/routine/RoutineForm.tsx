@@ -1,112 +1,181 @@
-import AutoResizeTextarea from "@/components/AutoResizeTextarea";
-import TimePicker from "@/components/TimePicker";
-import { RoutineItemLocal } from "@/types/routine";
+import { useNavigate } from "react-router-dom";
 
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { RoutineFormSchema, RoutineTodoSchema } from "@/hooks/useRoutineForm";
+
+import AutoResizeTextarea from "../AutoResizeTextarea";
+import TimePicker from "../ui/time-picker";
 import CheckableWeekList from "../CheckableWeekList";
+import { Button } from "../ui/button";
 
 import RoutineTodoList from "./RoutineTodoList";
+import ConfirmRoutineDelete from "./ConfirmRoutineDelete";
 
 interface Props {
-  formTitle: string;
-  buttons: React.ReactNode;
+  form: RoutineFormSchema;
+  isLoading: boolean;
 
-  title: string;
-  startTimeMinutes: number;
-  repeatDays: number[];
-  todoList: Array<RoutineItemLocal>;
+  submitButtonLabel: string;
 
-  onTitleChange: (title: string) => void;
-  onStartTimeMinutesChange: (startTimeMinutes: number) => void;
-  onRepeatDaysChange: (repeatDays: Array<number>) => void;
-
+  onSubmit: () => void;
+  onTodoDelete: (index: number) => void;
+  onTodoCreate: (title: string, minutes: number) => void;
   onTodoUpdate: (
     index: number,
-    key: keyof RoutineItemLocal,
+    key: keyof RoutineTodoSchema,
     value: string | number
   ) => void;
-  onTodoCreateClick: () => void;
-  onTodoDeleteClick: (index: number) => void;
+
+  onRoutineDelete?: () => void;
+  deletable?: boolean;
 }
 
 export default function RoutineForm({
-  buttons,
-  formTitle,
-  title,
-  startTimeMinutes,
-  repeatDays,
-  todoList,
-
-  onTitleChange,
+  form,
+  isLoading,
+  submitButtonLabel,
+  onSubmit,
+  onRoutineDelete,
+  onTodoDelete,
+  onTodoCreate,
   onTodoUpdate,
-  onTodoDeleteClick,
-  onStartTimeMinutesChange,
-  onRepeatDaysChange,
-  onTodoCreateClick,
+  deletable = false,
 }: Props) {
+  const navigate = useNavigate();
+
+  const handleCancelButtonClick = () => {
+    navigate(-1);
+  };
+
+  console.log(form.getValues().todoList);
+
   return (
-    <>
-      <h1 className="text-xl font-semibold">{formTitle}</h1>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-4 sm:space-y-8"
+      >
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>이름</FormLabel>
 
-      <div className="mt-4 flex flex-col gap-3">
-        <label>
-          <p className="font-semibold mb-2 text-lg">루틴 이름</p>
-          <AutoResizeTextarea
-            placeholder="루틴 이름을 입력하세요."
-            required
-            value={title}
-            onChange={(e) => onTitleChange(e.target.value)}
-          />
-
-          {!title && (
-            <p className="text-error text-sm ml-2">
-              * 루틴 이름을 입력해주세요.
-            </p>
+              <FormControl>
+                <AutoResizeTextarea
+                  autoFocus
+                  placeholder="루틴 이름을 입력해주세요."
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
-        </label>
+        />
 
-        <label className="text-lg">
-          <p className="font-semibold mb-2 text-lg">루틴 시작 시간</p>
-          <TimePicker
-            minutes={startTimeMinutes}
-            onChange={onStartTimeMinutesChange}
-          />
-        </label>
+        <FormField
+          control={form.control}
+          name="startTimeMinutes"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>시작 시간</FormLabel>
+              <FormDescription>
+                루틴을 시작할 목표 시간을 지정하세요.
+              </FormDescription>
 
-        <div>
-          <p className="font-semibold mb-2">반복 요일</p>
-          <CheckableWeekList
-            weekList={repeatDays}
-            onWeekChange={onRepeatDaysChange}
-          />
-
-          {repeatDays.every((v) => v === 0) && (
-            <p className="text-error text-sm ml-2 mt-2">
-              * 반복 요일이 하루라도 있어야 해요.
-            </p>
+              <FormControl>
+                <div>
+                  <TimePicker
+                    totalMinutes={field.value}
+                    onTotalMinutesChange={field.onChange}
+                  />
+                </div>
+              </FormControl>
+            </FormItem>
           )}
+        />
+
+        <FormField
+          control={form.control}
+          name="repeatDays"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>반복 요일</FormLabel>
+              <FormDescription>
+                루틴을 진행할 요일을 지정하세요.
+              </FormDescription>
+
+              <FormControl>
+                <CheckableWeekList
+                  weekList={field.value}
+                  onWeekChange={field.onChange}
+                />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="todoList"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>할 일 목록 ({field.value.length}개)</FormLabel>
+
+              <FormControl>
+                <div>
+                  <RoutineTodoList
+                    routineTodoList={field.value}
+                    setRoutineTodoList={(val) => form.setValue("todoList", val)}
+                    onTodoDelete={onTodoDelete}
+                    onTodoCreate={onTodoCreate}
+                    onTitleUpdate={(idx, val) =>
+                      onTodoUpdate(idx, "title", val)
+                    }
+                    onDurationMinutesUpdate={(idx, val) =>
+                      onTodoUpdate(idx, "durationMinutes", val)
+                    }
+                  />
+                </div>
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {deletable && onRoutineDelete && (
+          <div className="flex-col flex gap-2">
+            <p className="text-sm">설정</p>
+
+            <ConfirmRoutineDelete onDeleteConfirm={onRoutineDelete} />
+          </div>
+        )}
+
+        <div className="py-3 sm:py-0 flex flex-col sm:flex-row gap-2 justify-end">
+          <Button disabled={isLoading} type="submit">
+            {submitButtonLabel}
+          </Button>
+          <Button
+            type="button"
+            variant={"outline"}
+            onClick={handleCancelButtonClick}
+          >
+            취소하기
+          </Button>
         </div>
-
-        <div className="text-lg mt-3">
-          <p className="font-semibold mb-2">할 일 목록</p>
-
-          <RoutineTodoList
-            routineTodoList={todoList}
-            onTitleUpdate={(index, title) =>
-              onTodoUpdate(index, "title", title)
-            }
-            onDurationMinutesUpdate={(index, minutes) =>
-              onTodoUpdate(index, "duration_minutes", minutes)
-            }
-            onTodoDeleteClick={onTodoDeleteClick}
-          />
-
-          <button className="btn btn-sm mt-3" onClick={onTodoCreateClick}>
-            할 일 추가
-          </button>
-        </div>
-      </div>
-
-      <div className="flex items-center mt-5 gap-2">{buttons}</div>
-    </>
+      </form>
+    </Form>
   );
 }
