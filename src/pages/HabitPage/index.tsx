@@ -3,12 +3,13 @@ import { useState } from "react";
 
 import { habitsApi, queryClient } from "@/api/client";
 import { formatDate } from "@/utils/time";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import HabitList from "./HabitList";
 
 const fetchHabitList = (date: Date) => {
   const today = formatDate(date);
-  return habitsApi.getHabitList(today, 100, undefined, true);
+  return habitsApi.getHabitList(today);
 };
 
 const invalidateQueries = () => {
@@ -30,14 +31,22 @@ export default function HabitPage() {
   });
 
   return (
-    <>
-      <h1 className="text-2xl font-semibold mb-3">습관</h1>
-      <HabitList
-        reloadHabitList={invalidateQueries}
-        isLoading={isLoading}
-        habitList={data?.data || []}
-        date={date}
-      />
-    </>
+    <div className="mx-auto w-full max-w-xl">
+      <h2 className="text-3xl mb-2 tracking-tight">습관</h2>
+
+      {isLoading ? (
+        <div className="flex flex-col gap-4">
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-16 w-full" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+      ) : (
+        <HabitList
+          date={date}
+          reloadHabitList={invalidateQueries}
+          habitList={data?.data || []}
+        />
+      )}
+    </div>
   );
 }

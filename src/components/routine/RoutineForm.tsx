@@ -55,8 +55,6 @@ export default function RoutineForm({
     navigate(-1);
   };
 
-  console.log(form.getValues().todoList);
-
   return (
     <Form {...form}>
       <form

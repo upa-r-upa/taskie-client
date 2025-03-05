@@ -84,6 +84,7 @@ const LoginPage = () => {
       form.setValue("username", savedUsername);
       setRememberMe(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
