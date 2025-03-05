@@ -7,7 +7,7 @@ import NotFoundRoutine from "@/components/routine/NotFoundRoutine";
 
 import EditPage from "./EditPage";
 
-export default function RoutineUpdatePage() {
+export default function RoutineEditPage() {
   const { routineId } = useParams();
 
   const { isLoading, data } = useQuery({
