@@ -1,12 +1,8 @@
-import { useState } from "react";
 import { z } from "zod";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { RoutineItemLocal } from "@/types/routine";
-
-const RoutineTodoDefaultTitle = "";
-const RoutineTodoDefaultDuration = 5;
 
 interface Props {
   initialTitle?: string;
