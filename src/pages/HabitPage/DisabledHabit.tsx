@@ -18,7 +18,7 @@ export default function DisabledHabit({ habit, onHabitClick }: Props) {
   } = habit;
 
   return (
-    <li className="card card-bordered card-compact mb-2 shadow-md order-2">
+    <li className="card card-bordered card-compact mb-2 shadow-md">
       <div
         className="card-body flex flex-row items-center"
         onClick={onHabitClick}

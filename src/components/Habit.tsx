@@ -32,7 +32,7 @@ export default function Habit({
     Math.floor((end_time_minutes - start_time_minutes) / repeat_time_minutes),
     0
   );
-  const isDone = count <= log_list.length;
+  const isDone = log_list.length !== 0 && count <= log_list.length;
 
   const handleHabitAchieve = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -53,11 +53,11 @@ export default function Habit({
         {isDone ? (
           <Badge variant="default" className="text-left w-max">
             <Flag size={15} className="mr-1" />
-            {count}번 전부 달성했어요!
+            목표 {count}번 중 {log_list.length}번 완료했어요!
           </Badge>
         ) : (
           <Badge variant="outline" className="text-left w-max">
-            {count}번 중 {log_list.length}번 달성했어요!
+            {count}번 중 {log_list.length}번 달성
           </Badge>
         )}
         <p

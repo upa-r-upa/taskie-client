@@ -4,7 +4,7 @@ import HabitInformation from "@/components/habit/HabitInformation";
 import useHabitMutations from "@/hooks/useHabitMutations";
 import { Button } from "@/components/ui/button";
 
-import Habit from "./Habit";
+import Habit from "../../../components/Habit";
 
 interface Props {
   habitList: Array<HabitWithLog>;

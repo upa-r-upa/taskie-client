@@ -1,38 +1,18 @@
-import { BsPlusLg } from "react-icons/bs";
+import { PlusIcon } from "lucide-react";
 
 import { HabitWithLog } from "@/api/generated";
-import { getWeek } from "@/utils/time";
 import HabitModal from "@/components/habit/HabitModal";
 import HabitInformation from "@/components/habit/HabitInformation";
 import useHabitMutations from "@/hooks/useHabitMutations";
-
-import ActiveHabit from "./ActivatedHabit";
-import DisabledHabit from "./DisabledHabit";
+import { Button } from "@/components/ui/button";
+import Habit from "@/components/Habit";
 
 interface Props {
-  date: Date;
-  isLoading: boolean;
-  habitList: HabitWithLog[];
-
+  habitList: Array<HabitWithLog>;
   reloadHabitList: () => void;
 }
 
-function HabitSkeleton() {
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="skeleton h-24 w-48"></div>
-      <div className="skeleton h-24"></div>
-      <div className="skeleton h-24"></div>
-    </div>
-  );
-}
-
-export default function HabitList({
-  isLoading,
-  date,
-  habitList,
-  reloadHabitList,
-}: Props) {
+export default function HabitList({ habitList, reloadHabitList }: Props) {
   const {
     createHabitModal,
     updateHabitModal,
@@ -44,43 +24,31 @@ export default function HabitList({
 
   const { visibleState: selectedHabit } = updateHabitModal;
 
-  const renderHabitList = (list: Array<HabitWithLog>) => {
-    if (!list.length) {
-      return <HabitInformation />;
-    }
-
-    return list.map((data) => {
-      const activateDay = getWeek(date) === data.near_weekday;
-
-      return activateDay ? (
-        <ActiveHabit
-          key={data.id}
-          habit={data}
-          onHabitChecked={() => achieveHabitMutation.mutate(data.id)}
-          onHabitClick={() => updateHabitModal.openModal(data)}
-        />
-      ) : (
-        <DisabledHabit
-          key={data.id}
-          habit={data}
-          onHabitClick={() => updateHabitModal.openModal(data)}
-        />
-      );
-    });
-  };
-
   return (
     <>
-      {isLoading ? (
-        <HabitSkeleton />
-      ) : (
-        <ul className="flex flex-col">{renderHabitList(habitList)}</ul>
-      )}
-
-      <button onClick={createHabitModal.openModal} className="float-btn">
-        <BsPlusLg />
+      <Button
+        className="flex items-center mb-4"
+        variant="outline"
+        onClick={createHabitModal.openModal}
+      >
+        <PlusIcon />
         습관 추가하기
-      </button>
+      </Button>
+
+      <ul className="flex flex-col gap-2">
+        {habitList.length === 0 ? (
+          <HabitInformation />
+        ) : (
+          habitList.map((habit) => (
+            <Habit
+              key={habit.id}
+              habit={habit}
+              onHabitClick={() => updateHabitModal.openModal(habit)}
+              onHabitAchieve={() => achieveHabitMutation.mutate(habit.id)}
+            />
+          ))
+        )}
+      </ul>
 
       <HabitModal
         onSubmit={createHabit}

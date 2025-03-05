@@ -33,7 +33,7 @@ export default function ActivatedHabit({
   const done = count <= log_list.length;
 
   return (
-    <li className="card card-bordered card-compact mb-2 shadow-md order-1">
+    <li className="card card-bordered card-compact mb-2 shadow-md">
       <div className="card-body flex flex-row items-center">
         <div className="flex-1 overflow-hidden" onClick={onHabitClick}>
           <span className="badge badge-primary badge-sm">
