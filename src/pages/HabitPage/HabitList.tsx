@@ -1,130 +1,85 @@
-import { BsPlusLg } from "react-icons/bs";
+import { PlusIcon } from "lucide-react";
 
 import { HabitWithLog } from "@/api/generated";
-import { getWeek, parseRepeatDays } from "@/utils/time";
 import HabitModal from "@/components/habit/HabitModal";
-import HabitInformation from "@/components/HabitInformation";
+import HabitInformation from "@/components/habit/HabitInformation";
 import useHabitMutations from "@/hooks/useHabitMutations";
-
-import ActiveHabit from "./ActivatedHabit";
-import DisabledHabit from "./DisabledHabit";
+import { Button } from "@/components/ui/button";
+import Habit from "@/components/Habit";
+import { sortHabits } from "@/utils/sort";
+import { getWeek } from "@/utils/time";
 
 interface Props {
   date: Date;
-  isLoading: boolean;
-  habitList: HabitWithLog[];
+  habitList: Array<HabitWithLog>;
 
   reloadHabitList: () => void;
 }
 
-function HabitSkeleton() {
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="skeleton h-24 w-48"></div>
-      <div className="skeleton h-24"></div>
-      <div className="skeleton h-24"></div>
-    </div>
-  );
-}
-
-export default function HabitList({
-  isLoading,
-  date,
-  habitList,
-  reloadHabitList,
-}: Props) {
+export default function HabitList({ date, habitList, reloadHabitList }: Props) {
   const {
     createHabitModal,
     updateHabitModal,
     achieveHabitMutation,
-    deleteHabitMutation,
     createHabit,
     updateHabit,
     deleteHabit,
   } = useHabitMutations({ reloadHabitList });
-  const {
-    modalState: selectedHabit,
-    openModal: openUpdateModal,
-    closeModal: closeUpdateModal,
-    modalRef: updateModalRef,
-  } = updateHabitModal;
-  const {
-    closeModal: closeCreateModal,
-    openModal: openCreateModal,
-    modalRef: createModalRef,
-  } = createHabitModal;
 
-  const renderHabitList = (list: Array<HabitWithLog>) => {
-    if (!list.length) {
-      return <HabitInformation onModalOpen={openCreateModal} />;
-    }
+  const sortedHabits = sortHabits(habitList, date);
 
-    return list.map((data) => {
-      const activateDay = getWeek(date) === data.near_weekday;
-
-      if (activateDay) {
-        return (
-          <ActiveHabit
-            key={data.id}
-            habit={data}
-            onHabitChecked={() => achieveHabitMutation.mutate(data.id)}
-            onHabitClick={() => openUpdateModal(data)}
-          />
-        );
-      } else {
-        return (
-          <DisabledHabit
-            key={data.id}
-            habit={data}
-            onHabitClick={() => openUpdateModal(data)}
-          />
-        );
-      }
-    });
-  };
+  const { visibleState: selectedHabit } = updateHabitModal;
 
   return (
     <>
-      {isLoading ? (
-        <HabitSkeleton />
-      ) : (
-        <ul className="flex flex-col">{renderHabitList(habitList)}</ul>
-      )}
-
-      <button onClick={openCreateModal} className="float-btn">
-        <BsPlusLg />
+      <Button
+        className="flex items-center mb-4"
+        variant="outline"
+        onClick={createHabitModal.openModal}
+      >
+        <PlusIcon />
         습관 추가하기
-      </button>
+      </Button>
+
+      <ul className="flex flex-col gap-2">
+        {sortedHabits.length === 0 ? (
+          <HabitInformation />
+        ) : (
+          sortedHabits.map((habit) => {
+            const isActivated = habit.repeat_days.includes(getWeek(date));
+
+            return (
+              <Habit
+                key={habit.id}
+                isActive={isActivated}
+                habit={habit}
+                onHabitClick={() => updateHabitModal.openModal(habit)}
+                onHabitAchieve={() => achieveHabitMutation.mutate(habit.id)}
+              />
+            );
+          })
+        )}
+      </ul>
 
       <HabitModal
-        modalRef={createModalRef}
-        onCancel={closeCreateModal}
         onSubmit={createHabit}
-        modalId="habit-add-modal"
         modalTitle="습관 추가하기"
+        submitButtonLabel="추가하기"
+        isOpened={createHabitModal.isModalOpened}
+        setIsOpened={createHabitModal.closeModal}
       />
 
       {selectedHabit && (
         <HabitModal
-          modalRef={updateModalRef}
-          onCancel={closeUpdateModal}
-          onSubmit={updateHabit}
-          modalId="habit-update-modal"
+          deletable
           modalTitle="습관 수정하기"
-          title={selectedHabit.title}
-          startTimeMinutes={selectedHabit.start_time_minutes}
-          endTimeMinutes={selectedHabit.end_time_minutes}
-          repeatIntervalMinutes={selectedHabit.repeat_time_minutes}
-          repeatDays={parseRepeatDays(selectedHabit.repeat_days)}
-          extraButton={
-            <button
-              disabled={deleteHabitMutation.isPending}
-              onClick={() => deleteHabit(selectedHabit.id)}
-              className="btn btn-error"
-            >
-              삭제하기
-            </button>
-          }
+          submitButtonLabel="수정하기"
+          isOpened={updateHabitModal.isOpened}
+          setIsOpened={updateHabitModal.setIsOpened}
+          onModalInvisible={updateHabitModal.invisibleModal}
+          initialHabit={selectedHabit}
+          onSubmit={updateHabit}
+          onHabitDelete={() => deleteHabit(selectedHabit.id)}
         />
       )}
     </>

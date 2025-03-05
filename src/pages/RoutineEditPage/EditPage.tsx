@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
-import { useMessageStore } from "@/state/useMessageStore";
 import { queryClient, routineApi } from "@/api/client";
 import { RoutinePublic, RoutineUpdateInput } from "@/api/generated";
 import useRoutineForm from "@/hooks/useRoutineForm";
@@ -14,33 +14,9 @@ interface Props {
 export default function EditPage({ routine }: Props) {
   const navigate = useNavigate();
 
-  const parseRepeatDays = (repeatDays: Array<number>): Array<number> => {
-    const result = Array.from({ length: 7 }, () => 0);
-
-    repeatDays.forEach((value) => {
-      result[value] = 1;
-    });
-
-    return result;
-  };
-
-  const {
-    title,
-    repeatDays,
-    startTimeMinutes,
-    todoList,
-
-    setTitle,
-    setStartTimeMinutes,
-    setRepeatDays,
-
-    onTodoCreateClick,
-    onTodoDeleteClick,
-    onTodoUpdate,
-    isDisabled,
-  } = useRoutineForm({
+  const { form, onTodoCreate, onTodoDelete, onTodoUpdate } = useRoutineForm({
     initialTitle: routine.title,
-    initialRepeatDays: parseRepeatDays(routine.repeat_days),
+    initialRepeatDays: routine.repeat_days,
     initialStartTimeMinutes: routine.start_time_minutes,
     initialTodoList: routine.routine_elements,
   });
@@ -52,63 +28,43 @@ export default function EditPage({ routine }: Props) {
     queryClient.invalidateQueries({
       queryKey: ["routines"],
     });
+    queryClient.invalidateQueries({
+      queryKey: ["routine"],
+    });
   };
 
-  const addMessage = useMessageStore((state) => state.addMessage);
-  const createRoutineMutation = useMutation({
+  const updateRoutineMutation = useMutation({
     mutationFn: (data: RoutineUpdateInput) =>
       routineApi.updateRoutine(routine.id, data),
     onSuccess: () => {
       refetchData();
       navigate(-1);
     },
-    onError: () => {
-      addMessage({
-        message: "루틴 수정에 실패했습니다.",
-        type: "error",
-      });
-    },
+    onError: () => toast.error("루틴 수정에 실패했습니다."),
   });
 
-  const parseRepeatDaysToServerFormat = (
-    repeatDays: Array<number>
-  ): Array<number> => {
-    const result: Array<number> = [];
-
-    repeatDays.forEach((value, i) => {
-      if (value) {
-        result.push(i);
-      }
-    });
-
-    return result;
-  };
-
   const handleSubmit = () => {
-    createRoutineMutation.mutate({
-      title: title,
-      start_time_minutes: startTimeMinutes,
-      repeat_days: parseRepeatDaysToServerFormat(repeatDays),
-      routine_elements: todoList,
+    const values = form.getValues();
+
+    updateRoutineMutation.mutate({
+      title: values.title,
+      start_time_minutes: values.startTimeMinutes,
+      repeat_days: values.repeatDays,
+      routine_elements: values.todoList.map((v) => ({
+        id: v.id,
+        title: v.title,
+        duration_minutes: v.durationMinutes,
+      })),
     });
   };
 
   const deleteRoutineMutation = useMutation({
     mutationFn: routineApi.deleteRoutine,
     onSuccess: () => {
-      addMessage({
-        message: "루틴을 삭제했습니다.",
-      });
-      refetchData();
-
+      toast.success("루틴을 삭제했습니다."), refetchData();
       navigate(-1);
     },
-    onError: () => {
-      addMessage({
-        message: "루틴 삭제에 실패했습니다.",
-        type: "error",
-      });
-    },
+    onError: () => toast.error("루틴 삭제에 실패했습니다."),
   });
 
   const handleRoutineDeleteClick = () => {
@@ -116,46 +72,22 @@ export default function EditPage({ routine }: Props) {
   };
 
   return (
-    <>
-      <RoutineForm
-        formTitle="루틴 수정하기"
-        title={title}
-        startTimeMinutes={startTimeMinutes}
-        repeatDays={repeatDays}
-        todoList={todoList}
-        onTitleChange={setTitle}
-        onStartTimeMinutesChange={setStartTimeMinutes}
-        onTodoCreateClick={onTodoCreateClick}
-        onTodoDeleteClick={onTodoDeleteClick}
-        onRepeatDaysChange={setRepeatDays}
-        onTodoUpdate={onTodoUpdate}
-        buttons={
-          <>
-            <button
-              onClick={() => {
-                navigate(-1);
-              }}
-              className="btn w-20"
-            >
-              취소
-            </button>
-            <button
-              disabled={deleteRoutineMutation.isPending}
-              onClick={handleRoutineDeleteClick}
-              className="btn btn-error"
-            >
-              삭제하기
-            </button>
-            <button
-              onClick={handleSubmit}
-              disabled={isDisabled() || deleteRoutineMutation.isPending}
-              className="btn btn-primary flex-1"
-            >
-              루틴 수정하기
-            </button>
-          </>
-        }
-      />
-    </>
+    <div className="mx-auto w-full max-w-xl">
+      <h2 className="text-3xl mb-2 tracking-tight">루틴 수정하기</h2>
+
+      <div>
+        <RoutineForm
+          deletable
+          form={form}
+          onSubmit={handleSubmit}
+          isLoading={updateRoutineMutation.isPending}
+          submitButtonLabel="루틴 수정하기"
+          onRoutineDelete={handleRoutineDeleteClick}
+          onTodoCreate={onTodoCreate}
+          onTodoDelete={onTodoDelete}
+          onTodoUpdate={onTodoUpdate}
+        />
+      </div>
+    </div>
   );
 }

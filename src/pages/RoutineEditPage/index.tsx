@@ -2,11 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 
 import { routineApi } from "@/api/client";
-import Loading from "@/components/Loading";
+import { Skeleton } from "@/components/ui/skeleton";
+import NotFoundRoutine from "@/components/routine/NotFoundRoutine";
 
 import EditPage from "./EditPage";
 
-export default function RoutineUpdatePage() {
+export default function RoutineEditPage() {
   const { routineId } = useParams();
 
   const { isLoading, data } = useQuery({
@@ -14,14 +15,21 @@ export default function RoutineUpdatePage() {
     queryFn: () => routineApi.getRoutine(parseInt(routineId!)),
     enabled: !!(routineId && !isNaN(parseInt(routineId))),
     refetchOnWindowFocus: true,
+    retry: false,
   });
 
   if (isLoading) {
-    return <Loading />;
+    return (
+      <div className="flex flex-col gap-4">
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-16 w-full" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+    );
   }
 
   if (!routineId || isNaN(parseInt(routineId)) || (!isLoading && !data?.data)) {
-    return <p>존재하지 않는 루틴이에요.</p>;
+    return <NotFoundRoutine />;
   }
 
   return <EditPage routine={data!.data} />;

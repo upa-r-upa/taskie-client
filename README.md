@@ -9,18 +9,18 @@
 # 스펙
 
 - React + TS + vite
-- daisyui + tailwindcss
+- shadcn + tailwindcss
 - zustand
 
 # 실행 방법
 
 ## 1. 준비
 
-- Node.js >= 21 
+- Node.js >= 21
 - Pnpm 설치
-    ```bash
-    npm install -g pnpm
-    ```
+  ```bash
+  npm install -g pnpm
+  ```
 
 ## 2. 레포지터리 클론
 
@@ -91,3 +91,11 @@ pnpm run dev
 | :---------------------------------------------------------------------------------------: |
 |                                       Habit 서비스                                        |
 
+
+# Attributions
+
+- Sound Attribution
+  Original Sound: cfork - [26875](https://freesound.org/people/cfork/sounds/26875/)
+  Creator: cfork
+  License: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)
+  Modifications: The original sound has been edited (trimmed) for use in this project.

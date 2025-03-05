@@ -1,27 +1,20 @@
 import { Outlet } from "react-router-dom";
 
-import NavBar from "./components/Navbar";
-import BottomNavigation from "./components/BottomNavigation";
-import TokenRefresher from "./components/TokenRefresher";
-import Messages from "./components/Messages";
+import TokenRefresher from "@/components/TokenRefresher";
+import PageHeader from "@/components/PageHeader";
+import { Toaster } from "@/components/ui/sonner";
 
-function App() {
+export default function App() {
   return (
-    <>
-      <div className="overflow-y-auto min-h-screen flex flex-col root-content">
-        <NavBar />
+    <div className="min-h-screen flex flex-col overflow-visible relative">
+      <PageHeader />
 
-        <div className="px-8 pt-20 pb-20 flex-1 relative">
-          <Outlet />
-        </div>
-
-        <BottomNavigation />
-        <Messages />
+      <div className="px-6 pt-20 pb-4 flex-1 container mx-auto w-full">
+        <Outlet />
       </div>
 
+      <Toaster />
       <TokenRefresher />
-    </>
+    </div>
   );
 }
-
-export default App;

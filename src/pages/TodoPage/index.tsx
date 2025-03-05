@@ -1,42 +1,63 @@
-import { useQuery } from "@tanstack/react-query";
-import { BsPlusLg } from "react-icons/bs";
 import { useState } from "react";
 
-import TodoList from "@/components/todo/TodoList";
-import CompletedTodoList from "@/components/todo/CompletedTodoList";
 import useTodoMutations from "@/hooks/useTodoMutations";
-import { queryClient, todoApi } from "@/api/client";
+import { queryClient } from "@/api/client";
 import { getDateWithoutTime } from "@/utils/time";
-import { TodoPublic } from "@/api/generated";
-import { API_REFETCH_INTERVAL } from "@/constants/api";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 import TodoModal from "../MainPage/Todo/TodoModal";
 
-function TodoLoadingSkeleton() {
+import IncompleteTodoTab from "./IncompleteTodoTab";
+import CompleteTodoTab from "./CompleteTodoTab";
+
+enum TabType {
+  incomplete = "incomplete",
+  complete = "complete",
+}
+
+export function TodoAddButton({
+  onTodoAdd,
+  classNames,
+}: {
+  onTodoAdd: (title: string) => void;
+  classNames?: string;
+}) {
+  const [todoTitle, setTodoTitle] = useState<string>("");
+
+  const handleAddTodo = () => {
+    if (!todoTitle.trim()) return;
+    onTodoAdd(todoTitle);
+    setTodoTitle("");
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.nativeEvent.isComposing && e.key === "Enter") return;
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddTodo();
+    }
+  };
+
   return (
-    <div className="flex flex-col gap-4">
-      <div className="skeleton h-10 w-28"></div>
-      <div className="skeleton h-10"></div>
-      <div className="skeleton h-10"></div>
+    <div className={cn("flex items-center gap-2", classNames)}>
+      <Input
+        className="flex-1 text-sm"
+        placeholder="할 일을 입력해 추가하세요."
+        value={todoTitle}
+        onChange={(e) => setTodoTitle(e.target.value)}
+        onKeyDown={handleKeyDown}
+      />
+      <Button onClick={handleAddTodo}>추가</Button>
     </div>
   );
 }
 
 export default function TodoPage() {
   const [date] = useState(() => new Date());
-
-  const { isLoading, data: todoList } = useQuery({
-    queryKey: ["todos"],
-    queryFn: () => todoApi.getTodoList(),
-    refetchIntervalInBackground: true,
-    refetchInterval: API_REFETCH_INTERVAL,
-  });
-  const { isLoading: doneTodoListIsLoading, data: doneTodoList } = useQuery({
-    queryKey: ["todos", "done"],
-    queryFn: () => todoApi.getTodoList(undefined, undefined, true),
-    refetchIntervalInBackground: true,
-    refetchInterval: API_REFETCH_INTERVAL,
-  });
+  const [tab, setTab] = useState<string>(TabType.incomplete);
 
   const reloadTodoList = () => {
     queryClient.invalidateQueries({
@@ -51,6 +72,7 @@ export default function TodoPage() {
     createModalState,
     updateModalState,
     onAddTodoSubmit,
+    onDeleteTodo,
     onUpdateTodoSubmit,
     onUpdateTodoChecked,
     updateTodoMutation,
@@ -58,87 +80,83 @@ export default function TodoPage() {
     createTodoMutation,
   } = useTodoMutations(reloadTodoList);
 
-  const renderTodoUpdateModal = (todo: TodoPublic | null) => {
-    if (!todo) return;
+  const { visibleState: selectedTodo } = updateModalState;
 
-    return (
-      <TodoModal
-        ref={updateModalState.modalRef}
-        modalTitle="할 일 수정하기"
-        modalId="todo-update"
-        title={todo.title}
-        content={todo.content}
-        targetDate={new Date(todo.target_date)}
-        onTodoSubmit={onUpdateTodoSubmit}
-        isLoading={updateTodoMutation.isPending || deleteTodoMutation.isPending}
-        onCancel={updateModalState.closeModal}
-        extraButton={
-          <button
-            disabled={deleteTodoMutation.isPending}
-            onClick={() => deleteTodoMutation.mutate(todo.id)}
-            className="btn btn-error"
-          >
-            삭제하기
-          </button>
-        }
-      />
-    );
+  const isUpdateModalLoading =
+    updateTodoMutation.isPending || deleteTodoMutation.isPending;
+
+  const handleTodoAdd = (title: string) => {
+    onAddTodoSubmit({
+      title,
+      targetDate: getDateWithoutTime(new Date()),
+      content: "",
+    });
   };
 
   return (
     <>
-      <div className="relative pb-4">
-        <h1 className="text-2xl font-semibold mb-3">할 일 목록</h1>
+      <div className="mx-auto grid grid-cols-1 max-w-xl">
+        <h2 className="text-3xl tracking-tight">할 일</h2>
 
-        {isLoading ? (
-          <TodoLoadingSkeleton />
-        ) : (
-          <TodoList
-            isGrouped
-            todoList={todoList?.data || []}
-            onAddTodoClick={createModalState.openModal}
-            onTodoClick={updateModalState.openModal}
-            onTodoCheck={onUpdateTodoChecked}
-          />
-        )}
+        <Tabs
+          defaultValue={TabType.incomplete}
+          value={tab}
+          onValueChange={setTab}
+        >
+          <div className="flex flex-col gap-2 sm:flex-row sm:gap-6 my-3 sticky top-[3.6rem] bg-background py-3">
+            <TabsList className="flex items-center w-max">
+              <TabsTrigger value={TabType.incomplete}>진행 예정</TabsTrigger>
+              <TabsTrigger value={TabType.complete}>완료</TabsTrigger>
+            </TabsList>
 
-        <div className="collapse collapse-arrow card-bordered shadow-sm mt-6 bg-slate-50">
-          <input type="radio" name="done-todos" defaultChecked={false} />
-          <div className="collapse-title text-lg font-medium">
-            완료한 할일 목록
+            <TodoAddButton onTodoAdd={handleTodoAdd} classNames="flex-1" />
           </div>
 
-          <div className="p-2 bg-white">
-            {doneTodoListIsLoading ? (
-              <TodoLoadingSkeleton />
-            ) : (
-              <CompletedTodoList
-                todoList={doneTodoList?.data || []}
-                onTodoCheck={onUpdateTodoChecked}
-                onTodoClick={updateModalState.openModal}
-              />
-            )}
-          </div>
-        </div>
+          <TabsContent value={TabType.incomplete}>
+            <IncompleteTodoTab
+              onTodoCheck={onUpdateTodoChecked}
+              onTodoClick={updateModalState.openModal}
+            />
+          </TabsContent>
 
-        <TodoModal
-          ref={createModalState.modalRef}
-          key={createModalState.isModalOpened ? "open" : "close"}
-          modalTitle="할 일 추가하기"
-          modalId="todo-create"
-          targetDate={getDateWithoutTime(date)}
-          onTodoSubmit={onAddTodoSubmit}
-          isLoading={createTodoMutation.isPending}
-          onCancel={createModalState.closeModal}
-        />
-
-        {renderTodoUpdateModal(updateModalState.modalState)}
+          <TabsContent value={TabType.complete}>
+            <CompleteTodoTab
+              onTodoCheck={onUpdateTodoChecked}
+              onTodoClick={updateModalState.openModal}
+            />
+          </TabsContent>
+        </Tabs>
       </div>
 
-      <button onClick={createModalState.openModal} className="float-btn">
-        <BsPlusLg />
-        할일 추가하기
-      </button>
+      <TodoModal
+        title="할 일 추가하기"
+        isOpened={createModalState.isModalOpened}
+        setIsOpened={createModalState.setIsOpened}
+        targetDate={getDateWithoutTime(date)}
+        onTodoSubmit={onAddTodoSubmit}
+        isLoading={createTodoMutation.isPending}
+        submitButtonLabel="할 일 추가하기"
+      />
+
+      {selectedTodo && (
+        <TodoModal
+          deletable
+          isOpened={updateModalState.isOpened}
+          setIsOpened={updateModalState.setIsOpened}
+          submitButtonLabel="할 일 수정하기"
+          title="할 일 수정하기"
+          initialTodo={{ ...selectedTodo }}
+          isLoading={isUpdateModalLoading}
+          targetDate={
+            selectedTodo?.target_date
+              ? new Date(selectedTodo.target_date)
+              : new Date()
+          }
+          onTodoSubmit={onUpdateTodoSubmit}
+          onModalInvisible={updateModalState.invisibleModal}
+          onTodoDelete={onDeleteTodo}
+        />
+      )}
     </>
   );
 }

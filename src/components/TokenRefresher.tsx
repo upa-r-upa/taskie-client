@@ -2,12 +2,12 @@ import { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import { authApi, client } from "@/api/client";
 import { ErrorResponse } from "@/api/generated";
 import { useAuthStore } from "@/state/useAuthStore";
 import Routes from "@/constants/routes";
-import { useMessageStore } from "@/state/useMessageStore";
 
 interface InternalAxiosRequestConfigWithRetry
   extends InternalAxiosRequestConfig {
@@ -19,11 +19,11 @@ export default function TokenRefresher() {
 
   const {
     token,
+    setUser,
     setIsAccessTokenRefreshing,
-    setTokenWithUser,
+    setToken,
     clearAuthState,
   } = useAuthStore((state) => state);
-  const addMessage = useMessageStore(({ addMessage }) => addMessage);
 
   const refreshTokenMutation = useMutation({
     mutationKey: ["refreshToken"],
@@ -33,9 +33,14 @@ export default function TokenRefresher() {
   useEffect(() => {
     refreshTokenMutation
       .mutateAsync()
-      .then((response) =>
-        setTokenWithUser(response.data!.access_token, response.data!.user)
-      )
+      .then((response) => {
+        setToken(response.data!.access_token);
+        setUser(response.data!.user);
+
+        client.defaults.headers.common["Authorization"] = authorizationToken(
+          response.data!.access_token
+        );
+      })
       .catch(() => {
         clearAuthState();
       })
@@ -77,7 +82,9 @@ export default function TokenRefresher() {
       try {
         const response = await refreshTokenMutation.mutateAsync();
 
-        setTokenWithUser(response.data!.access_token, response.data!.user);
+        setToken(response.data!.access_token);
+        setUser(response.data!.user);
+
         client.defaults.headers.common["Authorization"] = authorizationToken(
           token!
         );
@@ -85,10 +92,9 @@ export default function TokenRefresher() {
         return client(originalRequest);
       } catch (error) {
         navigate(Routes.Login);
-        addMessage({
-          message: "토큰이 만료되어 로그아웃 되었습니다. 다시 로그인해주세요.",
-          type: "warning",
-        });
+        toast.warning(
+          "토큰이 만료되어 로그아웃 되었습니다. 다시 로그인해주세요."
+        );
 
         clearAuthState();
 
@@ -119,22 +125,15 @@ export default function TokenRefresher() {
         ) {
           await accessTokenRefresh(originalRequest);
         } else if (error.response?.status === 403) {
-          navigate(Routes.Login, { replace: true });
-          addMessage({
-            message: "현재 요청한 작업을 처리 할 권한이 없습니다.",
-            type: "warning",
-          });
+          toast.error("현재 요청한 작업을 처리 할 권한이 없습니다.");
         } else if (error.response?.status === 500) {
-          addMessage({
-            message: "서버에서 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
-            type: "error",
-          });
+          toast.error(
+            "서버에서 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+          );
         } else if (error.code === "ERR_NETWORK") {
-          addMessage({
-            message:
-              "현재 서버가 원활하지 않습니다. 잠시 후 다시 시도해주세요.",
-            type: "error",
-          });
+          toast.error(
+            "현재 서버가 원활하지 않습니다. 잠시 후 다시 시도해주세요."
+          );
         }
 
         return Promise.reject(error);
