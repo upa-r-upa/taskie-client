@@ -13,8 +13,6 @@ import { sendEvent } from "@/lib/analytics";
 import useModal from "./useModal";
 import useModalWithState from "./useModalWithState";
 
-import { useModalStore } from "@/lib/store";
-
 export default function useTodoMutations(reloadTodoList: () => void) {
   const createModalState = useModal();
   const updateModalState = useModalWithState<TodoPublic>();

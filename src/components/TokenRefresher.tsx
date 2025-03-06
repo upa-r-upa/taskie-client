@@ -29,7 +29,7 @@ export default function TokenRefresher() {
   const refreshTokenMutation = useMutation({
     mutationKey: ["refreshToken"],
     mutationFn: () => authApi.refreshToken(),
-    onSuccess: (response) => {
+    onSuccess: () => {
       sendEvent("Auth", "RefreshToken", "Success");
     },
     onError: (error: AxiosError) => {
