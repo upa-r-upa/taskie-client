@@ -1,11 +1,13 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 import { routineApi } from "@/api/client";
 import { RoutineLogBase } from "@/api/generated";
 import { Skeleton } from "@/components/ui/skeleton";
 import NotFoundRoutine from "@/components/routine/NotFoundRoutine";
+import { sendEvent } from "@/lib/analytics";
 
 import {
   RoutineAchieveInputParameter,
@@ -30,10 +32,19 @@ export default function RoutinePlayPage() {
     mutationFn: (data: RoutineAchieveInputParameter) =>
       routineApi.putRoutineLog(data.id, data.update),
     onSuccess: () => {
+      sendEvent(
+        "Routine",
+        "Complete",
+        "Success",
+        data?.data?.routine_elements?.length
+      );
       toast.success(`${data?.data.title || "제목 없음"} 루틴을 완료했어요!`);
       navigate(-1);
     },
-    onError: () => toast.error("루틴 완료에 실패했습니다."),
+    onError: (error: AxiosError) => {
+      sendEvent("Routine", "Complete", "Error", error.response?.status || 0);
+      toast.error("루틴 완료에 실패했습니다.");
+    },
   });
 
   const handleSubmit = (data: RoutinePlayViewSubmitProps) => {

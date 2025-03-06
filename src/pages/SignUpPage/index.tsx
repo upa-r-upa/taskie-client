@@ -27,6 +27,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { sendEvent } from "@/lib/analytics";
 
 const formSchema = z
   .object({
@@ -92,10 +93,15 @@ const SignUpPage = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: authApi.signup,
     onSuccess: () => {
+      sendEvent("Auth", "Signup", "Success");
       navigate(`/${Routes.Login}`);
       toast.success("회원가입이 완료되었습니다. 로그인을 해주세요.");
     },
     onError: (error: AxiosError<ErrorResponse>) => {
+      const errorStatus = error.response?.status || 0;
+      const errorType = error.response?.data?.error_type || "unknown";
+      sendEvent("Auth", "Signup", `Error-${errorType}`, errorStatus);
+
       if (error.response?.status === 409) {
         const { error_type } = error.response.data;
         const message = ErrorMessages[error_type];

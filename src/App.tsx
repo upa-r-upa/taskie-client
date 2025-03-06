@@ -1,9 +1,12 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
 import TokenRefresher from "@/components/TokenRefresher";
 import PageHeader from "@/components/PageHeader";
 import { Toaster } from "@/components/ui/sonner";
+import { initGA, sendPageView } from "@/lib/analytics";
+
+const GA_TRACKING_ID = import.meta.env.VITE_GA_TRACKING_ID;
 
 function updateViewportHeight() {
   const vh = window.innerHeight * 0.01;
@@ -11,6 +14,16 @@ function updateViewportHeight() {
 }
 
 export default function App() {
+  const location = useLocation();
+
+  useEffect(() => {
+    initGA(GA_TRACKING_ID);
+  }, []);
+
+  useEffect(() => {
+    sendPageView(location.pathname + location.search);
+  }, [location]);
+
   useEffect(() => {
     updateViewportHeight();
     window.addEventListener("resize", updateViewportHeight);

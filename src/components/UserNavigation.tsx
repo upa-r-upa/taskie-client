@@ -1,10 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 import Routes from "@/constants/routes";
 import { useAuthStore } from "@/state/useAuthStore";
 import { authApi } from "@/api/client";
+import { sendEvent } from "@/lib/analytics";
 
 import {
   DropdownMenu,
@@ -24,13 +26,15 @@ export default function UserNavigation() {
   const { clearAuthState, user } = useAuthStore((state) => state);
 
   const handleLogoutSuccess = () => {
+    sendEvent("Auth", "Logout", "Success");
     clearAuthState();
-    navigate(`/${Routes.Login}`);
+    navigate(`/${Routes.Login}`, { replace: true });
 
     toast.success("로그아웃이 완료되었습니다.");
   };
 
-  const handleLogoutError = () => {
+  const handleLogoutError = (error: AxiosError) => {
+    sendEvent("Auth", "Logout", "Error", error.response?.status || 0);
     toast.error(
       "로그아웃이 정상적으로 완료되지 못했습니다. 다시 시도해주세요."
     );

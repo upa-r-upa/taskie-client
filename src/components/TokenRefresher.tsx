@@ -8,6 +8,7 @@ import { authApi, client } from "@/api/client";
 import { ErrorResponse } from "@/api/generated";
 import { useAuthStore } from "@/state/useAuthStore";
 import Routes from "@/constants/routes";
+import { sendEvent } from "@/lib/analytics";
 
 interface InternalAxiosRequestConfigWithRetry
   extends InternalAxiosRequestConfig {
@@ -28,6 +29,12 @@ export default function TokenRefresher() {
   const refreshTokenMutation = useMutation({
     mutationKey: ["refreshToken"],
     mutationFn: () => authApi.refreshToken(),
+    onSuccess: () => {
+      sendEvent("Auth", "RefreshToken", "Success");
+    },
+    onError: (error: AxiosError) => {
+      sendEvent("Auth", "RefreshToken", "Error", error.response?.status || 0);
+    },
   });
 
   useEffect(() => {

@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 import {
   TodoModalSubmitProps,
@@ -7,6 +8,7 @@ import {
 } from "@/pages/MainPage/types";
 import { TodoPublic } from "@/api/generated";
 import { todoApi } from "@/api/client";
+import { sendEvent } from "@/lib/analytics";
 
 import useModal from "./useModal";
 import useModalWithState from "./useModalWithState";
@@ -33,11 +35,15 @@ export default function useTodoMutations(reloadTodoList: () => void) {
   const createTodoMutation = useMutation({
     mutationFn: todoApi.createTodo,
     onSuccess: () => {
+      sendEvent("Todo", "Create", "Success");
       createModalState.closeModal();
       updateModalState.closeModal();
       reloadTodoList();
     },
-    onError: () => toast.error("할일 추가에 실패했습니다."),
+    onError: (error: AxiosError) => {
+      sendEvent("Todo", "Create", "Error", error.response?.status || 0);
+      toast.error("할일 추가에 실패했습니다.");
+    },
   });
 
   const onTodoUpdateSuccess = () => {
@@ -48,8 +54,14 @@ export default function useTodoMutations(reloadTodoList: () => void) {
   const updateTodoMutation = useMutation({
     mutationFn: (input: TodoUpdateInputParameter) =>
       todoApi.updateTodo(input.id, input.update),
-    onSuccess: onTodoUpdateSuccess,
-    onError: () => toast.error("할일 수정에 실패했습니다."),
+    onSuccess: () => {
+      sendEvent("Todo", "Update", "Success");
+      onTodoUpdateSuccess();
+    },
+    onError: (error: AxiosError) => {
+      sendEvent("Todo", "Update", "Error", error.response?.status || 0);
+      toast.error("할일 수정에 실패했습니다.");
+    },
   });
 
   const onUpdateTodoSubmit = (todo: TodoModalSubmitProps) => {
@@ -67,8 +79,14 @@ export default function useTodoMutations(reloadTodoList: () => void) {
 
   const deleteTodoMutation = useMutation({
     mutationFn: todoApi.deleteTodo,
-    onSuccess: onTodoUpdateSuccess,
-    onError: () => toast.error("할일 삭제에 실패했습니다."),
+    onSuccess: () => {
+      sendEvent("Todo", "Delete", "Success");
+      onTodoUpdateSuccess();
+    },
+    onError: (error: AxiosError) => {
+      sendEvent("Todo", "Delete", "Error", error.response?.status || 0);
+      toast.error("할일 삭제에 실패했습니다.");
+    },
   });
 
   const onUpdateTodoChecked = (todo: TodoPublic, checked: boolean) => {

@@ -1,11 +1,13 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 import { queryClient, routineApi } from "@/api/client";
 import { RoutinePublic, RoutineUpdateInput } from "@/api/generated";
 import useRoutineForm from "@/hooks/useRoutineForm";
 import RoutineForm from "@/components/routine/RoutineForm";
+import { sendEvent } from "@/lib/analytics";
 
 interface Props {
   routine: RoutinePublic;
@@ -37,10 +39,14 @@ export default function EditPage({ routine }: Props) {
     mutationFn: (data: RoutineUpdateInput) =>
       routineApi.updateRoutine(routine.id, data),
     onSuccess: () => {
+      sendEvent("Routine", "Update", "Success");
       refetchData();
       navigate(-1);
     },
-    onError: () => toast.error("루틴 수정에 실패했습니다."),
+    onError: (error: AxiosError) => {
+      sendEvent("Routine", "Update", "Error", error.response?.status || 0);
+      toast.error("루틴 수정에 실패했습니다.");
+    },
   });
 
   const handleSubmit = () => {
@@ -61,10 +67,15 @@ export default function EditPage({ routine }: Props) {
   const deleteRoutineMutation = useMutation({
     mutationFn: routineApi.deleteRoutine,
     onSuccess: () => {
-      toast.success("루틴을 삭제했습니다."), refetchData();
+      sendEvent("Routine", "Delete", "Success");
+      toast.success("루틴을 삭제했습니다.");
+      refetchData();
       navigate(-1);
     },
-    onError: () => toast.error("루틴 삭제에 실패했습니다."),
+    onError: (error: AxiosError) => {
+      sendEvent("Routine", "Delete", "Error", error.response?.status || 0);
+      toast.error("루틴 삭제에 실패했습니다.");
+    },
   });
 
   const handleRoutineDeleteClick = () => {
