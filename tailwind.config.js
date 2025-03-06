@@ -10,7 +10,13 @@ export default {
   theme: {
     extend: {
       height: {
-        screen: ["100vh", "100dvh"],
+        device: "calc(var(--vh, 1vh) * 100)",
+      },
+      minHeight: {
+        device: "calc(var(--vh, 1vh) * 100)",
+      },
+      maxHeight: {
+        device: "calc(var(--vh, 1vh) * 100)",
       },
       borderRadius: {
         lg: "var(--radius)",
