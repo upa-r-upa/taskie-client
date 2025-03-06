@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AxiosResponse } from "axios";
+import { AxiosResponse, AxiosError } from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -30,6 +30,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { sendEvent } from "@/lib/analytics";
 
 const formSchema = z.object({
   username: z.string(),
@@ -70,11 +71,16 @@ const LoginPage = () => {
 
   const { mutate, isPending } = useMutation({
     mutationFn: authApi.login,
-    onSuccess: handleLoginSuccess,
-    onError: () =>
+    onSuccess: (data) => {
+      sendEvent("Auth", "Login", "Success");
+      handleLoginSuccess(data);
+    },
+    onError: (error: AxiosError) => {
+      sendEvent("Auth", "Login", "Error", error.response?.status || 0);
       toast.error(
         "로그인에 실패했습니다. 아이디 혹은 비밀번호를 확인해주세요."
-      ),
+      );
+    },
   });
 
   useEffect(() => {

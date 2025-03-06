@@ -1,10 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 import { queryClient, routineApi } from "@/api/client";
 import useRoutineForm from "@/hooks/useRoutineForm";
 import RoutineForm from "@/components/routine/RoutineForm";
+import { sendEvent } from "@/lib/analytics";
 
 export default function RoutineCreatePage() {
   const navigate = useNavigate();
@@ -14,6 +16,7 @@ export default function RoutineCreatePage() {
   const createRoutineMutation = useMutation({
     mutationFn: routineApi.createRoutine,
     onSuccess: () => {
+      sendEvent("Routine", "Create", "Success");
       queryClient.invalidateQueries({
         queryKey: ["tasks"],
       });
@@ -22,7 +25,10 @@ export default function RoutineCreatePage() {
       });
       navigate(-1);
     },
-    onError: () => toast.error("루틴 생성에 실패했습니다."),
+    onError: (error: AxiosError) => {
+      sendEvent("Routine", "Create", "Error", error.response?.status || 0);
+      toast.error("루틴 생성에 실패했습니다.");
+    },
   });
 
   const handleSubmit = () => {

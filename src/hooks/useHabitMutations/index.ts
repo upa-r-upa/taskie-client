@@ -1,9 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 import { habitsApi } from "@/api/client";
 import { HabitPublic } from "@/api/generated";
 import { HabitModalSubmitProps } from "@/components/habit/HabitModal";
+import { sendEvent } from "@/lib/analytics";
 
 import useModalWithState from "../useModalWithState";
 import useModal from "../useModal";
@@ -23,35 +25,47 @@ export default function useHabitMutations({ reloadHabitList }: Props) {
   const achieveHabitMutation = useMutation({
     mutationFn: habitsApi.achieveHabit,
     onSuccess: () => {
+      sendEvent("Habit", "Achieve", "Success");
       reloadHabitList();
-
       toast.success(`습관을 성공적으로 달성했어요.`);
     },
-    onError: () => toast.error("습관 달성 요청에 실패했습니다."),
+    onError: (error: AxiosError) => {
+      sendEvent("Habit", "Achieve", "Error", error.response?.status || 0);
+      toast.error("습관 달성 요청에 실패했습니다.");
+    },
   });
 
   const createHabitMutation = useMutation({
     mutationFn: habitsApi.createHabit,
     onSuccess: () => {
+      sendEvent("Habit", "Create", "Success");
       closeCreateModal();
       reloadHabitList();
     },
-    onError: () => toast.error("습관 추가에 실패했습니다."),
+    onError: (error: AxiosError) => {
+      sendEvent("Habit", "Create", "Error", error.response?.status || 0);
+      toast.error("습관 추가에 실패했습니다.");
+    },
   });
 
   const updateHabitMutation = useMutation({
     mutationFn: (input: HabitUpdateInputParameter) =>
       habitsApi.updateHabit(input.id, input.update),
     onSuccess: () => {
+      sendEvent("Habit", "Update", "Success");
       closeUpdateModal();
       reloadHabitList();
     },
-    onError: () => toast.error("습관 수정에 실패했습니다."),
+    onError: (error: AxiosError) => {
+      sendEvent("Habit", "Update", "Error", error.response?.status || 0);
+      toast.error("습관 수정에 실패했습니다.");
+    },
   });
 
   const deleteHabitMutation = useMutation({
     mutationFn: habitsApi.deleteHabit,
     onSuccess: () => {
+      sendEvent("Habit", "Delete", "Success");
       closeUpdateModal();
       reloadHabitList();
 
