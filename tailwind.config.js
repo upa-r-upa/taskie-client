@@ -15,6 +15,9 @@ export default {
       minHeight: {
         device: "calc(var(--vh, 1vh) * 100)",
       },
+      maxHeight: {
+        device: "calc(var(--vh, 1vh) * 100)",
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
