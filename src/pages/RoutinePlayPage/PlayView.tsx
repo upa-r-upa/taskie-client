@@ -123,7 +123,7 @@ export default function PlayView({ routine, onSubmit }: Props) {
   const routineTodo = routineTodoList[currentIndex];
 
   return (
-    <div className="mx-auto w-full">
+    <div className="mx-auto w-full max-w-4xl">
       <h2 className="text-2xl mb-4 tracking-tight">{routine.title}</h2>
 
       <div className="flex flex-col gap-3 md:flex-row">

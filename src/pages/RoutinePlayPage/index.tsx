@@ -70,7 +70,7 @@ export default function RoutinePlayPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto p-4">
+      <div className="container mx-auto p-4 w-full max-w-4xl">
         <Skeleton className="h-12 w-48 mb-4" />
 
         <div className="flex flex-col md:flex-row gap-8">

@@ -20,7 +20,7 @@ export default function RoutineEditPage() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 mx-auto max-w-xl">
         <Skeleton className="h-12 w-full" />
         <Skeleton className="h-16 w-full" />
         <Skeleton className="h-10 w-full" />
