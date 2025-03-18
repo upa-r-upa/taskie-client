@@ -42,19 +42,11 @@ const formSchema = z
     password: z
       .string()
       .min(6, "비밀번호는 6자 이상이어야 합니다.")
-      .max(20, "비밀번호는 20자 이하이어야 합니다.")
-      .regex(
-        /^[a-zA-Z0-9]+$/,
-        "비밀번호는 영문 혹은 영문과 숫자를 조합해주세요."
-      ),
+      .max(20, "비밀번호는 20자 이하이어야 합니다."),
     passwordConfirm: z
       .string()
       .min(6, "비밀번호는 6자 이상이어야 합니다.")
-      .max(20, "비밀번호는 20자 이하이어야 합니다.")
-      .regex(
-        /^[a-zA-Z0-9]+$/,
-        "비밀번호는 영문 혹은 영문과 숫자를 조합해주세요."
-      ),
+      .max(20, "비밀번호는 20자 이하이어야 합니다."),
     email: z
       .string()
       .max(100, "이메일은 100자 이하여야 합니다.")
@@ -142,8 +134,8 @@ const SignUpPage = () => {
                 <FormItem>
                   <FormLabel>아이디</FormLabel>
                   <FormDescription>
-                    최소 4자 이상, 최대 20자 이하, 영문 혹은 숫자를
-                    조합해주세요.
+                    최소 4자 이상, 최대 20자 이하로 입력해주세요. (영문과 숫자만
+                    가능)
                   </FormDescription>
 
                   <FormControl>
@@ -166,8 +158,7 @@ const SignUpPage = () => {
                 <FormItem>
                   <FormLabel>비밀번호</FormLabel>
                   <FormDescription>
-                    최소 6자 이상, 최대 20자 이하, 영문 혹은 숫자를
-                    조합해주세요.
+                    최소 6자 이상, 최대 20자 이하로 입력해주세요.
                   </FormDescription>
 
                   <FormControl>
