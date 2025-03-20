@@ -40,18 +40,19 @@
 |                                       미완료 Todo                                       |                                      완료한 Todo                                      |
 
 ## Routine 서비스
-| ![Routine 1](https://github.com/user-attachments/assets/9206394e-b631-41fb-a012-bb72c3eb82e7) | ![Routine 2](https://github.com/user-attachments/assets/6f877910-d078-4f4e-8b40-1187e45ec429) | ![Routine 3](https://github.com/user-attachments/assets/2a71bd41-451b-4bb6-8e36-2a49764ce0f8) |
-| :-----------------------------------------------: | :-----------------------------------------------: | :-----------------------------------------------: |
-| 루틴 목록 | 루틴 실행 | 완료한 루틴 |
+| ![Routine 1](https://github.com/user-attachments/assets/2a71bd41-451b-4bb6-8e36-2a49764ce0f8) | ![Routine 2](https://github.com/user-attachments/assets/6f877910-d078-4f4e-8b40-1187e45ec429) |
+| :-----------------------------------------------: | :-----------------------------------------------: | 
+| 루틴 목록 | 루틴 실행 |
 
 
 
 
 ## Habit 서비스 (개발 진행중)
 
-| ![Habit](https://github.com/user-attachments/assets/06259540-a021-4941-96ba-bbab62f88d53) |
+| <img src="https://github.com/user-attachments/assets/06259540-a021-4941-96ba-bbab62f88d53" alt="Habit" width="450" /> |
 | :---------------------------------------------------------------------------------------: |
-|                                       Habit 서비스                                        |
+|                                       습관 목록                                        | 
+
 
 # 스펙
 
