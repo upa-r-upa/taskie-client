@@ -14,8 +14,7 @@ interface Props {
   onHoursChange: (hour: number) => void;
   onAMPMChange: (ampm: AMPM) => void;
 }
-
-const HourList = Array.from({ length: 12 }, (_, i) => 12 - i);
+const HourList = Array.from({ length: 12 }, (_, i) => i + 1);
 
 export default function TimePickerBase({
   hours,
@@ -49,7 +48,7 @@ export default function TimePickerBase({
             <Button
               key={hour}
               size="icon"
-              variant={hour === hours ? "default" : "ghost"}
+              variant={hour === (hours % 12 || 12) ? "default" : "ghost"}
               className="sm:w-full shrink-0 aspect-square"
               onClick={() => onHoursChange(hour)}
             >
