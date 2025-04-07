@@ -57,7 +57,7 @@ export default function PlayView({ routine, onSubmit }: Props) {
     setRoutineTodoList((prev) =>
       prev.map((item, idx) =>
         idx === currentIndex
-          ? { ...item, completed_duration_seconds: seconds }
+          ? { ...item, completed_duration_seconds: Math.max(1, seconds) }
           : item
       )
     );
@@ -70,7 +70,7 @@ export default function PlayView({ routine, onSubmit }: Props) {
       id: routine.id,
       routineTodoList: routineTodoList.map((item, idx) =>
         idx === currentIndex
-          ? { ...item, completed_duration_seconds: seconds }
+          ? { ...item, completed_duration_seconds: Math.max(1, seconds) }
           : item
       ),
     });
