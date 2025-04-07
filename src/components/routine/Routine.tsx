@@ -27,7 +27,7 @@ const RoutineTodoItem = ({ todo }: { todo: RoutineItem }) => {
       </p>
 
       <p className="text-xs text-muted-foreground basis-20">
-        {formatSecondsAsDuration(todo.completed_duration_seconds || 0)} 진행
+        {formatSecondsAsDuration(todo.completed_duration_seconds || 1)} 진행
       </p>
     </div>
   );
@@ -66,7 +66,8 @@ export default function Routine({ routine, disabled }: Props) {
         {isDone && (
           <Badge className="w-max" variant="outline">
             <CheckIcon size={15} className="mr-1" />총{" "}
-            {formatSecondsAsDuration(completedSeconds)} 진행했어요!
+            {formatSecondsAsDuration(Math.max(60, completedSeconds))}{" "}
+            진행했어요!
           </Badge>
         )}
 
