@@ -16,7 +16,6 @@ import EmptyTodoList from "./EmptyTodoList";
 
 interface Props {
   routine: RoutinePublic;
-
   onSubmit: (data: RoutinePlayViewSubmitProps) => void;
 }
 
@@ -40,58 +39,59 @@ export default function PlayView({ routine, onSubmit }: Props) {
     }
   }, [isMounted, prevIsMounted, start]);
 
-  const updateCurrentIndex = (nextIndex: number) => {
-    const nextRoutineTodo = routineTodoList[nextIndex];
+  const currentRoutineTodo = routineTodoList[currentIndex];
 
-    setCurrentIndex(nextIndex);
+  const moveToTodoIndex = (index: number) => {
+    setCurrentIndex(index);
 
-    if (nextRoutineTodo.is_skipped) {
+    const targetTodo = routineTodoList[index];
+
+    if (targetTodo.is_skipped) {
       setTime(0);
     } else {
-      setTime(nextRoutineTodo.completed_duration_seconds || 0);
+      setTime(targetTodo.completed_duration_seconds || 0);
     }
   };
 
-  const updateRoutineTodoCompletedDuration = (
-    index: number,
-    durationSeconds: number
-  ) => {
-    const nextRoutineTodoList = routineTodoList.map((item, idx) =>
-      idx === index
-        ? { ...item, completed_duration_seconds: durationSeconds }
-        : item
+  const saveCurrentTodoDuration = () => {
+    setRoutineTodoList((prev) =>
+      prev.map((item, idx) =>
+        idx === currentIndex
+          ? { ...item, completed_duration_seconds: seconds }
+          : item
+      )
     );
-    setRoutineTodoList(nextRoutineTodoList);
-
-    return nextRoutineTodoList;
   };
 
-  const handleRoutineDone = () => {
-    const nextRoutineTodoList = updateRoutineTodoCompletedDuration(
-      currentIndex,
-      seconds
-    );
+  const finishRoutine = () => {
+    saveCurrentTodoDuration();
+
     onSubmit({
       id: routine.id,
-      routineTodoList: nextRoutineTodoList,
+      routineTodoList: routineTodoList.map((item, idx) =>
+        idx === currentIndex
+          ? { ...item, completed_duration_seconds: seconds }
+          : item
+      ),
     });
   };
 
-  const handleNextButtonClick = () => {
+  const moveToNextTodo = () => {
+    saveCurrentTodoDuration();
+
     if (currentIndex >= routine.routine_elements.length - 1) {
-      handleRoutineDone();
+      finishRoutine();
       return;
     }
 
-    updateRoutineTodoCompletedDuration(currentIndex, seconds);
-    updateCurrentIndex(currentIndex + 1);
+    moveToTodoIndex(currentIndex + 1);
   };
 
-  const handlePrevButtonClick = () => {
+  const moveToPrevTodo = () => {
     if (currentIndex === 0) return;
 
-    updateRoutineTodoCompletedDuration(currentIndex, seconds);
-    updateCurrentIndex(currentIndex - 1);
+    saveCurrentTodoDuration();
+    moveToTodoIndex(currentIndex - 1);
   };
 
   const handleRoutineTodoActiveChange = (active: boolean) => {
@@ -120,8 +120,6 @@ export default function PlayView({ routine, onSubmit }: Props) {
     return <EmptyTodoList title={routine.title} id={routine.id} />;
   }
 
-  const routineTodo = routineTodoList[currentIndex];
-
   return (
     <div className="mx-auto w-full max-w-4xl">
       <h2 className="text-2xl mb-4 tracking-tight">{routine.title}</h2>
@@ -130,15 +128,15 @@ export default function PlayView({ routine, onSubmit }: Props) {
         <RoutineTodo
           seconds={seconds}
           isRunning={isRunning}
-          routineTodo={routineTodo}
+          routineTodo={currentRoutineTodo}
           hasNextTodo={currentIndex < routine.routine_elements.length - 1}
           hasPrevTodo={currentIndex !== 0}
           onTimerPause={pause}
           onTimerReset={reset}
           onTimerResume={start}
-          onMoveToPrevTodo={handlePrevButtonClick}
+          onMoveToPrevTodo={moveToPrevTodo}
           onActiveChange={handleRoutineTodoActiveChange}
-          onDone={handleNextButtonClick}
+          onDone={moveToNextTodo}
         />
 
         <RoutineTodoStatus
@@ -149,7 +147,7 @@ export default function PlayView({ routine, onSubmit }: Props) {
 
       <div className="flex justify-between items-center mt-6">
         <BackButton />
-        <Button onClick={handleRoutineDone}>
+        <Button onClick={finishRoutine}>
           <CheckCheck />
           루틴 종료하기
         </Button>
