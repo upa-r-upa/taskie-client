@@ -3,8 +3,10 @@ import { getDateWithoutTime } from "@/utils/time";
 import { Button } from "@/components/ui/button";
 import TodoList from "@/components/todo/TodoList";
 import useTodoMutations from "@/hooks/useTodoMutations";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import TodoModal from "./TodoModal";
+import TodoDetail from "./TodoDetail";
 
 interface Props {
   date: Date;
@@ -33,19 +35,25 @@ export default function TodoSection({ date, todoList, reloadTodoList }: Props) {
 
   return (
     <>
-      <TodoList
-        todoList={todoList}
-        onTodoClick={updateModalState.openModal}
-        onTodoCheck={onUpdateTodoChecked}
-      />
+      <div className="overflow-auto">
+        <TodoList
+          todoList={todoList}
+          onTodoClick={updateModalState.openModal}
+          onTodoCheck={onUpdateTodoChecked}
+        />
 
-      <Button
-        size="lg"
-        onClick={createModalState.openModal}
-        className="mt-4 w-full"
-      >
-        할 일 추가하기
-      </Button>
+        <Button
+          size="lg"
+          onClick={createModalState.openModal}
+          className="mt-4 w-full"
+        >
+          할 일 추가하기
+        </Button>
+      </div>
+
+      <div>
+        <TodoDetail todo={selectedTodo} onTodoUpdate={reloadTodoList} />
+      </div>
 
       <TodoModal
         title="할 일 추가하기"

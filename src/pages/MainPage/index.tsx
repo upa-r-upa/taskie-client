@@ -44,13 +44,12 @@ function MainPage() {
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card className="p-4 flex-1 h-max lg:order-3">
+      <div className="mt-4 grid grid-cols-1 gap-4">
+        <Card className="p-4 sm:h-[600px]">
           <CardHeader className="p-0">
             <CardTitle>할 일</CardTitle>
           </CardHeader>
-
-          <CardContent className="p-0 py-4">
+          <CardContent className="p-0 py-4 gap-4">
             {isLoading ? (
               <div className="flex flex-col gap-4">
                 <Skeleton className="h-12 w-full" />
@@ -58,17 +57,19 @@ function MainPage() {
                 <Skeleton className="h-10 w-full" />
               </div>
             ) : (
-              <TodoSection
-                date={date}
-                todoList={data?.data?.todo_list || []}
-                reloadTodoList={refetch}
-              />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <TodoSection
+                  date={date}
+                  todoList={data?.data?.todo_list || []}
+                  reloadTodoList={refetch}
+                />
+              </div>
             )}
           </CardContent>
         </Card>
 
-        <div className="flex flex-col gap-4">
-          <Card className="p-4 sm:p-6 overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card className="p-4 sm:p-6 h-max overflow-hidden">
             <CardHeader className="p-0">
               <CardTitle>루틴</CardTitle>
             </CardHeader>
@@ -88,7 +89,7 @@ function MainPage() {
             </CardContent>
           </Card>
 
-          <Card className="p-4 sm:p-6 overflow-hidden">
+          <Card className="p-4 sm:p-6 h-max overflow-hidden">
             <CardHeader className="p-0">
               <CardTitle>습관</CardTitle>
             </CardHeader>
