@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { TodoPublic } from "@/api/generated";
 import { cn } from "@/lib/utils";
 import { todoApi } from "@/api/client";
+import AutoResizeTextarea from "@/components/AutoResizeTextarea";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Props {
   todo: TodoPublic | null;
@@ -16,7 +18,7 @@ export default function TodoDetail({ todo, onTodoUpdate }: Props) {
   const [content, setContent] = useState(todo?.content ?? "");
 
   return (
-    <div className="space-y-4 border rounded-lg p-4 shadow-sm min-h-[250px] flex flex-col">
+    <div className="space-y-4 border rounded-lg p-4 shadow-sm flex flex-col h-full">
       {!todo ? (
         <div className="text-center py-8 text-gray-500 flex-grow flex items-center justify-center">
           현재 선택된 할 일이 없어요. 할 일을 클릭해서 확인해보세요.
@@ -24,34 +26,21 @@ export default function TodoDetail({ todo, onTodoUpdate }: Props) {
       ) : (
         <>
           <div>
-            <textarea
+            <AutoResizeTextarea
               value={title}
+              onChange={(e) => setTitle(e.target.value)}
               placeholder="제목 없음"
-              className={cn(
-                "w-full resize-none overflow-hidden bg-transparent text-xl font-bold outline-none",
-                "border-0 p-0 focus:ring-0"
-              )}
               rows={1}
-              style={{
-                height: "auto",
-                minHeight: "1.5rem",
-              }}
+              className="w-full resize-none border-none bg-transparent p-0 text-lg focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none font-bold"
             />
           </div>
 
           <div className="flex-grow">
-            <textarea
+            <Textarea
               value={content}
+              onChange={(e) => setContent(e.target.value)}
               placeholder="내용을 입력해주세요."
-              className={cn(
-                "w-full resize-none overflow-hidden bg-transparent outline-none h-full",
-                "border-0 p-0 focus:ring-0"
-              )}
-              rows={5}
-              style={{
-                height: "auto",
-                minHeight: "5rem",
-              }}
+              className="w-full h-full resize-none border-none bg-transparent p-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none"
             />
           </div>
         </>

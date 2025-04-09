@@ -35,7 +35,7 @@ export default function TodoSection({ date, todoList, reloadTodoList }: Props) {
 
   return (
     <>
-      <div className="overflow-auto">
+      <div>
         <TodoList
           todoList={todoList}
           onTodoClick={updateModalState.openModal}

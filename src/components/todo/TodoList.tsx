@@ -25,7 +25,7 @@ export default function TodoList({
 
   return (
     <>
-      <div className="flex flex-col gap-2 pt-0">
+      <div className="flex flex-col gap-2 pt-0 h-[470px] overflow-y-auto">
         {todoList.map((item) => {
           return (
             <Fragment key={item.id}>
