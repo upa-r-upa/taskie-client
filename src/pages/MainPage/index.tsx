@@ -44,13 +44,12 @@ function MainPage() {
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card className="p-4 flex-1 h-max lg:order-3">
-          <CardHeader className="p-0">
+      <div className="mt-4 grid grid-cols-1 gap-4">
+        <Card className="p-4 flex flex-col sm:h-[calc(100vh-190px)] sm:min-h-[500px]">
+          <CardHeader className="p-0 flex-none">
             <CardTitle>할 일</CardTitle>
           </CardHeader>
-
-          <CardContent className="p-0 py-4">
+          <CardContent className="p-0 py-4 flex-grow overflow-hidden">
             {isLoading ? (
               <div className="flex flex-col gap-4">
                 <Skeleton className="h-12 w-full" />
@@ -67,8 +66,8 @@ function MainPage() {
           </CardContent>
         </Card>
 
-        <div className="flex flex-col gap-4">
-          <Card className="p-4 sm:p-6 overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card className="p-4 sm:p-6 h-max overflow-hidden">
             <CardHeader className="p-0">
               <CardTitle>루틴</CardTitle>
             </CardHeader>
@@ -88,7 +87,7 @@ function MainPage() {
             </CardContent>
           </Card>
 
-          <Card className="p-4 sm:p-6 overflow-hidden">
+          <Card className="p-4 sm:p-6 h-max overflow-hidden">
             <CardHeader className="p-0">
               <CardTitle>습관</CardTitle>
             </CardHeader>

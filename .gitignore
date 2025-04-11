@@ -28,3 +28,5 @@ src/api/generated
 
 .env.*
 !.env.example
+
+.cursor/*
