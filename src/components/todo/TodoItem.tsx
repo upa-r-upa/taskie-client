@@ -23,15 +23,15 @@ export default function TodoItem({ todo, onTodoCheck, onTodoClick }: Props) {
   };
 
   return (
-    <div className="flex items-center space-x-4 rounded-md border transition-colors bg-card hover:bg-accent cursor-pointer p">
+    <div className="flex items-center rounded-md border transition-colors bg-card hover:bg-accent cursor-pointer">
       <div
-        className="flex-1 space-y-1 p-3 pr-0 overflow-hidden"
+        className="flex-1 space-y-1 p-3 pr-0 overflow-hidden w-0 min-w-0"
         onClick={() => onTodoClick(todo)}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 max-w-full overflow-hidden">
           <p
             className={cn(
-              "flex-1 text-sm leading-none overflow-hidden text-ellipsis whitespace-nowrap",
+              "flex-1 text-sm leading-none overflow-hidden text-ellipsis whitespace-nowrap w-0",
               completed_at && "text-muted-foreground/70 line-through"
             )}
           >
@@ -39,7 +39,12 @@ export default function TodoItem({ todo, onTodoCheck, onTodoClick }: Props) {
           </p>
 
           {!completed_at && (
-            <span className={cn("text-xs text-blue-400 ", getTextColor())}>
+            <span
+              className={cn(
+                "text-xs text-blue-400 flex-shrink-0 ml-2",
+                getTextColor()
+              )}
+            >
               {formatRelativeDate(target_date)}
             </span>
           )}
@@ -48,7 +53,7 @@ export default function TodoItem({ todo, onTodoCheck, onTodoClick }: Props) {
         {content && (
           <p
             className={cn(
-              "text-sm text-muted-foreground overflow-hidden text-ellipsis whitespace-nowrap",
+              "text-sm text-muted-foreground overflow-hidden text-ellipsis whitespace-nowrap max-w-full",
               completed_at && "text-muted-foreground/50"
             )}
           >
@@ -57,7 +62,7 @@ export default function TodoItem({ todo, onTodoCheck, onTodoClick }: Props) {
         )}
       </div>
 
-      <div className="pr-2">
+      <div className="p-2 flex-shrink-0">
         <Checkbox
           checked={!!completed_at}
           onCheckedChange={(checked) => onTodoCheck(todo, !!checked)}

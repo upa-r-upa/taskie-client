@@ -45,11 +45,11 @@ function MainPage() {
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-4">
-        <Card className="p-4 h-[600px]">
-          <CardHeader className="p-0">
+        <Card className="p-4 flex flex-col sm:h-[calc(100vh-190px)] sm:min-h-[500px]">
+          <CardHeader className="p-0 flex-none">
             <CardTitle>할 일</CardTitle>
           </CardHeader>
-          <CardContent className="p-0 py-4 gap-4">
+          <CardContent className="p-0 py-4 flex-grow overflow-hidden">
             {isLoading ? (
               <div className="flex flex-col gap-4">
                 <Skeleton className="h-12 w-full" />
@@ -57,13 +57,11 @@ function MainPage() {
                 <Skeleton className="h-10 w-full" />
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <TodoSection
-                  date={date}
-                  todoList={data?.data?.todo_list || []}
-                  reloadTodoList={refetch}
-                />
-              </div>
+              <TodoSection
+                date={date}
+                todoList={data?.data?.todo_list || []}
+                reloadTodoList={refetch}
+              />
             )}
           </CardContent>
         </Card>

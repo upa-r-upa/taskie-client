@@ -24,20 +24,15 @@ export default function TodoList({
   }
 
   return (
-    <>
-      <div className="flex flex-col gap-2 pt-0 h-[470px] overflow-y-auto">
-        {todoList.map((item) => {
-          return (
-            <Fragment key={item.id}>
-              <TodoItem
-                todo={item}
-                onTodoClick={onTodoClick}
-                onTodoCheck={onTodoCheck}
-              />
-            </Fragment>
-          );
-        })}
-      </div>
-    </>
+    <div className="space-y-2">
+      {todoList.map((item) => (
+        <TodoItem
+          key={item.id}
+          todo={item}
+          onTodoClick={onTodoClick}
+          onTodoCheck={onTodoCheck}
+        />
+      ))}
+    </div>
   );
 }
