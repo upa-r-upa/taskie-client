@@ -15,6 +15,7 @@ interface Props {
   date: Date;
 
   showTime?: boolean;
+  isSimple?: boolean;
 
   onDateChange: (date: Date) => void;
 }
@@ -22,6 +23,7 @@ interface Props {
 export default function DatePicker({
   date,
   showTime,
+  isSimple,
   onDateChange,
   children,
 }: Props & PropsWithChildren) {
@@ -31,11 +33,12 @@ export default function DatePicker({
         <Button
           variant={"outline"}
           className={cn(
-            "w-[220px] md:w-[250px] justify-start text-left font-normal",
-            !date && "text-muted-foreground"
+            "w-[220px] justify-start text-left font-normal",
+            !date && "text-muted-foreground",
+            isSimple && "w-[200px] text-sm"
           )}
         >
-          <CalendarIcon />
+          {!isSimple && <CalendarIcon />}
 
           {date ? (
             showTime ? (

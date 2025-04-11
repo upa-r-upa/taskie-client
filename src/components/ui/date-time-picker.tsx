@@ -5,11 +5,16 @@ import TimePickerBase from "./time-picker-base";
 
 interface Props {
   date: Date;
+  isSimple?: boolean;
 
   onDateChange: (date: Date) => void;
 }
 
-export default function DateTimePicker({ date, onDateChange }: Props) {
+export default function DateTimePicker({
+  date,
+  isSimple,
+  onDateChange,
+}: Props) {
   const handleDateSelect = (selectedDate: Date | undefined) => {
     if (selectedDate) {
       onDateChange(selectedDate);
@@ -39,7 +44,12 @@ export default function DateTimePicker({ date, onDateChange }: Props) {
   };
 
   return (
-    <DatePicker date={date} onDateChange={handleDateSelect} showTime>
+    <DatePicker
+      date={date}
+      onDateChange={handleDateSelect}
+      isSimple={isSimple}
+      showTime
+    >
       <TimePickerBase
         ampm={date.getHours() >= 12 ? "오후" : "오전"}
         hours={date.getHours()}
