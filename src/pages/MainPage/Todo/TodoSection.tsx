@@ -1,12 +1,10 @@
 import { TodoPublic } from "@/api/generated";
-import { getDateWithoutTime } from "@/utils/time";
 import { Button } from "@/components/ui/button";
 import TodoList from "@/components/todo/TodoList";
 import useTodoMutations from "@/hooks/useTodoMutations";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-import TodoModal from "./TodoModal";
-import TodoDetail from "./TodoDetail";
+import TodoDetail from "../../../components/todo/TodoDetail";
 
 interface Props {
   date: Date;
@@ -17,7 +15,6 @@ interface Props {
 
 export default function TodoSection({ date, todoList, reloadTodoList }: Props) {
   const {
-    createModalState,
     updateModalState,
     onAddTodoSubmit,
     onUpdateTodoSubmit,
@@ -26,9 +23,9 @@ export default function TodoSection({ date, todoList, reloadTodoList }: Props) {
     updateTodoMutation,
     deleteTodoMutation,
     createTodoMutation,
+    selectedTodo,
+    setSelectedTodo,
   } = useTodoMutations(reloadTodoList);
-
-  const { visibleState: selectedTodo } = updateModalState;
 
   const isUpdateModalLoading =
     updateTodoMutation.isPending || deleteTodoMutation.isPending;
@@ -40,24 +37,25 @@ export default function TodoSection({ date, todoList, reloadTodoList }: Props) {
           <div className="w-full pr-3">
             <TodoList
               todoList={todoList}
-              onTodoClick={updateModalState.openModal}
+              selectedTodoId={selectedTodo?.id}
+              onTodoClick={(todo) => setSelectedTodo(todo)}
               onTodoCheck={onUpdateTodoChecked}
             />
           </div>
         </ScrollArea>
 
-        <Button
-          size="lg"
-          onClick={createModalState.openModal}
-          className="w-full"
-        >
+        <Button size="lg" className="w-full">
           할 일 추가하기
         </Button>
       </div>
 
       <div className="w-full sm:w-1/2 h-full">
         {selectedTodo ? (
-          <TodoDetail todo={selectedTodo} onTodoUpdate={reloadTodoList} />
+          <TodoDetail
+            todo={selectedTodo}
+            onTodoUpdate={reloadTodoList}
+            onTodoDelete={onDeleteTodo}
+          />
         ) : (
           <div className="text-center text-muted-foreground h-full flex items-center justify-center border rounded-lg">
             <div>
@@ -68,7 +66,7 @@ export default function TodoSection({ date, todoList, reloadTodoList }: Props) {
         )}
       </div>
 
-      <TodoModal
+      {/* <TodoModal
         title="할 일 추가하기"
         isOpened={createModalState.isModalOpened}
         setIsOpened={createModalState.setIsOpened}
@@ -76,7 +74,7 @@ export default function TodoSection({ date, todoList, reloadTodoList }: Props) {
         onTodoSubmit={onAddTodoSubmit}
         isLoading={createTodoMutation.isPending}
         submitButtonLabel="할 일 추가하기"
-      />
+      /> */}
     </div>
   );
 }

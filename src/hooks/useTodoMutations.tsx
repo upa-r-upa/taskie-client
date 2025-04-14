@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
+import { useState } from "react";
 
 import {
   TodoModalSubmitProps,
@@ -11,11 +12,11 @@ import { todoApi } from "@/api/client";
 import { sendEvent } from "@/lib/analytics";
 
 import useModal from "./useModal";
-import useModalWithState from "./useModalWithState";
 
 export default function useTodoMutations(reloadTodoList: () => void) {
-  const createModalState = useModal();
-  const updateModalState = useModalWithState<TodoPublic>();
+  const [selectedTodo, setSelectedTodo] = useState<TodoPublic | null>(null);
+
+  const updateModalState = useModal();
 
   const onAddTodoSubmit = (todo: TodoModalSubmitProps) => {
     createTodoMutation.mutate({
@@ -27,16 +28,16 @@ export default function useTodoMutations(reloadTodoList: () => void) {
   };
 
   const onDeleteTodo = () => {
-    if (!updateModalState.visibleState) return;
+    if (!selectedTodo) return;
 
-    deleteTodoMutation.mutate(updateModalState.visibleState.id);
+    deleteTodoMutation.mutate(selectedTodo.id);
+    setSelectedTodo(null);
   };
 
   const createTodoMutation = useMutation({
     mutationFn: todoApi.createTodo,
     onSuccess: () => {
       sendEvent("Todo", "Create", "Success");
-      createModalState.closeModal();
       updateModalState.closeModal();
       reloadTodoList();
     },
@@ -65,13 +66,13 @@ export default function useTodoMutations(reloadTodoList: () => void) {
   });
 
   const onUpdateTodoSubmit = (todo: TodoModalSubmitProps) => {
-    if (!updateModalState.visibleState) return;
+    if (!selectedTodo) return;
 
     updateTodoMutation.mutate({
-      id: updateModalState.visibleState.id,
+      id: selectedTodo.id,
       update: {
         ...todo,
-        completed: !!updateModalState.visibleState.completed_at,
+        completed: !!selectedTodo.completed_at,
         target_date: todo.targetDate.toISOString(),
       },
     });
@@ -101,7 +102,8 @@ export default function useTodoMutations(reloadTodoList: () => void) {
 
   return {
     updateModalState,
-    createModalState,
+    selectedTodo,
+    setSelectedTodo,
     onUpdateTodoSubmit,
     onAddTodoSubmit,
     onDeleteTodo,

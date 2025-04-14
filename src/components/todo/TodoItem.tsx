@@ -7,11 +7,18 @@ import { Checkbox } from "../ui/checkbox";
 interface Props {
   todo: TodoPublic;
 
+  isSelected: boolean;
+
   onTodoClick: (todo: TodoPublic) => void;
   onTodoCheck: (todo: TodoPublic, checked: boolean) => void;
 }
 
-export default function TodoItem({ todo, onTodoCheck, onTodoClick }: Props) {
+export default function TodoItem({
+  todo,
+  isSelected,
+  onTodoCheck,
+  onTodoClick,
+}: Props) {
   const { title, content, target_date, completed_at } = todo;
 
   const getTextColor = () => {
@@ -23,7 +30,12 @@ export default function TodoItem({ todo, onTodoCheck, onTodoClick }: Props) {
   };
 
   return (
-    <div className="flex items-center rounded-md border transition-colors bg-card hover:bg-accent cursor-pointer">
+    <div
+      className={cn(
+        "flex items-center rounded-md border transition-colors bg-card hover:bg-accent cursor-pointer",
+        isSelected && "bg-accent border-muted-foreground/50"
+      )}
+    >
       <div
         className="flex-1 space-y-1 p-3 pr-0 overflow-hidden w-0 min-w-0"
         onClick={() => onTodoClick(todo)}
@@ -32,10 +44,11 @@ export default function TodoItem({ todo, onTodoCheck, onTodoClick }: Props) {
           <p
             className={cn(
               "flex-1 text-sm leading-none overflow-hidden text-ellipsis whitespace-nowrap w-0",
-              completed_at && "text-muted-foreground/70 line-through"
+              completed_at && "text-muted-foreground/70 line-through",
+              !title && "text-muted-foreground"
             )}
           >
-            {title || "제목이 없습니다."}
+            {title || "제목 없음"}
           </p>
 
           {!completed_at && (
