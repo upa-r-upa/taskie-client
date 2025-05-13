@@ -7,11 +7,18 @@ import { Checkbox } from "../ui/checkbox";
 interface Props {
   todo: TodoPublic;
 
+  isSelected: boolean;
+
   onTodoClick: (todo: TodoPublic) => void;
   onTodoCheck: (todo: TodoPublic, checked: boolean) => void;
 }
 
-export default function TodoItem({ todo, onTodoCheck, onTodoClick }: Props) {
+export default function TodoItem({
+  todo,
+  isSelected,
+  onTodoCheck,
+  onTodoClick,
+}: Props) {
   const { title, content, target_date, completed_at } = todo;
 
   const getTextColor = () => {
@@ -23,23 +30,34 @@ export default function TodoItem({ todo, onTodoCheck, onTodoClick }: Props) {
   };
 
   return (
-    <div className="flex items-center space-x-4 rounded-md border transition-colors bg-card hover:bg-accent cursor-pointer p">
+    <div
+      className={cn(
+        "flex items-center rounded-md border transition-colors bg-card hover:bg-accent cursor-pointer",
+        isSelected && "bg-accent border-muted-foreground/50"
+      )}
+    >
       <div
-        className="flex-1 space-y-1 p-3 pr-0 overflow-hidden"
+        className="flex-1 space-y-1 p-3 pr-0 overflow-hidden w-0 min-w-0"
         onClick={() => onTodoClick(todo)}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 max-w-full overflow-hidden">
           <p
             className={cn(
-              "flex-1 text-sm leading-none overflow-hidden text-ellipsis whitespace-nowrap",
-              completed_at && "text-muted-foreground/70 line-through"
+              "flex-1 text-sm leading-none overflow-hidden text-ellipsis whitespace-nowrap w-0",
+              completed_at && "text-muted-foreground/70 line-through",
+              !title && "text-muted-foreground"
             )}
           >
-            {title || "제목이 없습니다."}
+            {title || "제목 없음"}
           </p>
 
           {!completed_at && (
-            <span className={cn("text-xs text-blue-400 ", getTextColor())}>
+            <span
+              className={cn(
+                "text-xs text-blue-400 flex-shrink-0 ml-2",
+                getTextColor()
+              )}
+            >
               {formatRelativeDate(target_date)}
             </span>
           )}
@@ -48,7 +66,7 @@ export default function TodoItem({ todo, onTodoCheck, onTodoClick }: Props) {
         {content && (
           <p
             className={cn(
-              "text-sm text-muted-foreground overflow-hidden text-ellipsis whitespace-nowrap",
+              "text-sm text-muted-foreground overflow-hidden text-ellipsis whitespace-nowrap max-w-full",
               completed_at && "text-muted-foreground/50"
             )}
           >
@@ -57,7 +75,7 @@ export default function TodoItem({ todo, onTodoCheck, onTodoClick }: Props) {
         )}
       </div>
 
-      <div className="pr-2">
+      <div className="p-2 flex-shrink-0">
         <Checkbox
           checked={!!completed_at}
           onCheckedChange={(checked) => onTodoCheck(todo, !!checked)}

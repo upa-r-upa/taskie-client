@@ -24,7 +24,7 @@ const AutoResizeTextarea = React.forwardRef<
     <Textarea
       ref={ref}
       value={value}
-      className={cn("overflow-hidden min-h-10 resize-none", className)}
+      className={cn("overflow-hidden min-h-8 resize-none", className)}
       rows={1}
       {...props}
     />

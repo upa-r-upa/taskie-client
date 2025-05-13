@@ -1,5 +1,3 @@
-import { Fragment } from "react/jsx-runtime";
-
 import { TodoPublic } from "@/api/generated";
 import EmptyCard from "@/components/EmptyCard";
 
@@ -10,12 +8,15 @@ interface Props {
 
   onTodoClick: (todo: TodoPublic) => void;
   onTodoCheck: (todo: TodoPublic, checked: boolean) => void;
+
+  selectedTodoId?: number;
 }
 
 export default function TodoList({
   todoList,
   onTodoClick,
   onTodoCheck,
+  selectedTodoId,
 }: Props) {
   if (todoList.length === 0) {
     return (
@@ -24,20 +25,16 @@ export default function TodoList({
   }
 
   return (
-    <>
-      <div className="flex flex-col gap-2 pt-0">
-        {todoList.map((item) => {
-          return (
-            <Fragment key={item.id}>
-              <TodoItem
-                todo={item}
-                onTodoClick={onTodoClick}
-                onTodoCheck={onTodoCheck}
-              />
-            </Fragment>
-          );
-        })}
-      </div>
-    </>
+    <div className="space-y-2">
+      {todoList.map((item) => (
+        <TodoItem
+          key={item.id}
+          todo={item}
+          onTodoClick={onTodoClick}
+          onTodoCheck={onTodoCheck}
+          isSelected={selectedTodoId === item.id}
+        />
+      ))}
+    </div>
   );
 }
