@@ -45,7 +45,7 @@ function MainPage() {
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-4">
-        <Card className="p-4 flex flex-col sm:h-[calc(100vh-190px)] sm:min-h-[500px]">
+        <Card className="p-4 flex flex-col h-[400px] sm:min-h-[500px]">
           <CardHeader className="p-0 flex-none">
             <CardTitle>할 일</CardTitle>
           </CardHeader>

@@ -16,7 +16,7 @@ interface Props {
 export default function TodoSection({ date, todoList, reloadTodoList }: Props) {
   const {
     updateModalState,
-    onAddTodoSubmit,
+    onAddTodo,
     onUpdateTodoSubmit,
     onUpdateTodoChecked,
     onDeleteTodo,
@@ -32,19 +32,15 @@ export default function TodoSection({ date, todoList, reloadTodoList }: Props) {
 
   return (
     <div className="flex sm:flex-row flex-col h-full gap-4">
-      <div className="w-full sm:w-1/2 h-full flex flex-col">
-        <ScrollArea className="flex-1 mb-4 w-full">
-          <div className="w-full pr-3">
-            <TodoList
-              todoList={todoList}
-              selectedTodoId={selectedTodo?.id}
-              onTodoClick={(todo) => setSelectedTodo(todo)}
-              onTodoCheck={onUpdateTodoChecked}
-            />
-          </div>
-        </ScrollArea>
+      <div className="w-full sm:w-1/2 h-full flex flex-col gap-2">
+        <TodoList
+          todoList={todoList}
+          selectedTodoId={selectedTodo?.id}
+          onTodoClick={(todo) => setSelectedTodo(todo)}
+          onTodoCheck={onUpdateTodoChecked}
+        />
 
-        <Button size="lg" className="w-full">
+        <Button size="lg" className="w-full" onClick={() => onAddTodo(date)}>
           할 일 추가하기
         </Button>
       </div>
@@ -65,16 +61,6 @@ export default function TodoSection({ date, todoList, reloadTodoList }: Props) {
           </div>
         )}
       </div>
-
-      {/* <TodoModal
-        title="할 일 추가하기"
-        isOpened={createModalState.isModalOpened}
-        setIsOpened={createModalState.setIsOpened}
-        targetDate={getDateWithoutTime(date)}
-        onTodoSubmit={onAddTodoSubmit}
-        isLoading={createTodoMutation.isPending}
-        submitButtonLabel="할 일 추가하기"
-      /> */}
     </div>
   );
 }

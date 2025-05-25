@@ -58,6 +58,7 @@ export default function TodoDetail({
           date={targetDate}
           onDateChange={(date) => setTargetDate(date)}
         />
+
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button variant="outline" size="icon" className="ml-auto">
@@ -84,7 +85,7 @@ export default function TodoDetail({
         </AlertDialog>
       </div>
 
-      <ScrollArea className="mt-4 flex-grow pr-2">
+      <ScrollArea className="mt-4 pr-2 flex-grow h-full">
         <TextAreaAutosize
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -97,7 +98,8 @@ export default function TodoDetail({
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="내용을 입력해주세요."
-          className="text-sm min-h-full"
+          className="text-sm flex-grow min-h-full"
+          minRows={20}
         />
       </ScrollArea>
 
