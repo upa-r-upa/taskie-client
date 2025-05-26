@@ -56,7 +56,7 @@ export function TodoAddButton({
 }
 
 export default function TodoPage() {
-  const [date] = useState(() => new Date());
+  const [date] = useState(() => getDateWithoutTime(new Date()));
   const [tab, setTab] = useState<string>(TabType.incomplete);
 
   const reloadTodoList = () => {

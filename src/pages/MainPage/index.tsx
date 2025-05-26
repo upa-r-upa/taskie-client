@@ -2,7 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { queryClient, taskApi } from "@/api/client";
-import { formatConditionalDate, formatDate } from "@/utils/time";
+import {
+  formatConditionalDate,
+  formatDate,
+  getDateWithoutTime,
+} from "@/utils/time";
 import DatePicker from "@/components/ui/date-picker";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,7 +16,7 @@ import HabitSection from "./Habit/HabitSection";
 import RoutineSection from "./Routine/RoutineSection";
 
 function MainPage() {
-  const [date, setDate] = useState<Date>(() => new Date());
+  const [date, setDate] = useState<Date>(() => getDateWithoutTime(new Date()));
 
   const formattedDate = formatDate(date);
 
@@ -28,6 +32,8 @@ function MainPage() {
       queryKey: ["tasks"],
     });
   };
+
+  console.log(date, date.toISOString());
 
   return (
     <>
