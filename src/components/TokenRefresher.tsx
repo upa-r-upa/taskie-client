@@ -28,7 +28,8 @@ export default function TokenRefresher() {
 
   const refreshTokenMutation = useMutation({
     mutationKey: ["refreshToken"],
-    mutationFn: () => authApi.refreshToken(),
+    mutationFn: (includeUserInfo: boolean) =>
+      authApi.refreshToken(includeUserInfo),
     onSuccess: () => {
       sendEvent("Auth", "RefreshToken", "Success");
     },
@@ -39,10 +40,16 @@ export default function TokenRefresher() {
 
   useEffect(() => {
     refreshTokenMutation
-      .mutateAsync()
+      .mutateAsync(true)
       .then((response) => {
-        setToken(response.data!.access_token);
-        setUser(response.data!.user);
+        const { access_token, user } = response.data ?? {};
+
+        if (!access_token || !user) {
+          throw new Error("access_token 혹은 User가 없습니다.");
+        }
+
+        setToken(access_token);
+        setUser(user);
 
         client.defaults.headers.common["Authorization"] = authorizationToken(
           response.data!.access_token
@@ -87,10 +94,9 @@ export default function TokenRefresher() {
       originalRequest._retry = true;
 
       try {
-        const response = await refreshTokenMutation.mutateAsync();
+        const response = await refreshTokenMutation.mutateAsync(false);
 
         setToken(response.data!.access_token);
-        setUser(response.data!.user);
 
         client.defaults.headers.common["Authorization"] = authorizationToken(
           token!
