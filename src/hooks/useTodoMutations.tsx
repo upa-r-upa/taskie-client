@@ -14,31 +14,31 @@ import { sendEvent } from "@/lib/analytics";
 import useModal from "./useModal";
 
 export default function useTodoMutations(reloadTodoList: () => void) {
-  const [selectedTodo, setSelectedTodo] = useState<TodoPublic | null>(null);
+  const [selectedTodoId, setSelectedTodoId] = useState<number | null>(null);
 
   const updateModalState = useModal();
 
-  const onAddTodoSubmit = (todo: TodoModalSubmitProps) => {
+  const onAddTodo = (targetDate: Date) => {
     createTodoMutation.mutate({
-      content: todo.content,
-      title: todo.title,
+      title: "",
+      content: "",
       order: 0,
-      target_date: todo.targetDate.toISOString(),
+      target_date: targetDate.toISOString(),
     });
   };
 
   const onDeleteTodo = () => {
-    if (!selectedTodo) return;
+    if (!selectedTodoId) return;
 
-    deleteTodoMutation.mutate(selectedTodo.id);
-    setSelectedTodo(null);
+    deleteTodoMutation.mutate(selectedTodoId);
+    setSelectedTodoId(null);
   };
 
   const createTodoMutation = useMutation({
     mutationFn: todoApi.createTodo,
-    onSuccess: () => {
+    onSuccess: (data) => {
       sendEvent("Todo", "Create", "Success");
-      updateModalState.closeModal();
+      setSelectedTodoId(data.data.id);
       reloadTodoList();
     },
     onError: (error: AxiosError) => {
@@ -66,13 +66,12 @@ export default function useTodoMutations(reloadTodoList: () => void) {
   });
 
   const onUpdateTodoSubmit = (todo: TodoModalSubmitProps) => {
-    if (!selectedTodo) return;
+    if (!selectedTodoId) return;
 
     updateTodoMutation.mutate({
-      id: selectedTodo.id,
+      id: selectedTodoId,
       update: {
         ...todo,
-        completed: !!selectedTodo.completed_at,
         target_date: todo.targetDate.toISOString(),
       },
     });
@@ -102,10 +101,10 @@ export default function useTodoMutations(reloadTodoList: () => void) {
 
   return {
     updateModalState,
-    selectedTodo,
-    setSelectedTodo,
+    selectedTodoId,
+    setSelectedTodoId,
+    onAddTodo,
     onUpdateTodoSubmit,
-    onAddTodoSubmit,
     onDeleteTodo,
     onUpdateTodoChecked,
     deleteTodoMutation,

@@ -9,7 +9,7 @@ interface Props {
 
   isSelected: boolean;
 
-  onTodoClick: (todo: TodoPublic) => void;
+  onTodoClick: (todoId: number) => void;
   onTodoCheck: (todo: TodoPublic, checked: boolean) => void;
 }
 
@@ -38,7 +38,7 @@ export default function TodoItem({
     >
       <div
         className="flex-1 space-y-1 p-3 pr-0 overflow-hidden w-0 min-w-0"
-        onClick={() => onTodoClick(todo)}
+        onClick={() => onTodoClick(todo.id)}
       >
         <div className="flex items-center gap-2 max-w-full overflow-hidden">
           <p

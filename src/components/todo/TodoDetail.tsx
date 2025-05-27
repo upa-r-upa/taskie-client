@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Trash2 } from "lucide-react";
 
 import { TodoPublic } from "@/api/generated";
@@ -19,11 +19,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { TodoModalSubmitProps } from "@/pages/MainPage/types";
 
 interface Props {
   todo: TodoPublic;
-  onTodoUpdate?: (updatedTodo: TodoPublic) => void;
-  onTodoDelete?: (todoId: number) => void;
+
+  onTodoUpdate: (updatedTodo: TodoModalSubmitProps) => void;
+  onTodoDelete: (todoId: number) => void;
 }
 
 export default function TodoDetail({
@@ -33,14 +35,18 @@ export default function TodoDetail({
 }: Props) {
   const [title, setTitle] = useState<string>(todo.title);
   const [content, setContent] = useState<string>(todo.content || "");
-  const [targetDate, setTargetDate] = useState<Date>(
-    new Date(todo.target_date)
-  );
+
+  const targetDate = useMemo(() => {
+    return new Date(todo.target_date);
+  }, [todo.target_date]);
+
+  const completed = useMemo(() => {
+    return !!todo.completed_at;
+  }, [todo.completed_at]);
 
   useEffect(() => {
     setTitle(todo.title);
     setContent(todo.content || "");
-    setTargetDate(new Date(todo.target_date));
   }, [todo]);
 
   const handleDelete = () => {
@@ -49,19 +55,63 @@ export default function TodoDetail({
     }
   };
 
+  const handleTargetDateUpdate = (date: Date) => {
+    onTodoUpdate({
+      title,
+      content,
+      targetDate: date,
+      completed: completed,
+    });
+  };
+
+  const handleCheckedUpdate = (checked: boolean) => {
+    onTodoUpdate({
+      title,
+      content,
+      targetDate,
+      completed: checked,
+    });
+  };
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setTitle(e.target.value);
+
+    onTodoUpdate({
+      content,
+      targetDate,
+      completed,
+      title: e.target.value,
+    });
+  };
+
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setTitle(e.target.value);
+
+    onTodoUpdate({
+      title,
+      targetDate,
+      completed,
+      content: e.target.value,
+    });
+  };
+
   return (
     <div className="border rounded-lg p-4 shadow-sm h-full flex flex-col">
-      <div className="flex items-center gap-4">
-        <Checkbox size="md" checked={!!todo.completed_at} />
+      <div className="flex items-center gap-2">
+        <Checkbox
+          size="md"
+          checked={completed}
+          onCheckedChange={handleCheckedUpdate}
+        />
         <DateTimePicker
           isSimple
           date={targetDate}
-          onDateChange={(date) => setTargetDate(date)}
+          onDateChange={handleTargetDateUpdate}
         />
 
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="outline" size="icon" className="ml-auto">
+            <Button variant="outline" size="icon" className="ml-auto px-2">
               <Trash2 className="w-4 h-4 text-destructive" />
             </Button>
           </AlertDialogTrigger>
@@ -88,7 +138,7 @@ export default function TodoDetail({
       <ScrollArea className="mt-4 pr-2 flex-grow h-full">
         <TextAreaAutosize
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={handleTitleChange}
           placeholder="제목 없음"
           maxLength={100}
           className="text-lg font-bold"
@@ -96,7 +146,7 @@ export default function TodoDetail({
 
         <TextAreaAutosize
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={handleContentChange}
           placeholder="내용을 입력해주세요."
           className="text-sm flex-grow min-h-full"
           minRows={20}

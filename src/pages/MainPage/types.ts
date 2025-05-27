@@ -8,6 +8,7 @@ export interface TodoModalSubmitProps {
   title: string;
   content: string;
   targetDate: Date;
+  completed: boolean;
 }
 
 export interface TodoUpdateInputParameter {
