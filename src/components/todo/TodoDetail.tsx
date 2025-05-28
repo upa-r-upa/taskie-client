@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Trash2 } from "lucide-react";
 
 import { TodoPublic } from "@/api/generated";
@@ -36,7 +36,8 @@ export default function TodoDetail({
   onTodoUpdate,
   onTodoDelete,
 }: Props) {
-  const { inputRef, focusToEnd } = useFocusToEnd();
+  const { inputRef: titleInputRef, focusToEnd } = useFocusToEnd();
+  const contentInputRef = useRef<HTMLTextAreaElement>(null);
 
   const { dispatch, clear } = useDebounce(AUTO_SAVE_DELAY);
   const { id, target_date, completed_at } = todo;
@@ -60,6 +61,13 @@ export default function TodoDetail({
     setTitle(todo.title);
     setContent(todo.content || "");
   }, [todo]);
+
+  const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      contentInputRef.current?.focus();
+    }
+  };
 
   const handleDelete = () => {
     if (onTodoDelete) {
@@ -156,10 +164,11 @@ export default function TodoDetail({
         <TextAreaAutosize
           value={title}
           onChange={handleTitleChange}
+          onKeyDown={handleTitleKeyDown}
           placeholder="제목 없음"
           maxLength={100}
           className="text-lg font-bold"
-          ref={inputRef}
+          ref={titleInputRef}
         />
 
         <TextAreaAutosize
@@ -168,6 +177,7 @@ export default function TodoDetail({
           placeholder="내용을 입력해주세요."
           className="text-sm flex-grow min-h-full"
           minRows={20}
+          ref={contentInputRef}
         />
       </ScrollArea>
 
