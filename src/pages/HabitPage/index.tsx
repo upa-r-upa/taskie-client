@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { habitsApi, queryClient } from "@/api/client";
-import { formatDate } from "@/utils/time";
+import { formatDate, getDateWithoutTime } from "@/utils/time";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import HabitList from "./HabitList";
@@ -22,7 +22,7 @@ const invalidateQueries = () => {
 };
 
 export default function HabitPage() {
-  const [date] = useState(() => new Date());
+  const [date] = useState(() => getDateWithoutTime(new Date()));
   const { isLoading, data } = useQuery({
     queryKey: ["habits"],
     queryFn: () => fetchHabitList(date),

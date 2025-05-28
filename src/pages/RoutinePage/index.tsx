@@ -7,11 +7,12 @@ import { routineApi } from "@/api/client";
 import RoutineList from "@/components/routine/RoutineList";
 import { Button } from "@/components/ui/button";
 import Routes from "@/constants/routes";
+import { getDateWithoutTime } from "@/utils/time";
 
 import RoutineSkeleton from "./RoutineSkeleton";
 
 export default function RoutinePage() {
-  const [date] = useState<Date>(() => new Date());
+  const [date] = useState<Date>(() => getDateWithoutTime(new Date()));
 
   const { isLoading, data } = useQuery({
     queryKey: ["routines"],

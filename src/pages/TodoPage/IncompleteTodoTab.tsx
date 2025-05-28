@@ -39,13 +39,13 @@ export default function IncompleteTodoTab({ onTodoClick, onTodoCheck }: Props) {
   }
 
   return (
-    <>
+    <div className="h-full flex flex-col overflow-hidden">
       <TodoList
         todoList={data?.pages.flatMap((page) => page.data) || []}
         onTodoClick={onTodoClick}
         onTodoCheck={onTodoCheck}
       />
       <div ref={triggerRef} className="h-1" />
-    </>
+    </div>
   );
 }

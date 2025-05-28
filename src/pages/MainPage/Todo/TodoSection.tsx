@@ -1,10 +1,10 @@
+import { useMemo } from "react";
+
 import { TodoPublic } from "@/api/generated";
-import { getDateWithoutTime } from "@/utils/time";
 import { Button } from "@/components/ui/button";
 import TodoList from "@/components/todo/TodoList";
 import useTodoMutations from "@/hooks/useTodoMutations";
-
-import TodoModal from "./TodoModal";
+import TodoDetail from "@/components/todo/TodoDetail";
 
 interface Props {
   date: Date;
@@ -15,67 +15,55 @@ interface Props {
 
 export default function TodoSection({ date, todoList, reloadTodoList }: Props) {
   const {
-    createModalState,
     updateModalState,
-    onAddTodoSubmit,
+    onAddTodo,
     onUpdateTodoSubmit,
     onUpdateTodoChecked,
     onDeleteTodo,
     updateTodoMutation,
     deleteTodoMutation,
     createTodoMutation,
+    selectedTodoId,
+    setSelectedTodoId,
   } = useTodoMutations(reloadTodoList);
 
-  const { visibleState: selectedTodo } = updateModalState;
+  const selectedTodo = useMemo(() => {
+    if (!selectedTodoId) return;
 
-  const isUpdateModalLoading =
-    updateTodoMutation.isPending || deleteTodoMutation.isPending;
+    return todoList.find(({ id }) => id === selectedTodoId);
+  }, [todoList, selectedTodoId]);
 
   return (
-    <>
-      <TodoList
-        todoList={todoList}
-        onTodoClick={updateModalState.openModal}
-        onTodoCheck={onUpdateTodoChecked}
-      />
-
-      <Button
-        size="lg"
-        onClick={createModalState.openModal}
-        className="mt-4 w-full"
-      >
-        할 일 추가하기
-      </Button>
-
-      <TodoModal
-        title="할 일 추가하기"
-        isOpened={createModalState.isModalOpened}
-        setIsOpened={createModalState.setIsOpened}
-        targetDate={getDateWithoutTime(date)}
-        onTodoSubmit={onAddTodoSubmit}
-        isLoading={createTodoMutation.isPending}
-        submitButtonLabel="할 일 추가하기"
-      />
-
-      {selectedTodo && (
-        <TodoModal
-          deletable
-          isOpened={updateModalState.isOpened}
-          setIsOpened={updateModalState.setIsOpened}
-          submitButtonLabel="할 일 수정하기"
-          title="할 일 수정하기"
-          initialTodo={{ ...selectedTodo }}
-          isLoading={isUpdateModalLoading}
-          targetDate={
-            selectedTodo?.target_date
-              ? new Date(selectedTodo.target_date)
-              : new Date()
-          }
-          onTodoSubmit={onUpdateTodoSubmit}
-          onModalInvisible={updateModalState.invisibleModal}
-          onTodoDelete={onDeleteTodo}
+    <div className="flex sm:flex-row flex-col h-full gap-2">
+      <div className="w-full sm:w-1/2 h-full flex flex-col gap-2">
+        <TodoList
+          todoList={todoList}
+          selectedTodoId={selectedTodoId}
+          onTodoClick={(id) => setSelectedTodoId(id)}
+          onTodoCheck={onUpdateTodoChecked}
         />
-      )}
-    </>
+
+        <Button size="lg" className="w-full" onClick={() => onAddTodo(date)}>
+          할 일 추가하기
+        </Button>
+      </div>
+
+      <div className="w-full sm:w-1/2 h-full overflow-hidden">
+        {selectedTodo ? (
+          <TodoDetail
+            todo={selectedTodo}
+            onTodoUpdate={onUpdateTodoSubmit}
+            onTodoDelete={onDeleteTodo}
+          />
+        ) : (
+          <div className="text-center text-muted-foreground h-full flex items-center justify-center border rounded-lg">
+            <div>
+              <p>현재 선택된 할 일이 없어요.</p>
+              <p>할 일을 클릭해서 확인해보세요.</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

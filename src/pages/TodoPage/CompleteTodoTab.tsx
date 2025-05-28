@@ -48,8 +48,8 @@ export default function CompleteTodoTab({ onTodoClick, onTodoCheck }: Props) {
   }
 
   return (
-    <>
-      <div className="flex flex-col gap-2 pt-0">
+    <div className="h-full flex flex-col overflow-hidden">
+      <div className="flex flex-col gap-2 overflow-y-auto min-h-0 flex-1">
         {todoList.map((item, i) => {
           if (!item.completed_at) return;
 
@@ -78,6 +78,6 @@ export default function CompleteTodoTab({ onTodoClick, onTodoCheck }: Props) {
       </div>
 
       <div ref={triggerRef} className="h-1" />
-    </>
+    </div>
   );
 }
