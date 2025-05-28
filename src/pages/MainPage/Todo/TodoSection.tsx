@@ -1,10 +1,10 @@
+import { useMemo } from "react";
+
 import { TodoPublic } from "@/api/generated";
 import { Button } from "@/components/ui/button";
 import TodoList from "@/components/todo/TodoList";
 import useTodoMutations from "@/hooks/useTodoMutations";
-import { ScrollArea } from "@/components/ui/scroll-area";
-
-import TodoDetail from "../../../components/todo/TodoDetail";
+import TodoDetail from "@/components/todo/TodoDetail";
 
 interface Props {
   date: Date;
@@ -23,20 +23,23 @@ export default function TodoSection({ date, todoList, reloadTodoList }: Props) {
     updateTodoMutation,
     deleteTodoMutation,
     createTodoMutation,
-    selectedTodo,
-    setSelectedTodo,
+    selectedTodoId,
+    setSelectedTodoId,
   } = useTodoMutations(reloadTodoList);
 
-  const isUpdateModalLoading =
-    updateTodoMutation.isPending || deleteTodoMutation.isPending;
+  const selectedTodo = useMemo(() => {
+    if (!selectedTodoId) return;
+
+    return todoList.find(({ id }) => id === selectedTodoId);
+  }, [todoList, selectedTodoId]);
 
   return (
-    <div className="flex sm:flex-row flex-col h-full gap-4">
+    <div className="flex sm:flex-row flex-col h-full gap-2">
       <div className="w-full sm:w-1/2 h-full flex flex-col gap-2">
         <TodoList
           todoList={todoList}
-          selectedTodoId={selectedTodo?.id}
-          onTodoClick={(todo) => setSelectedTodo(todo)}
+          selectedTodoId={selectedTodoId}
+          onTodoClick={(id) => setSelectedTodoId(id)}
           onTodoCheck={onUpdateTodoChecked}
         />
 
@@ -45,11 +48,11 @@ export default function TodoSection({ date, todoList, reloadTodoList }: Props) {
         </Button>
       </div>
 
-      <div className="w-full sm:w-1/2 h-full">
+      <div className="w-full sm:w-1/2 h-full overflow-hidden">
         {selectedTodo ? (
           <TodoDetail
             todo={selectedTodo}
-            onTodoUpdate={reloadTodoList}
+            onTodoUpdate={onUpdateTodoSubmit}
             onTodoDelete={onDeleteTodo}
           />
         ) : (

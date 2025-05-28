@@ -33,8 +33,6 @@ function MainPage() {
     });
   };
 
-  console.log(date, date.toISOString());
-
   return (
     <>
       <div className="block sm:flex items-center justify-between space-y-2">

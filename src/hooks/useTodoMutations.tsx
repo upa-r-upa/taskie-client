@@ -7,38 +7,40 @@ import {
   TodoModalSubmitProps,
   TodoUpdateInputParameter,
 } from "@/pages/MainPage/types";
-import { TodoPublic } from "@/api/generated";
-import { todoApi } from "@/api/client";
+import { TaskPublic, TodoPublic } from "@/api/generated";
+import { queryClient, todoApi } from "@/api/client";
 import { sendEvent } from "@/lib/analytics";
 
 import useModal from "./useModal";
 
+const TASK_QUERY_KEY = ["tasks"];
+
 export default function useTodoMutations(reloadTodoList: () => void) {
-  const [selectedTodo, setSelectedTodo] = useState<TodoPublic | null>(null);
+  const [selectedTodoId, setSelectedTodoId] = useState<number | null>(null);
 
   const updateModalState = useModal();
 
-  const onAddTodoSubmit = (todo: TodoModalSubmitProps) => {
+  const onAddTodo = (targetDate: Date) => {
     createTodoMutation.mutate({
-      content: todo.content,
-      title: todo.title,
+      title: "",
+      content: "",
       order: 0,
-      target_date: todo.targetDate.toISOString(),
+      target_date: targetDate.toISOString(),
     });
   };
 
   const onDeleteTodo = () => {
-    if (!selectedTodo) return;
+    if (!selectedTodoId) return;
 
-    deleteTodoMutation.mutate(selectedTodo.id);
-    setSelectedTodo(null);
+    deleteTodoMutation.mutate(selectedTodoId);
+    setSelectedTodoId(null);
   };
 
   const createTodoMutation = useMutation({
     mutationFn: todoApi.createTodo,
-    onSuccess: () => {
+    onSuccess: (data) => {
       sendEvent("Todo", "Create", "Success");
-      updateModalState.closeModal();
+      setSelectedTodoId(data.data.id);
       reloadTodoList();
     },
     onError: (error: AxiosError) => {
@@ -55,24 +57,47 @@ export default function useTodoMutations(reloadTodoList: () => void) {
   const updateTodoMutation = useMutation({
     mutationFn: (input: TodoUpdateInputParameter) =>
       todoApi.updateTodo(input.id, input.update),
+    onMutate: async (todo) => {
+      await queryClient.cancelQueries({
+        queryKey: TASK_QUERY_KEY,
+      });
+      const prevTask = queryClient.getQueryData<TaskPublic>(TASK_QUERY_KEY);
+
+      if (prevTask) {
+        const nextTask = prevTask?.todo_list.map((taskTodo) => {
+          if (taskTodo.id === todo.id) {
+            return todo;
+          } else {
+            return taskTodo;
+          }
+        });
+
+        queryClient.setQueryData(TASK_QUERY_KEY, nextTask);
+      }
+
+      return { prevTask };
+    },
     onSuccess: () => {
       sendEvent("Todo", "Update", "Success");
       onTodoUpdateSuccess();
     },
-    onError: (error: AxiosError) => {
+    onError: (error: AxiosError, input, context) => {
+      if (context?.prevTask) {
+        queryClient.setQueryData(TASK_QUERY_KEY, context.prevTask);
+      }
+
       sendEvent("Todo", "Update", "Error", error.response?.status || 0);
       toast.error("할일 수정에 실패했습니다.");
     },
   });
 
   const onUpdateTodoSubmit = (todo: TodoModalSubmitProps) => {
-    if (!selectedTodo) return;
+    if (!selectedTodoId) return;
 
     updateTodoMutation.mutate({
-      id: selectedTodo.id,
+      id: selectedTodoId,
       update: {
         ...todo,
-        completed: !!selectedTodo.completed_at,
         target_date: todo.targetDate.toISOString(),
       },
     });
@@ -102,10 +127,10 @@ export default function useTodoMutations(reloadTodoList: () => void) {
 
   return {
     updateModalState,
-    selectedTodo,
-    setSelectedTodo,
+    selectedTodoId,
+    setSelectedTodoId,
+    onAddTodo,
     onUpdateTodoSubmit,
-    onAddTodoSubmit,
     onDeleteTodo,
     onUpdateTodoChecked,
     deleteTodoMutation,

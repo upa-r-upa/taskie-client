@@ -7,10 +7,10 @@ import TodoItem from "./TodoItem";
 interface Props {
   todoList: Array<TodoPublic>;
 
-  onTodoClick: (todo: TodoPublic) => void;
+  onTodoClick: (todoId: number) => void;
   onTodoCheck: (todo: TodoPublic, checked: boolean) => void;
 
-  selectedTodoId?: number;
+  selectedTodoId: number | null;
 }
 
 export default function TodoList({
