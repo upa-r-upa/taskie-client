@@ -20,6 +20,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { TodoModalSubmitProps } from "@/pages/MainPage/types";
+import useDebounce from "@/hooks/useDebounce";
+import { AUTO_SAVE_DELAY } from "@/constants/api";
+import useFocusToEnd from "@/hooks/useFocusToEnd";
 
 interface Props {
   todo: TodoPublic;
@@ -33,16 +36,25 @@ export default function TodoDetail({
   onTodoUpdate,
   onTodoDelete,
 }: Props) {
+  const { inputRef, focusToEnd } = useFocusToEnd();
+
+  const { dispatch, clear } = useDebounce(AUTO_SAVE_DELAY);
+  const { id, target_date, completed_at } = todo;
+
   const [title, setTitle] = useState<string>(todo.title);
   const [content, setContent] = useState<string>(todo.content || "");
 
   const targetDate = useMemo(() => {
-    return new Date(todo.target_date);
-  }, [todo.target_date]);
+    return new Date(target_date);
+  }, [target_date]);
 
   const completed = useMemo(() => {
-    return !!todo.completed_at;
-  }, [todo.completed_at]);
+    return !!completed_at;
+  }, [completed_at]);
+
+  useEffect(() => {
+    focusToEnd();
+  }, [id, focusToEnd]);
 
   useEffect(() => {
     setTitle(todo.title);
@@ -51,11 +63,12 @@ export default function TodoDetail({
 
   const handleDelete = () => {
     if (onTodoDelete) {
-      onTodoDelete(todo.id);
+      onTodoDelete(id);
     }
   };
 
   const handleTargetDateUpdate = (date: Date) => {
+    clear();
     onTodoUpdate({
       title,
       content,
@@ -65,6 +78,7 @@ export default function TodoDetail({
   };
 
   const handleCheckedUpdate = (checked: boolean) => {
+    clear();
     onTodoUpdate({
       title,
       content,
@@ -74,25 +88,28 @@ export default function TodoDetail({
   };
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    dispatch(() =>
+      onTodoUpdate({
+        content,
+        targetDate,
+        completed,
+        title: e.target.value,
+      })
+    );
     setTitle(e.target.value);
-
-    onTodoUpdate({
-      content,
-      targetDate,
-      completed,
-      title: e.target.value,
-    });
   };
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setTitle(e.target.value);
+    setContent(e.target.value);
 
-    onTodoUpdate({
-      title,
-      targetDate,
-      completed,
-      content: e.target.value,
-    });
+    dispatch(() =>
+      onTodoUpdate({
+        title,
+        targetDate,
+        completed,
+        content: e.target.value,
+      })
+    );
   };
 
   return (
@@ -111,7 +128,7 @@ export default function TodoDetail({
 
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="outline" size="icon" className="ml-auto px-2">
+            <Button variant="outline" size="icon" className="ml-auto px-1">
               <Trash2 className="w-4 h-4 text-destructive" />
             </Button>
           </AlertDialogTrigger>
@@ -142,6 +159,7 @@ export default function TodoDetail({
           placeholder="제목 없음"
           maxLength={100}
           className="text-lg font-bold"
+          ref={inputRef}
         />
 
         <TextAreaAutosize

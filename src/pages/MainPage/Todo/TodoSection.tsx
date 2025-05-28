@@ -34,7 +34,7 @@ export default function TodoSection({ date, todoList, reloadTodoList }: Props) {
   }, [todoList, selectedTodoId]);
 
   return (
-    <div className="flex sm:flex-row flex-col h-full gap-4">
+    <div className="flex sm:flex-row flex-col h-full gap-2">
       <div className="w-full sm:w-1/2 h-full flex flex-col gap-2">
         <TodoList
           todoList={todoList}
