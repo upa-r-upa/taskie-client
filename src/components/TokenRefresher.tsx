@@ -28,7 +28,7 @@ export default function TokenRefresher() {
 
   const refreshTokenMutation = useMutation({
     mutationKey: ["refreshToken"],
-    mutationFn: () => authApi.refreshToken(),
+    mutationFn: () => authApi.refreshToken(true),
     onSuccess: () => {
       sendEvent("Auth", "RefreshToken", "Success");
     },
