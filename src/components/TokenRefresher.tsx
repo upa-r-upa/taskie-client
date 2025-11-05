@@ -42,7 +42,7 @@ export default function TokenRefresher() {
       .mutateAsync()
       .then((response) => {
         setToken(response.data!.access_token);
-        setUser(response.data!.user);
+        setUser(response.data!.user || null);
 
         client.defaults.headers.common["Authorization"] = authorizationToken(
           response.data!.access_token
@@ -90,7 +90,7 @@ export default function TokenRefresher() {
         const response = await refreshTokenMutation.mutateAsync();
 
         setToken(response.data!.access_token);
-        setUser(response.data!.user);
+        setUser(response.data!.user || null);
 
         client.defaults.headers.common["Authorization"] = authorizationToken(
           token!
