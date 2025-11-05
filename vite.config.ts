@@ -8,16 +8,27 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      injectRegister: "auto",
       registerType: "autoUpdate",
       devOptions: {
         enabled: true,
+      },
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,webmanifest,mp3}"],
+        navigateFallbackDenylist: [/^\/api\//],
+        cleanupOutdatedCaches: true,
       },
       includeAssets: ["favicon.ico"],
       manifest: {
         name: "Taskie: 투두/습관/루틴 관리",
         short_name: "Taskie",
         description: "간편하게 투두/습관/루틴을 관리하는 습관 관리 앱",
+        start_url: "/",
+        display: "standalone",
+        background_color: "#ffffff",
         theme_color: "#ffffff",
+        id: "/",
+        orientation: "portrait",
         icons: [
           {
             src: "pwa-192x192.png",
